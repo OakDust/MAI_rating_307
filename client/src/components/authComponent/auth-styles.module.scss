@@ -1,0 +1,30 @@
+h1, h2, h3, h4, h5, h6, p{
+    margin: 0;
+}
+
+.auth__container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 50px;
+}
+
+.intro__block{
+    padding-top: 115px;
+    text-align: center;
+    color: white;
+    
+    h1{
+        font-family: 'Tektur', sans-serif;
+        font-size: 82px;
+        line-height: 82px;
+        margin-bottom: 16px;
+    }
+
+    p{
+        font-family: 'Montserrat', sans-serif;
+        font-size: 24px;
+        line-height: 24px;
+    }
+}
