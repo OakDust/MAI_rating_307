@@ -1,12 +1,10 @@
 import React from 'react';
-import AuthComponent from '../components/authComponent/authComponent';
+import Auth from '../components/auth/auth';
 
 const Registration = () => {
+    return(
 
-    return( 
-        <div>
-            <AuthComponent isRegistration={true}/>
-        </div>
+        <Auth isRegistration={true}/>
     );
 }
 export default Registration;

@@ -4,9 +4,9 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
-const generateAccessToken = (id) => {
+const generateAccessToken = (id, role) => {
     const payload = {
-        id
+        id, role
     }
 
     return jwt.sign(payload, process.env.AUTH_SECRET, {expiresIn: '4h'})
@@ -48,7 +48,7 @@ exports.professorAuth = async (req, res, next) => {
 exports.studentAuth = async (req, res, next) => {
     const student = await Student.findOne({
         where: {
-            s_email: req.body.email
+            email: req.body.email
         }
     })
 
@@ -60,7 +60,7 @@ exports.studentAuth = async (req, res, next) => {
         return
     } 
 
-    const validPasswordStudent = bcrypt.compareSync(req.body.password, student.s_password); 
+    const validPasswordStudent = bcrypt.compareSync(req.body.password, student.password);
 
     if (!validPasswordStudent) {
         await res.status(400).json({
@@ -70,10 +70,11 @@ exports.studentAuth = async (req, res, next) => {
         return
     } 
 
-    const token = await generateAccessToken(student.s_id)
-
+    const token = await generateAccessToken(student.id, 'Student')
+    console.log(student.dataValues)
     await res.json({
+        user: student.dataValues,
         message: false,
-        token: token
+        token: 'Student ' + token
     })
 }

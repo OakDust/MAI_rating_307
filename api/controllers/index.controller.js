@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 
 
 exports.create = (req, res) => {
-    if (!(req.body.id && req.body.name && req.body.email && req.body.password)) {
+    if (!(req.body.id && req.body.name && req.body.email && req.body.password && req.body.groups)) {
         res.status(400).send({
           message: "Allow null is false can not be empty!"
         });
@@ -18,10 +18,11 @@ exports.create = (req, res) => {
             const hashedPasswordStudent = bcrypt.hashSync(req.body.password, 10);
 
             const student = {
-                s_id: req.body.id,
-                s_name: req.body.name,
-                s_email: req.body.email,
-                s_password: hashedPasswordStudent,
+                groups: req.body.groups,
+                id: req.body.id,
+                name: req.body.name,
+                email: req.body.email,
+                password: hashedPasswordStudent,
                 is_head_student: req.body.is_head_student
             };
 
@@ -52,10 +53,11 @@ exports.create = (req, res) => {
                 const hashedPasswordHeadStudent = bcrypt.hashSync(req.body.password, 10);
 
                 const headStudent = {
-                    s_id: req.body.id,
-                    s_name: req.body.name,
-                    s_email: req.body.email,
-                    s_password: hashedPasswordHeadStudent,
+                    groups: req.body.groups,
+                    id: req.body.id,
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: hashedPasswordHeadStudent,
                     is_head_student: req.body.is_head_student
                 };
 

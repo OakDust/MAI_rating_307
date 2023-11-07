@@ -2,19 +2,19 @@ const { DataTypes } = require('sequelize')
 const db = require('../bin/db')
 
 const Student = db.define('students', {
-    s_id: {
+    id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
         unique: true
     },
-    s_name: {
+    name: {
         type: DataTypes.STRING(64),
         allowNull: false,
         
     },
-    s_email: {
+    email: {
         type: DataTypes.STRING(64),
         allowNull: false,
         unique: true,
@@ -23,9 +23,13 @@ const Student = db.define('students', {
             notEmpty: true,
         }
     },
-    s_password: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    groups: {
+        type: DataTypes.TEXT,
+        allowNull: false
     },
     is_head_student: {
         type: DataTypes.BOOLEAN,

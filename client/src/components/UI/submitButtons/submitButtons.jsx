@@ -1,42 +1,54 @@
-import React, { useState } from 'react';
-import classes from './submitButtons-styles.module.scss';
-import { useLocation, Link } from 'react-router-dom';
-import { formSubmit } from "../../../http/login";
+import React, {useState} from 'react';
+import classes from './styles.module.scss';
+import MyButton from '../myButton/myButton';
+import LinkButton from '../linkButton/linkButton';
+import {formSubmit} from "../../../http/auth";
+import {Navigate} from "react-router-dom";
 
-const SubmitButtons = ({id_form, login, password}) => {
+const SubmitButtons = ({isRegistration, idForm, login, password}) => {
     let [message, setMessage] = useState()
     let [response, setResponse] = useState()
 
     const url = process.env.REACT_APP_HOSTNAME + '/auth/studentAuth'
 
-    const location = useLocation();
+    let titleSubmitButton = 'Войти';
+    let titleLinkButton = 'Зарегистрироваться';
+    let backRoute = '/registration';
 
-    const isRegistration = (location.pathname === '/registration');
+    if (isRegistration) {
+        titleSubmitButton = 'Зарегистрироваться';
+        titleLinkButton = 'Войти';
+        backRoute = '/auth';
+    }
 
-    const titleSubmitButton = (isRegistration ? 'Зарегистрироваться' : 'Войти');
-    const titleLinkButton = (isRegistration ? 'Войти' : 'Зарегистрироваться');
-    const backRoute = (isRegistration ? '/login' : '/registration');
+    const submitForm = async (event) => {
+        let responseMessage, responseToken
 
-    return(
+        // get response from api
+        [responseMessage, responseToken] = await formSubmit(event, url, login, password)
+
+        setMessage(responseMessage)
+        setResponse(responseToken)
+    }
+
+    return( 
 
         <div className={classes.button__container}>
-            <button
+            <MyButton
                 type="submit"
-                onClick={
-                    async (event) => {
-                        let responseMessage, responseToken
+                onClick={submitForm}
+                form={idForm}
+            >
+                {titleSubmitButton}
+            </MyButton>
 
-                        // get response from api
-                        [responseMessage, responseToken] = await formSubmit(event, url, login, password)
+            <div>
+                {message}
+            </div>
 
-                        setMessage(responseMessage)
-                        setResponse(responseToken)
-                    }
-                }
-                form={id_form}>{titleSubmitButton}
-            </button>
+            <LinkButton to={backRoute}>{titleLinkButton}</LinkButton>
 
-            <Link to={backRoute}>{titleLinkButton}</Link>
+            {response ? (<Navigate to='/surveys' />) : null}
         </div>
     );
 }

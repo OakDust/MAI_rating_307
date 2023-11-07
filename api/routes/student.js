@@ -6,10 +6,9 @@ const db = require('pg')
 const controller = require('../controllers/student.controller')
 
 /* GET users listing. */
-router.get('/', (req, res, next) => {
+router.post('/students_by_groups', async (req, res, next) => {
     // controller.checkHeadStudent(req, res)
-
-    controller.show(req, res)
+    await controller.getUserInfo(req, res)
 });
 
 router.post('/', (req, res, next) => {

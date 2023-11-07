@@ -1,29 +1,41 @@
-import React from 'react';
-import classes from './auth-form.module.scss';
-import SubmitButtons from '../submitButtons/submitButtons';
-import PrivelegeButtons from '../privelegeButtons/privelegeButtons';
+import React, {useState} from 'react';
+import classes from './styles.module.scss';
+import {registrationForm, authForm} from './formFields.js';
+import SubmitButtons from "../submitButtons/submitButtons";
 
-const AuthForm = ({form_fields, id_form, login, password}) => {
+const AuthForm = ({isRegistration, idForm}) => {
+    let [login, setLogin] = useState('')
+    let [password, setPassword] = useState('')
+
+    const formFields = (isRegistration ? registrationForm : authForm);
 
     return( 
         <div className={classes.auth__container}>
-            <PrivelegeButtons/>
-
-            <form className={classes.auth__form} id={id_form} method="POST">
-                {form_fields.map(field => 
+            <form type='submit' className={classes.auth__form} id={idForm}>
+                {formFields.map((field, index) => 
                     <div>
                         <label>{field.title}</label>
                         <input
                             type={field.type}
                             placeholder={field.placeholder}
                             name={field.name}
-                            onChange={(event) => {field.onChange(event)}}/>
+                            onChange={
+                                field.title === 'Логин' ? event => setLogin(event.target.value) : event => setPassword(event.target.value)
+                            }
+                        />
                     </div>
                 )}
             </form>
 
-            <SubmitButtons id_form={id_form} login={login} password={password}/>
+            <SubmitButtons
+                isRegistration={isRegistration}
+                idForm={idForm}
+                login={login}
+                password={password}
+            />
         </div>
+
+
     );
 }
 export default AuthForm;
