@@ -38,10 +38,11 @@ exports.formSubmit = async (event, url, login, password) => {
 
     localStorage.setItem("Authorization", token)
 
-    localStorage.setItem("User Name", user.name)
-    localStorage.setItem("User Group", user.groups)
+    localStorage.setItem("User role", user.role)
+    localStorage.setItem("User name", user.name)
+    localStorage.setItem("User group", user.groups)
 
     // setting it to a state
     // setResponse(message)
-    return [message, token, user]
+    return [message, token]
 }

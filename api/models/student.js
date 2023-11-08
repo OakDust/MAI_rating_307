@@ -27,6 +27,9 @@ const Student = db.define('students', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    role: {
+        type: DataTypes.TEXT
+    },
     groups: {
         type: DataTypes.TEXT,
         allowNull: false

@@ -3,9 +3,8 @@ import classes from './styles.module.scss';
 import background from '../../../assets/backgrounds/groupBackground.webp';
 
 
-const FieldGroup = ({groupmates}) => {
-
-    return( 
+const FieldGroup = ({groupmates, headStudent}) => {
+    return(
 
         <div className={classes.group__container}>
             <ul>
@@ -14,7 +13,7 @@ const FieldGroup = ({groupmates}) => {
                         {student}
                     </li>
                 ))}
-                <li>Староста Круглянкин Владислав Сергеевич</li>
+                <li>Староста: {headStudent}</li>
             </ul>
 
             <img className={classes.group__background} src={background} alt='group'/>

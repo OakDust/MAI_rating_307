@@ -18,25 +18,24 @@ const AboutUser = ({userInfo}) => {
         buttonforStudent.route = '/surveys';
     }
 
-    
     return( 
 
         <div className={classes.user__container}>
             <img src={userIcon} alt='user' />
             <div className={classes.user__discription}>
-                <div>
                     <h3>{userInfo.name}</h3>
-                </div>
 
                 {userInfo.role === 'Студент' ? (
                     <div>
+                        <p>{userInfo.role}</p>
                         <p>{userInfo.groups}</p>
                         <LinkButton to={buttonforStudent.route}>{buttonforStudent.title}</LinkButton>
                     </div>
                 ) : userInfo.role === 'Староста' ? (
                     <div>
                         <p>{userInfo.role}</p>
-                        <p>{userInfo.group}</p>     
+                        <p>{userInfo.groups}</p>
+                        <LinkButton to={buttonforStudent.route}>{buttonforStudent.title}</LinkButton>
                     </div>
                 ) : userInfo.role === 'Преподаватель' ? (
                     <div>

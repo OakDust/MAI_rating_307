@@ -4,25 +4,25 @@ const studentController = require('../controllers/student.controller')
 const bcrypt = require('bcryptjs')
 
 
-exports.create = (req, res) => {
-    if (!(req.body.id && req.body.name && req.body.email && req.body.password && req.body.groups)) {
+exports.create = async (req, res) => {
+    if (!(req.body.id && req.body.name && req.body.email && req.body.password)) {
         res.status(400).send({
           message: "Allow null is false can not be empty!"
         });
         return;
       }
 
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
-      switch (req.body.entity) {
+    switch (req.body.role) {
         case 'Студент':
-            const hashedPasswordStudent = bcrypt.hashSync(req.body.password, 10);
-
             const student = {
                 groups: req.body.groups,
                 id: req.body.id,
                 name: req.body.name,
                 email: req.body.email,
-                password: hashedPasswordStudent,
+                password: hashedPassword,
+                role: req.body.role,
                 is_head_student: req.body.is_head_student
             };
 
@@ -38,54 +38,48 @@ exports.create = (req, res) => {
 
             break;
 
-            case 'Староста':
+          case 'Староста':
                 // if headstudent does already exist
-                const check = studentController.checkHeadStudent
+                req.body.is_head_student = await studentController.checkHeadStudent(req, res)
 
-                if (check) {
-                    console.log('already exists')
-                    res.status(403).end()
+                if (req.body.is_head_student) {
+                    res.status(403).json({
+                        message: 'Head student already exists in this group'
+                    })
                     break
                 } 
-
-                req.body.is_head_student = true
-
-                const hashedPasswordHeadStudent = bcrypt.hashSync(req.body.password, 10);
 
                 const headStudent = {
                     groups: req.body.groups,
                     id: req.body.id,
                     name: req.body.name,
                     email: req.body.email,
-                    password: hashedPasswordHeadStudent,
+                    password: hashedPassword,
+                    role: req.body.role,
                     is_head_student: req.body.is_head_student
                 };
 
-                Student.create(headStudent)
+                await Student.create(headStudent)
                     .then(data => {
                         res.status(201).redirect(process.env.REACT_APP_API_URL);
                     })
                     .catch(err => {
                         res.status(500).send({
-                            message:
-                            err.message
+                            message: err.message
                     });
                 });
 
                 break;
 
         case 'Преподаватель':
-
-            const hashedPasswordProfessor = bcrypt.hashSync(req.body.password, 10);
-
             const professor = {
-                p_id: req.body.id,
-                p_name: req.body.name,
-                p_email: req.body.email,
-                p_password: hashedPasswordProfessor
+                id: req.body.id,
+                name: req.body.name,
+                email: req.body.email,
+                password: hashedPassword
             };
 
-            Professor.create(professor)
+            await Professor.create(professor)
                 .then(data => {
                     res.status(201).redirect(process.env.REACT_APP_API_URL);
                 })
@@ -93,9 +87,8 @@ exports.create = (req, res) => {
                     res.status(500).send({
                         message:
                         err.message
+                    });
                 });
-            });
-            
             break;
       
         default:

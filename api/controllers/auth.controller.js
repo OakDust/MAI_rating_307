@@ -4,6 +4,10 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
+function passRole(is_head_student) {
+    return is_head_student ? 'Староста' : 'Студент'
+}
+
 const generateAccessToken = (id, role) => {
     const payload = {
         id, role
@@ -71,9 +75,23 @@ exports.studentAuth = async (req, res, next) => {
     } 
 
     const token = await generateAccessToken(student.id, 'Student')
-    console.log(student.dataValues)
+
+    const role = passRole(student.dataValues.is_head_student)
+
+    const studentData = {
+        id: student.dataValues.id,
+        name: student.dataValues.name,
+        email: student.dataValues.email,
+        password: student.dataValues.password,
+        role: role,
+        groups: student.dataValues.groups,
+        is_head_student: student.dataValues.is_head_student,
+        createdAt: student.dataValues.createdAt,
+        updatedAt: student.dataValues.updatedAt
+    }
+
     await res.json({
-        user: student.dataValues,
+        user: studentData,
         message: false,
         token: 'Student ' + token
     })

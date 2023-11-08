@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router();
-const db = require('pg')
 
 
 const controller = require('../controllers/student.controller')
@@ -14,6 +13,10 @@ router.post('/students_by_groups', async (req, res, next) => {
 router.post('/', (req, res, next) => {
     controller.create(req, res)
 
+})
+
+router.get('/disciplines', async (req, res) => {
+    await controller.fetchDisciplines(req, res)
 })
 
 module.exports = router;

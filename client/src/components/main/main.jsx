@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import classes from './styles.module.scss';
 import pointerIcon from '../../assets/icons/pointer.webp';
 import AboutUser from '../UI/aboutUser/aboutUser.jsx';
@@ -10,9 +10,9 @@ const Main = (props) => {
     let [logged, setLogged] = useState(true)
 
     const [userInfo, setUserInfo] = useState({
-        role: 'Студент',
-        name: localStorage.getItem('User Name'),
-        groups: localStorage.getItem('User Group')
+        role: localStorage.getItem('User role'),
+        name: localStorage.getItem('User name'),
+        groups: localStorage.getItem('User group')
     })
 
     const exit = (event) => {

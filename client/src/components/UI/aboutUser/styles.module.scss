@@ -4,6 +4,7 @@
     justify-content: center;
     text-align: center;
     align-items: center;
+    width: 200px;
 
     img{
         width: 200px;
@@ -24,21 +25,22 @@
     font-style: normal;
     line-height: 100%;
 
+    h3{
+        font-size: 30px;
+        font-weight: 700;
+        line-height: 30px;
+
+    }
+
     div{
         display: inline-flex;
         flex-direction: column;
         gap: 18px;
-
-        h3{
-            font-size: 30px;
-            font-weight: 700;
-            
-        }
 
         p{
             font-size: 20px;
             font-weight: 500;
         }
     }
-    
+
 }

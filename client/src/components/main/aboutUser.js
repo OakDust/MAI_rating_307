@@ -1,39 +1,25 @@
-export const userInfo = {
-    role: 'Студент',
-    name: 'Родион',
-    surname: 'Варыгин',
-    group: 'М3О-221Б-22',
-    department: '307',
+const disciplineFetch = async (url, groups) => {
+    const requestHeaders = {
+        method: "GET",
+    }
+
+    const response = await fetch(url + '?' + new URLSearchParams(groups), requestHeaders)
+
+    const jsonResponse = await response.json()
+
+    return JSON.stringify(jsonResponse)
 }
 
-export const disciplinesList = [
-    {
-        discipline: 'Алгоритмы и обработка данных',
-        professor: 'Маркарян',
-    },
-    {
-        discipline: 'Базы данных',
-        professor: 'Склеймин'
-    },
-    {
-        discipline: 'Дифференциальные уравнения',
-        professor: 'Вестяк',
-    },
-    {
-        discipline: 'Иностранный язык',
-        professor: 'Жаринова',
-    },
-    {
-        discipline: 'Математическое моделирование',
-        professor: 'Маркарян',
-    },
-    {
-        discipline: 'Общая физика',
-        professor: 'Третьякова',
-    },
-    {
-        discipline: 'Основы психологии',
-        professor: 'Ковальчук',
-    },
-]
+const getDisciplines = async (url, groups) => {
+    const response = await disciplineFetch(url, groups)
 
+    const parsedResponse = await  JSON.parse(response)
+
+    return parsedResponse
+}
+
+export const disciplinesList = await getDisciplines(
+    process.env.REACT_APP_HOSTNAME + '/student/disciplines',
+    {
+        groups: localStorage.getItem('User group')
+    })

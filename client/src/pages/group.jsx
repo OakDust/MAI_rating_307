@@ -2,23 +2,31 @@ import React, {useEffect, useState} from 'react';
 import Main from '../components/main/main';
 import FieldGroup from '../components/UI/fieldGroup/fieldGroup';
 import {getUserInfo} from "../http/getUserInfo";
-import FieldSurveys from "../components/UI/fieldSurveys/fieldSurveys";
+
 
 const Group = () => {
     let [groupmates, setGroupmates] = useState([])
-
+    let [headStudent, setHeadStudent] = useState()
     const url = process.env.REACT_APP_HOSTNAME + '/student/students_by_groups'
 
     useEffect(  () => {
         const backendService = async () => {
-            const groupmates = await getUserInfo(localStorage.getItem('User Group'), url)
+            const [groupmates, headStudent] = await getUserInfo(localStorage.getItem('User group'), url)
 
             setGroupmates(groupmates)
+            setHeadStudent(headStudent)
 
-            return groupmates
+            return [groupmates, headStudent]
         }
 
         backendService()
+            .catch((err) => {
+                return (
+                    //500
+                    <div>error</div>
+                )
+            })
+            .then()
     }, [])
 
     if (localStorage['Authorization']) {
@@ -29,7 +37,7 @@ const Group = () => {
             <div>
                 {
                     (isAuth && student == 'Student') ?
-                        <Main title='Моя группа'  displayField={<FieldGroup groupmates={groupmates}/>}/>
+                        <Main title='Моя группа'  displayField={<FieldGroup groupmates={groupmates} headStudent={headStudent}/>}/>
                         :
                         <div>error</div>
                 }
