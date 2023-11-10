@@ -3,7 +3,7 @@
     gap: 30px;
     justify-content: center;
 
-    button{
+    .role__button{
         box-sizing: border-box;
         padding: 15px 30px;
         border: none;
@@ -13,5 +13,11 @@
         font-family: Montserrat;
         font-size: 20px;
         font-weight: 600;
+        cursor: pointer;
+
+        &.active{
+            background-color: #00CFDC;
+            color: white;
+        }
     }
 }

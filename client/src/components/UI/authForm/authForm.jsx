@@ -4,8 +4,8 @@ import {registrationForm, authForm} from './formFields.js';
 import SubmitButtons from "../submitButtons/submitButtons";
 
 const AuthForm = ({isRegistration, idForm}) => {
-    let [login, setLogin] = useState('')
-    let [password, setPassword] = useState('')
+    const [login, setLogin] = useState('')
+    const [password, setPassword] = useState('')
 
     const formFields = (isRegistration ? registrationForm : authForm);
 

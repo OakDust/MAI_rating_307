@@ -1,13 +1,17 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import classes from './styles.module.scss';
 import MyButton from '../myButton/myButton';
 import LinkButton from '../linkButton/linkButton';
 import {formSubmit} from "../../../http/auth";
 import {Navigate} from "react-router-dom";
+import {getDisciplines} from "../../main/aboutUser";
 
 const SubmitButtons = ({isRegistration, idForm, login, password}) => {
     let [message, setMessage] = useState()
     let [response, setResponse] = useState()
+    let [logged, setLogged] = useState(false)
+    const [disciplines, setDisciplines] = useState([{}])
+    let [isLoading, setIsLoading] = useState(true)
 
     const url = process.env.REACT_APP_HOSTNAME + '/auth/studentAuth'
 
@@ -22,13 +26,31 @@ const SubmitButtons = ({isRegistration, idForm, login, password}) => {
     }
 
     const submitForm = async (event) => {
-        let responseMessage, responseToken
 
         // get response from api
-        [responseMessage, responseToken] = await formSubmit(event, url, login, password)
+        await formSubmit(event, url, login, password)
+            .then(([responseMessage, responseToken]) => {
+                setMessage(responseMessage)
+                setResponse(responseToken)
+            })
+            .then(() => {setLogged(logged = true)})
+    }
 
-        setMessage(responseMessage)
-        setResponse(responseToken)
+    if (logged) {
+            const backendService = async () => {
+
+                const response = await getDisciplines(
+                    process.env.REACT_APP_HOSTNAME + '/student/disciplines',
+                    {
+                        groups: localStorage.getItem('User group')
+                    })
+
+                setDisciplines(response)
+
+                return response
+            }
+
+            backendService().then(() => setIsLoading(!isLoading))
     }
 
     return( 
@@ -48,7 +70,7 @@ const SubmitButtons = ({isRegistration, idForm, login, password}) => {
 
             <LinkButton to={backRoute}>{titleLinkButton}</LinkButton>
 
-            {response ? (<Navigate to='/surveys' />) : null}
+            {!isLoading ? (<Navigate to='/surveys' />) : null}
         </div>
     );
 }

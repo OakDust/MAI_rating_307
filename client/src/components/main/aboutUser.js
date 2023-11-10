@@ -1,6 +1,6 @@
-const disciplineFetch = async (url, groups) => {
+exports.disciplineFetch = async (url, groups) => {
     const requestHeaders = {
-        method: "GET",
+        method: "POST",
     }
 
     const response = await fetch(url + '?' + new URLSearchParams(groups), requestHeaders)
@@ -10,16 +10,12 @@ const disciplineFetch = async (url, groups) => {
     return JSON.stringify(jsonResponse)
 }
 
-const getDisciplines = async (url, groups) => {
-    const response = await disciplineFetch(url, groups)
+exports.getDisciplines = async (url, groups) => {
+    const response = await this.disciplineFetch(url, groups)
 
     const parsedResponse = await  JSON.parse(response)
 
+    localStorage.setItem('disciplines', response)
+
     return parsedResponse
 }
-
-export const disciplinesList = await getDisciplines(
-    process.env.REACT_APP_HOSTNAME + '/student/disciplines',
-    {
-        groups: localStorage.getItem('User group')
-    })
