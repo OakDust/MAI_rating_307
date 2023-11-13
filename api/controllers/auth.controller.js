@@ -19,7 +19,7 @@ const generateAccessToken = (id, role) => {
 exports.professorAuth = async (req, res, next) => {
     const professor = await Professor.findOne({
         where: {
-            p_email: req.body.email
+            email: req.body.email
         }
     })
 
@@ -29,9 +29,9 @@ exports.professorAuth = async (req, res, next) => {
             token: false
         })
         return
-    } 
+    }
 
-    const validPasswordProfessor = bcrypt.compareSync(req.body.password, professor.p_password); 
+    const validPasswordProfessor = bcrypt.compareSync(req.body.password, professor.password);
 
     if (!validPasswordProfessor) {
         await res.status(400).json({
@@ -39,9 +39,9 @@ exports.professorAuth = async (req, res, next) => {
             token: false
         })
         return
-    } 
+    }
 
-    const token = await generateAccessToken(professor.p_id)
+    const token = await generateAccessToken(professor.id)
 
     await res.json({
         message: false,

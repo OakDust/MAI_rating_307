@@ -15,8 +15,12 @@ router.post('/', (req, res, next) => {
 
 })
 
-router.get('/disciplines', async (req, res) => {
+router.post('/disciplines', async (req, res) => {
     await controller.fetchDisciplines(req, res)
+})
+
+router.post('/quiz', async (req, res, next)=> {
+    await controller.setTeacherScore(req, res, next)
 })
 
 module.exports = router;

@@ -1,13 +1,16 @@
-import React from 'react';
+import React, {useState} from 'react';
 import classes from './styles.module.scss';
 import LinkButton from '../linkButton/linkButton';
 
-const FieldSurveys = () => {
-    const disciplines = JSON.parse(localStorage.getItem('disciplines'))
-
+const FieldSurveys = (state) => {
+    const [disciplines, setDisciplines] = useState(JSON.parse(localStorage.getItem('disciplines')))
+    // const state = location.state
+    
+    console.log(state)
     return(
 
         <div>
+            {state !== null && disciplines.length !== null? (
                 <ul className={classes.surveys__list}>
                     {disciplines.map((discipline) => (
                         <li>
@@ -16,6 +19,8 @@ const FieldSurveys = () => {
                         </li>
                     ))}
                 </ul>
+            ) : <div>Loading</div>}
+
         </div>
 
 

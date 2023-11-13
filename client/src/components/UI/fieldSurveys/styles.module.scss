@@ -17,8 +17,18 @@
         text-align: center;
         align-items: center;
 
-        button{
+        a{
+            border: none;
+            color: white;
             background-color: #7B61FF;
+
+            &:hover{
+                background-color: #1410D6;
+            }
+
+            &.active{
+                background-color: #0BEB65;
+            }
         }
     }
 }

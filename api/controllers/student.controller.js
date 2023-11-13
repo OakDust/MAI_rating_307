@@ -1,53 +1,8 @@
 const Student = require('../models/student')
 const StudentsByGroups = require('../models/studentsByGroups')
-const cheerio = require('cheerio');
-const {query} = require("express");
+const service = require('../service/student.service')
+const Quiz = require("../models/quiz");
 
-
-exports.parseTable = (html) => {
-  // Загрузка HTML с помощью cheerio
-  const $ = cheerio.load(html);
-
-// Массив для хранения извлеченных данных
-  const extractedData = [];
-
-// Перебор строк таблицы
-  $('table tr').each((rowIndex, row) => {
-    const rowData = [];
-
-    // Перебор ячеек строки
-    $(row).find('td').each((cellIndex, cell) => {
-      const cellText = $(cell).text().trim(); // Извлечение текста из ячейки
-      rowData.push(cellText); // Сохранение текста в массив данных строки
-    });
-
-    extractedData.push(rowData); // Сохранение данных строки в массив извлеченных данных
-  });
-
-  return extractedData
-}
-
-exports.prettyArray = (array, req) => {
-  const pretty = [{}]
-
-  for (let i = 0; i < array.length; i++) {
-    let discipline = array[i][0]
-    let groups = array[i][1]
-
-    if (array[i][0] !== 'Итого:' && array[i].length !== 0) {
-      let string = groups.toString().substring(0, 4) + groups.toString().substring(5, groups.toString().length)
-
-      pretty.push({
-        discipline: discipline,
-        groups: string,
-      })
-    }
-
-    pretty.filter(value => Object.keys(value).length !== 0)
-  }
-
-  return pretty.splice(2, pretty.length)
-}
 
 exports.getUserInfo = async (req, res) => {
 
@@ -57,19 +12,16 @@ exports.getUserInfo = async (req, res) => {
     }
   })
 
-  const output = JSON.stringify(students, null, 2)
   await res.status(200).json(students)
 }
 
 exports.show = async (req, res) => {
   const students = await Student.findAll()
-
-  const output = JSON.stringify(students, null, 2)
-
+  
   res.status(200).json(students)
 }
 
-exports.checkHeadStudent = async (req, res) => {
+exports.checkHeadStudent = async (req) => {
   const groupmates = await Student.findAll({
     where: {
       groups: req.body.groups
@@ -88,49 +40,80 @@ exports.checkHeadStudent = async (req, res) => {
   return headStudent
 }
 
-exports.sortDataByGroup = (groups, array) => {
-  let result = [{}]
-
-  for (let i = 0; i < array.length; i++) {
-
-    if (groups === array[i].groups) {
-      result.push({
-        discipline: array[i].discipline,
-        groups: array[i].groups
-      })
-    }
-  }
-
-  return result.filter(value => Object.keys(value).length !== 0)
-
-}
-
 exports.fetchDisciplines = async (req, res) => {
-  const requestHeaders = {
-    method: "POST",
-    mode: "no-cors",
-    headers: {
+  try {
+    const requestHeaders = {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
         "Content-Type": "text/html",
 
-    },
-    body: {
-      "username": process.env.DISCIPLINE_API_USERNAME,
-      "password": process.env.DISCIPLINE_API_PASSWORD
+      },
+      body: {
+        "username": process.env.DISCIPLINE_API_USERNAME,
+        "password": process.env.DISCIPLINE_API_PASSWORD
+      }
     }
+
+    let response
+    await fetch(process.env.FETCH_DISCIPLINES_API_URL, requestHeaders)
+        .then((res) => res.text())
+        .then((text) => {
+          response = text
+        })
+
+    const [links, parsed] = service.parseTable(response)
+    const toMerge = parsed.filter(val => val.length !== 0 && val.length !== '')
+
+    const professorsLoad = []
+
+    for (let i = 0; i < links.length; i++) {
+      const load = await service.fetchProfessorLoad(req, res, links[i])
+      professorsLoad.push(load)
+    }
+
+    const pretty = service.prettyArray(toMerge, professorsLoad)
+
+    const dataByGroup = service.sortDataByGroup(req.query.groups, pretty)
+
+    res.status(200).json(dataByGroup)
+
+  } catch (err) {
+    res.status(500).json({message: err.stack})
   }
+}
 
-  let response
-  await fetch('http://n20230.xmb.ru/', requestHeaders)
-      .then((res) => res.text())
-      .then((text) => {
-        response = text
-      })
+exports.setTeacherScore = async (req, res, next) => {
+  try {
+    const [lecturer, seminarian] = await service.teacherExists(req.body)
 
-  const parsed = this.parseTable(response)
+    let lecturer_score = 0
+    let seminarian_score = 0
+    for (let i = 3; i < 9; i++) {
+      lecturer_score += Number(req.body[i].lecturer)
+      seminarian_score += Number(req.body[i].seminarian)
+    }
 
-  const pretty = this.prettyArray(parsed, req)
+    const quizData = {
+      lecturer_id: lecturer.id,
+      seminarian_id: seminarian.id,
+      lecturer_score: lecturer_score,
+      seminarian_score: seminarian_score,
+      lecturer_pros: req.body[9].lecturer,
+      seminarian_pros: req.body[10].seminarian,
+      lecturer_cons: req.body[11].lecturer,
+      seminarian_cons: req.body[12].seminarian,
+    }
 
-  const dataByGroup = this.sortDataByGroup(req.query.groups, pretty)
+    await Quiz.create(quizData)
+        .then(res.status(200).end())
+        .catch((err) => {
+          if (err) {
+            res.status(500).json({message: err.stack})
+          }
+        })
 
-  res.status(200).json(dataByGroup)
+  } catch (err) {
+    res.status(400).json({message: err.stack})
+  }
 }

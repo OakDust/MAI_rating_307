@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import classes from './styles.module.scss';
 import MyButton from '../myButton/myButton';
 import LinkButton from '../linkButton/linkButton';
@@ -11,7 +11,7 @@ const SubmitButtons = ({isRegistration, idForm, login, password}) => {
     let [response, setResponse] = useState()
     let [logged, setLogged] = useState(false)
     const [disciplines, setDisciplines] = useState([{}])
-    let [isLoading, setIsLoading] = useState(true)
+    let [isLoading, setIsLoading] = useState(false)
 
     const url = process.env.REACT_APP_HOSTNAME + '/auth/studentAuth'
 
@@ -26,31 +26,33 @@ const SubmitButtons = ({isRegistration, idForm, login, password}) => {
     }
 
     const submitForm = async (event) => {
-
         // get response from api
         await formSubmit(event, url, login, password)
             .then(([responseMessage, responseToken]) => {
                 setMessage(responseMessage)
                 setResponse(responseToken)
             })
+            //500
+            .catch((err) => {
+                return <div>error</div>
+            })
             .then(() => {setLogged(logged = true)})
     }
 
     if (logged) {
-            const backendService = async () => {
+        const backendService = async () => {
+            const response = await getDisciplines(
+                process.env.REACT_APP_HOSTNAME + '/student/disciplines',
+                {
+                    groups: localStorage.getItem('User group')
+                })
 
-                const response = await getDisciplines(
-                    process.env.REACT_APP_HOSTNAME + '/student/disciplines',
-                    {
-                        groups: localStorage.getItem('User group')
-                    })
+            setDisciplines(response)
 
-                setDisciplines(response)
+            return response
+        }
 
-                return response
-            }
-
-            backendService().then(() => setIsLoading(!isLoading))
+        backendService().then(() => setIsLoading(isLoading = true))
     }
 
     return( 
@@ -70,7 +72,7 @@ const SubmitButtons = ({isRegistration, idForm, login, password}) => {
 
             <LinkButton to={backRoute}>{titleLinkButton}</LinkButton>
 
-            {!isLoading ? (<Navigate to='/surveys' />) : null}
+            {logged ? (<Navigate to='/surveys' state={isLoading} />) : null}
         </div>
     );
 }

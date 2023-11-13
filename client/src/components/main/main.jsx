@@ -19,6 +19,7 @@ const Main = (props) => {
         event.preventDefault()
         setLogged(false)
         localStorage.removeItem('Authorization')
+        localStorage.removeItem('disciplines')
     }
 
     return( 

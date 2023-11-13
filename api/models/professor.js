@@ -2,27 +2,30 @@ const { DataTypes } = require('sequelize')
 const db = require('../bin/db')
 
 const Professor = db.define('professors', {
-    p_id: {
+    id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false,
         unique: true
     },
-    p_name: {
+    name: {
         type: DataTypes.STRING(64),
         allowNull: false,
-        
     },
-    p_email: {
+    email: {
         type: DataTypes.STRING(64),
         allowNull: false,
         unique: true
     },
-    p_password: {
+    password: {
         type: DataTypes.STRING,
         allowNull: false,
-    }
+    },
+    score: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+    },
   }
 )
 

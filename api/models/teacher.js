@@ -1,66 +1,90 @@
-// const { DataTypes } = require('sequelize')
-// const db = require('../bin/db')
-//
-// const Teacher = db.define('teacher', {
-//         id: {
-//             type: DataTypes.INTEGER,
-//             autoIncrement: true,
-//             primaryKey: true,
-//             allowNull: false,
-//             unique: true
-//         },
-//         name: {
-//             type: DataTypes.TEXT,
-//
-//         },
-//         surname: {
-//             type: DataTypes.TEXT,
-//         },
-//         birthday: {
-//             type: DataTypes.TEXT
-//         },
-//         patronymic: {
-//             type: DataTypes.TEXT,
-//         },
-//         address: {
-//                 type: DataTypes.TEXT,
-//             },
-//         h_telephone: {
-//                 type: DataTypes.TEXT,
-//             },
-//         w_telephone: {
-//                 type: DataTypes.TEXT,
-//             },
-//         m_telephone: {
-//                 type: DataTypes.TEXT,
-//             },
-//         passport_data: {
-//                 type: DataTypes.TEXT,
-//             },
-//         scientific_degree: {
-//                 type: DataTypes.TEXT,
-//             },
-//         id_appointment: {
-//                 type: DataTypes.NUMBER,
-//             },
-//         rank: {
-//                 type: DataTypes.TEXT,
-//             },
-//         rate: {
-//                 type: DataTypes.TEXT,
-//             },
-//         INN: {
-//                 type: DataTypes.TEXT,
-//             },
-//         comment: {
-//                 type: DataTypes.TEXT,
-//             },
-//         hourly_rate: {
-//                 type: DataTypes.NUMBER,
-//             },
-//         timestamp: false
-//
-//         }
-// )
-//
-// module.exports = Teacher
+const { DataTypes } = require('sequelize')
+const db = require('../bin/db')
+
+const Teacher = db.define('teacher', {
+  id: {
+    autoIncrement: true,
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    primaryKey: true
+  },
+  name: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  surname: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  patronymic: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  birthday: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  address: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  h_telephone: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  w_telephone: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  m_telephone: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  passport_data: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  scientific_degree: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  id_appointment: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  },
+  rank: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  rate: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  INN: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: true
+  },
+  hourly_rate: {
+    type: DataTypes.INTEGER,
+    allowNull: true
+  }
+}, {
+  tableName: 'teacher',
+  timestamps: false,
+  indexes: [
+    {
+      name: "PRIMARY",
+      unique: true,
+      using: "BTREE",
+      fields: [
+        { name: "id" },
+      ]
+    },
+  ]
+});
+
+module.exports = Teacher;
