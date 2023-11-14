@@ -1,11 +1,12 @@
 const Student = require('../models/student')
 const Professor = require('../models/professor')
-const studentController = require('../controllers/student.controller')
+const service = require('../service/index.service')
 const bcrypt = require('bcryptjs')
+const Teacher = require("../models/teacher");
 
 
-exports.create = async (req, res) => {
-    if (!(req.body.id && req.body.name && req.body.email && req.body.password)) {
+exports.createStudent = async (req, res) => {
+    if (!(req.body.name && req.body.email && req.body.password && req.body.role)) {
         res.status(400).send({
           message: "Allow null is false can not be empty!"
         });
@@ -40,7 +41,7 @@ exports.create = async (req, res) => {
 
           case 'Староста':
                 // if headstudent does already exist
-                req.body.is_head_student = await studentController.checkHeadStudent(req, res)
+                req.body.is_head_student = await service.checkHeadStudent(req, res)
 
                 if (req.body.is_head_student) {
                     res.status(403).json({
@@ -71,11 +72,37 @@ exports.create = async (req, res) => {
 
                 break;
 
-        case 'Преподаватель':
+        default:
+            break;
+      }
+}
+
+exports.createProfessor = async (req, res, next) => {
+    if (!(req.body.name && req.body.email && req.body.password && req.body.role)) {
+        res.status(400).send({
+            message: "Allow null is false can not be empty!"
+        });
+        return;
+    }
+
+    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+
+    try {
+        const [surname, name, patronymic] = req.body.name.split(' ')
+        const teacherInDB = await Teacher.findOne({
+            where: {
+                name: name,
+                surname: surname,
+                patronymic: patronymic,
+            }
+        })
+
+        if (teacherInDB) {
             const professor = {
-                id: req.body.id,
+                id: teacherInDB.id,
                 name: req.body.name,
                 email: req.body.email,
+                role: req.body.role,
                 password: hashedPassword
             };
 
@@ -85,13 +112,11 @@ exports.create = async (req, res) => {
                 })
                 .catch(err => {
                     res.status(500).send({
-                        message:
-                        err.message
+                        message: err.message
                     });
                 });
-            break;
-      
-        default:
-            break;
-      }
+        }
+    } catch (err) {
+        res.status(400).json({message: err.stack})
+    }
 }

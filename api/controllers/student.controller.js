@@ -4,42 +4,37 @@ const service = require('../service/student.service')
 const Quiz = require("../models/quiz");
 
 
+// defines all the group members of current student
+// RETURN:
+//        [{}]
 exports.getUserInfo = async (req, res) => {
+  try {
+    const students = await StudentsByGroups.findAll({
+      where: {
+        groups: req.body.groups
+      }
+    })
 
-  const students = await StudentsByGroups.findAll({
-    where: {
-      groups: req.body.groups
-    }
-  })
-
-  await res.status(200).json(students)
+    await res.status(200).json(students)
+  } catch (err) {
+    res.status(400).json({message: err.stack})
+  }
 }
 
+// will need this later ~no-use
 exports.show = async (req, res) => {
   const students = await Student.findAll()
   
   res.status(200).json(students)
 }
 
-exports.checkHeadStudent = async (req) => {
-  const groupmates = await Student.findAll({
-    where: {
-      groups: req.body.groups
-    }
-  })
-
-  let headStudent = false
-
-  for (const student of groupmates) {
-    if (student.dataValues.is_head_student) {
-      headStudent = true
-      break
-    }
-  }
-
-  return headStudent
-}
-
+// finds entries of teachers in group curriculum
+// RETURN:
+//     [{key: i,
+//     lecturer: array[i].lecturer,
+//     seminarian: array[i].seminarian,
+//     discipline: array[i].discipline,
+//     groups: array[i].groups}]
 exports.fetchDisciplines = async (req, res) => {
   try {
     const requestHeaders = {
@@ -68,7 +63,7 @@ exports.fetchDisciplines = async (req, res) => {
     const professorsLoad = []
 
     for (let i = 0; i < links.length; i++) {
-      const load = await service.fetchProfessorLoad(req, res, links[i])
+      const load = await service.getObject(req, res, links[i])
       professorsLoad.push(load)
     }
 
@@ -83,6 +78,7 @@ exports.fetchDisciplines = async (req, res) => {
   }
 }
 
+// inserts score scheme into db
 exports.setTeacherScore = async (req, res, next) => {
   try {
     const [lecturer, seminarian] = await service.teacherExists(req.body)
@@ -106,12 +102,12 @@ exports.setTeacherScore = async (req, res, next) => {
     }
 
     await Quiz.create(quizData)
-        .then(res.status(200).end())
-        .catch((err) => {
-          if (err) {
-            res.status(500).json({message: err.stack})
-          }
-        })
+      .then(res.status(200).end())
+      .catch((err) => {
+        if (err) {
+          res.status(500).json({message: err.stack})
+        }
+      })
 
   } catch (err) {
     res.status(400).json({message: err.stack})

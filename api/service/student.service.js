@@ -16,9 +16,12 @@ exports.clearArray = (array) => {
 exports.prettyArray = (array, obj) => {
     const pretty = [{}]
 
-    for (let i = 0; i < array.length - 2; i++) {
+    for (let i = 0; i < array.length; i++) {
+        if (!obj[i]) continue
+
         let discipline = array[i][0]
         let groups = array[i][1]
+
         let lecturer = obj[i].lecturer
         let seminarian = obj[i].seminarian
 
@@ -101,6 +104,49 @@ exports.teacherExists = async (body) => {
     return [lecturer, seminarian]
 }
 
+exports.comprehensiveArray = async (req, res, link) => {
+    const response = await this.fetchProfessorLoad(req, res, link)
+
+    const [links, parsed] = this.parseTable(response)
+
+    const pretty = parsed.filter(val => val !== '' && val.length !== 0)
+
+    const comprehensive = pretty.splice(1, pretty.length - 2)
+
+    return comprehensive
+}
+
+exports.getObject = async (req, res, link) => {
+    const comprehensive = await this.comprehensiveArray(req, res, link)
+
+    let lecturer = ''
+    let seminarian = ''
+
+    for (let i = 0; i < comprehensive.length; i++) {
+        if (comprehensive[i][0] === 'Итого:') {continue}
+
+        switch (comprehensive.length) {
+            case 2:
+                lecturer = comprehensive[0][0]
+                seminarian = comprehensive[0][0]
+            case 1:
+                lecturer = comprehensive[0][0]
+                seminarian = comprehensive[0][0]
+            default:
+                if (comprehensive[i][1] !== '-' || comprehensive[i][5] !== '-') {lecturer = comprehensive[i][0]}
+
+                if (comprehensive[i][2] !== '-') {seminarian = comprehensive[i][0]}
+        }
+    }
+
+    const obj = {
+        lecturer: lecturer,
+        seminarian: seminarian
+    }
+
+    return obj
+}
+
 exports.fetchProfessorLoad = async (req, res, link) => {
     const requestHeaders = {
         method: "POST",
@@ -125,28 +171,7 @@ exports.fetchProfessorLoad = async (req, res, link) => {
             response = text
         })
 
-    const [links, parsed] = this.parseTable(response)
-    const pretty = parsed.filter(val => val !== '' && val.length !== 0)
-
-    const test = pretty.splice(1, pretty.length - 2)
-
-
-    let lecturer = ''
-    let seminarian = ''
-
-    for (let i = 0; i < test.length; i++) {
-        if (test[i][1] !== '-') { lecturer = test[i][0] }
-
-        if (test[i][2] !== '-') { seminarian = test[i][0] }
-
-    }
-
-    const obj = {
-        lecturer: lecturer,
-        seminarian: seminarian
-    }
-
-    return obj
+    return response
 }
 
 exports.sortDataByGroup = (groups, array) => {

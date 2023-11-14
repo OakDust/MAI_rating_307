@@ -22,6 +22,9 @@ const Professor = db.define('professors', {
         type: DataTypes.STRING,
         allowNull: false,
     },
+    role: {
+        type: DataTypes.TEXT,
+    },
     score: {
         type: DataTypes.FLOAT,
         allowNull: true,

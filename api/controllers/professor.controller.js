@@ -1,6 +1,8 @@
 const Professor = require('../models/professor')
 
 
-exports.show = (req, res) => {
-    
+exports.showProfessors = async (req, res) => {
+    const professors = await Professor.findAll()
+
+    res.status(200).json(professors)
 }
