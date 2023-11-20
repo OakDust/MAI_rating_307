@@ -1,6 +1,7 @@
-const Sequelize = require('sequelize');
-module.exports = function(sequelize, DataTypes) {
-  return sequelize.define('workload', {
+const {DataTypes} = require('sequelize');
+const db = require('../bin/kaf307_20200')
+
+const WorkLoad = db.define('workload', {
     id: {
       autoIncrement: true,
       type: DataTypes.INTEGER,
@@ -69,7 +70,6 @@ module.exports = function(sequelize, DataTypes) {
       allowNull: false
     }
   }, {
-    sequelize,
     tableName: 'workload',
     timestamps: false,
     indexes: [
@@ -82,5 +82,6 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
     ]
-  });
-};
+});
+
+module.exports = WorkLoad

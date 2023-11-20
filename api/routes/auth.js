@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const controller = require('../controllers/auth.controller')
 const Teacher = require('../models/teacher')
-const {Json} = require("sequelize/lib/utils");
 
 router.get('/', async (req, res, next) => {
     // const teacher = await Teacher.findAll()

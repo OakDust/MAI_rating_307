@@ -9,16 +9,12 @@ import {Navigate} from "react-router-dom";
 const Main = (props) => {
     let [logged, setLogged] = useState(true)
 
-    const [userInfo, setUserInfo] = useState({
-        role: localStorage.getItem('User role'),
-        name: localStorage.getItem('User name'),
-        groups: localStorage.getItem('User group')
-    })
+    const userInfo = JSON.parse(localStorage.getItem('authUser'));
 
     const exit = (event) => {
         event.preventDefault()
         setLogged(false)
-        localStorage.removeItem('Authorization')
+        localStorage.removeItem('token')
         localStorage.removeItem('disciplines')
     }
 

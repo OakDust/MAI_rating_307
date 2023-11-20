@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize')
-const db = require('../bin/db')
+//
+const db = require('../bin/crud_db')
 
 const Quiz = db.define('quizzes', {
         id: {
@@ -19,27 +20,35 @@ const Quiz = db.define('quizzes', {
         },
         lecturer_score: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
         },
         seminarian_score: {
             type: DataTypes.INTEGER,
-            allowNull: true
+            allowNull: false
         },
         lecturer_pros: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(1024),
             allowNull: true
         },
         seminarian_pros: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(1024),
             allowNull: true
         },
         lecturer_cons: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(1024),
             allowNull: true
         },
         seminarian_cons: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING(1024),
             allowNull: true
+        },
+        student_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        group_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
         }
     },{
         tableName: 'quizzes',

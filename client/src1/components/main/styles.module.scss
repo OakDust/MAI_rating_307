@@ -1,0 +1,40 @@
+.container{
+    width: 1720px;
+    padding: 100px;
+    margin: auto;
+}
+
+.main__header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .main__title{
+        display: inline-flex;
+        justify-content: center;
+        align-items: center;
+        gap: 69px;
+
+        img{
+            width: 300px;
+            height: auto;;
+        }
+
+        h1{
+            color: #F4F4F4;
+            font-family: Tektur;
+            font-size: 82px;
+            font-style: normal;
+            font-weight: 800;
+            line-height: 100%;
+        }
+    }
+}
+
+.main__body{
+    display: flex;
+    gap: 160px;
+    align-items: flex-start;
+    margin-top: 60px;
+}

@@ -1,19 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize')
 
-const db = new Sequelize(
-    process.env.STUDENTS_BY_GROUPS_DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PASSWORD,
-    {
-        dialect: 'mysql',
-        host: process.env.DB_HOST,
-        port: process.env.DB_PORT,
-        define: {
-            timestamps: false
-        },
-    },
-
-)
+const db = require('../bin/crud_db')
 
 const StudentsByGroups = db.define('students_by_groups', {
         id: {

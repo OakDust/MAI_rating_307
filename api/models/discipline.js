@@ -1,5 +1,5 @@
 const DataTypes = require('sequelize');
-const db = require('../bin/db')
+const db = require('../bin/kaf307_20200')
 
 
 const Discipline = db.define('discipline', {

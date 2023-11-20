@@ -11,7 +11,7 @@ const FieldQuiz = ({disciplineInfo}) => {
     const answerHandler = (newAnswer, numberQuestion, role) => {
         const updatedAnswers = answers.map((answer) => {
             if (answer.id === numberQuestion) {
-                return {...answer, [role] : newAnswer};
+                return {...answer, [role]: newAnswer};
             }
             return answer;
         });
@@ -20,7 +20,13 @@ const FieldQuiz = ({disciplineInfo}) => {
     }
 
     const submitAsnwers = () => {
+        // const quizDAta -> lecturer_id, seminarian_id == required
+        // 
         console.log(answers);
+    }
+
+    if (disciplineInfo.lecturer === '') {
+        disciplineInfo.lecturer = disciplineInfo.seminarian;
     }
 
     return( 

@@ -7,8 +7,8 @@
 const app = require('../app');
 const debug = require('debug')('api:server');
 const http = require('http');
-const sequelize = require('./db')
-
+const sequelize = require('./kaf307_20200')
+const custom_db = require('./crud_db')
 /**
  * Get port from environment and store in Express.
  */
@@ -27,6 +27,8 @@ const server = http.createServer(app);
  */
 const start = async () => {
   try {
+      await custom_db.authenticate()
+      await custom_db.sync()
       await sequelize.authenticate() // waits for the users connection to db
       await sequelize.sync() // checks whether initialization done or not. Does nothing if the initialization is done
       server.listen(port, () => console.log(`[server]: Server started on ${process.env.HOST_NAME + ':' + process.env.PORT}`)) // listening

@@ -41,7 +41,7 @@ exports.professorAuth = async (req, res, next) => {
         return
     }
 
-    const token = await generateAccessToken(professor.id)
+    const token = await generateAccessToken(professor.id, req.body.role)
 
     await res.json({
         message: false,
@@ -50,49 +50,54 @@ exports.professorAuth = async (req, res, next) => {
 }
 
 exports.studentAuth = async (req, res, next) => {
-    const student = await Student.findOne({
-        where: {
-            email: req.body.email
+    try {
+        const student = await Student.findOne({
+            where: {
+                email: req.body.email
+            }
+        })
+
+        if (!student) {
+            await res.status(400).json({
+                message: "Пользователь не существует",
+                token: false
+            })
+            return
         }
-    })
 
-    if (!student) {
-        await res.status(400).json({
-            message: "Пользователь не существует",
-            token: false
+        const validPasswordStudent = bcrypt.compareSync(req.body.password, student.password);
+
+        if (!validPasswordStudent) {
+            await res.status(400).json({
+                message: "Логин или пароль введен неправильно!",
+                token: false
+            })
+            return
+        }
+
+        const token = await generateAccessToken(student.id, 'Student')
+
+        const role = passRole(student.dataValues.is_head_student)
+
+        const studentData = {
+            id: student.dataValues.id,
+            name: student.dataValues.name,
+            email: student.dataValues.email,
+            password: student.dataValues.password,
+            role: role,
+            groups: student.dataValues.groups,
+            is_head_student: student.dataValues.is_head_student,
+            createdAt: student.dataValues.createdAt,
+            updatedAt: student.dataValues.updatedAt
+        }
+
+        res.status(200).json({
+            user: studentData,
+            message: false,
+            token: 'Student ' + token
         })
-        return
-    } 
-
-    const validPasswordStudent = bcrypt.compareSync(req.body.password, student.password);
-
-    if (!validPasswordStudent) {
-        await res.status(400).json({
-            message: "Логин или пароль введен неправильно!",
-            token: false
-        })
-        return
-    } 
-
-    const token = await generateAccessToken(student.id, 'Student')
-
-    const role = passRole(student.dataValues.is_head_student)
-
-    const studentData = {
-        id: student.dataValues.id,
-        name: student.dataValues.name,
-        email: student.dataValues.email,
-        password: student.dataValues.password,
-        role: role,
-        groups: student.dataValues.groups,
-        is_head_student: student.dataValues.is_head_student,
-        createdAt: student.dataValues.createdAt,
-        updatedAt: student.dataValues.updatedAt
+    } catch (err) {
+        res.status(500).json({message: err.stack})
     }
 
-    await res.json({
-        user: studentData,
-        message: false,
-        token: 'Student ' + token
-    })
 }

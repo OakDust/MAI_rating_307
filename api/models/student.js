@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize')
-const db = require('../bin/db')
+
+const db = require('../bin/crud_db')
 
 const Student = db.define('students', {
     id: {

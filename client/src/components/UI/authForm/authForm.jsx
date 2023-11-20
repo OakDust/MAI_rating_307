@@ -1,13 +1,15 @@
-import React, {useState} from 'react';
+import React from 'react';
 import classes from './styles.module.scss';
 import {registrationForm, authForm} from './formFields.js';
 import SubmitButtons from "../submitButtons/submitButtons";
 
-const AuthForm = ({isRegistration, idForm}) => {
-    const [login, setLogin] = useState('')
-    const [password, setPassword] = useState('')
+const AuthForm = ({isRegistration, idForm, fields, setFields, errorMessage}) => {
 
     const formFields = (isRegistration ? registrationForm : authForm);
+
+    const fieldsHandler = (value, type) => {
+        setFields({...fields, [type]: value})
+    };
 
     return( 
         <div className={classes.auth__container}>
@@ -19,20 +21,12 @@ const AuthForm = ({isRegistration, idForm}) => {
                             type={field.type}
                             placeholder={field.placeholder}
                             name={field.name}
-                            onChange={
-                                field.title === 'Логин' ? event => setLogin(event.target.value) : event => setPassword(event.target.value)
-                            }
+                            onChange={(e) => fieldsHandler(e.target.value, field.type)}
                         />
                     </div>
                 )}
+                {errorMessage}
             </form>
-
-            <SubmitButtons
-                isRegistration={isRegistration}
-                idForm={idForm}
-                login={login}
-                password={password}
-            />
         </div>
 
 

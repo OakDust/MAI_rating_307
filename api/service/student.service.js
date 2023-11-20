@@ -1,5 +1,8 @@
 const cheerio = require("cheerio");
 const Teacher = require("../models/teacher");
+const GroupsDB = require("../models/groups");
+const DistributedLoad = require("../models/distributed_load");
+const {QueryTypes} = require("sequelize");
 
 
 exports.clearArray = (array) => {
@@ -82,8 +85,8 @@ exports.parseTable = (html) => {
 }
 
 exports.teacherExists = async (body) => {
-    const [lecturerSurname, lecturerName, lecturerPatronymic] = body[0].split(' ')
-    const [seminarianSurname, seminarianName, seminarianPatronymic] = body[1].split(' ')
+    const [lecturerSurname, lecturerName, lecturerPatronymic] = body[0].lecturer_name.split(' ')
+    const [seminarianSurname, seminarianName, seminarianPatronymic] = body[0].seminarian_name.split(' ')
 
     const lecturer = await Teacher.findOne({
         where: {
@@ -192,4 +195,70 @@ exports.sortDataByGroup = (groups, array) => {
 
     return result.filter(value => Object.keys(value).length !== 0)
 
+}
+
+exports.sum = (obj) => {
+    return obj.lectures + obj.practical + obj.laboratory
+}
+
+exports.getName = (obj) => {
+    return obj.surname + ' ' + obj.name + ' ' + obj.patronymic
+}
+
+exports.getGroupId = async (groupName) => {
+    const groups = await GroupsDB.findOne({
+        where: {
+            name: groupName
+        }
+    })
+
+    return groups.id
+}
+
+exports.applyDistributedLoad = async (semester, groups_id) => {
+    const disciplinesQuery = `SELECT discipline.id, discipline.name from \`workload\` join discipline on discipline.id = workload.id_discipline where workload.id_group = ${groups_id} and workload.semester = ${semester}`
+    const disciplinesResponse = await DistributedLoad.sequelize.query(disciplinesQuery, {type: QueryTypes.SELECT})
+
+    const teachersQuery = `SELECT discipline.name as 'discipline', teacher.name, teacher.surname, teacher.patronymic, distributed_load.lectures, distributed_load.practical, distributed_load.laboratory from \`groups\` join workload on workload.id_group = groups.id join discipline on discipline.id = workload.id_discipline join distributed_load on distributed_load.id_load_group = workload.id and distributed_load.lectures = workload.lectures join teacher on teacher.id = distributed_load.id_teacher where groups.id = ${groups_id} and workload.semester = ${semester}`
+
+    let check = []
+    for (let i = 0; i < disciplinesResponse.length; i++) {
+        let lecturer = ''
+        let seminarian = ''
+        let laborant = ''
+
+        const teachers = await DistributedLoad.sequelize.query(teachersQuery + ` and discipline.id = ${disciplinesResponse[i].id}`, {type: QueryTypes.SELECT})
+
+        if (teachers.length === 1) {
+            lecturer = this.getName(teachers[0])
+            seminarian = lecturer
+        } else if (teachers.length === 2) {
+            for (let j = 0; j < 2; j++) {
+                this.sum(teachers[j]) === 0 || teachers[j].lectures !== 0 ? lecturer = this.getName(teachers[j]) :  null
+
+                teachers[j].practical !== 0 ? seminarian = this.getName(teachers[j]) : null
+            }
+        } else if (teachers.length === 3) {
+            for (let j = 0; j < 3; j++) {
+                this.sum(teachers[j]) === 0 || teachers[j].lectures !== 0 ? lecturer = this.getName(teachers[j]) :  null
+
+                teachers[j].practical !== 0 ? seminarian = this.getName(teachers[j]) : null
+
+                teachers[j].laboratory !== 0 ? laborant = this.getName(teachers[j]) : null
+            }
+        } else if (teachers.length === 0) {
+            lecturer = 'Не распределено'
+            seminarian = 'Не распределено'
+        }
+
+        check.push({
+            lecturer: lecturer,
+            seminarian: seminarian,
+            discipline: disciplinesResponse[i].name,
+            key: i,
+            // groups: groupName
+        })
+    }
+
+    return check
 }

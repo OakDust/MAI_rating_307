@@ -1,15 +1,20 @@
-module.exports = function(req, res, next) {
+const jwt = require('jsonwebtoken')
+
+module.exports = function authenticateToken(req, res, next) {
     if (req.method === 'OPTIONS') {
         next()
     }
+    const authParam = req.query['Authorization']
 
-    try {
-        const token = req.header['Authorization'].split(' ')[1]
+    const token = authParam && authParam.split(' ')[1]
 
-        if (!token) {
+    if (token == null) return res.sendStatus(401)
 
-        }
-    } catch (error) {
-        res.status(401).json({message: "Не пройдена авторизация"})
-    }
+    jwt.verify(token, process.env.AUTH_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403)
+
+        req.user = user
+
+        next()
+    })
 }

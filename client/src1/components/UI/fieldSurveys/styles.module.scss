@@ -1,0 +1,34 @@
+.surveys__list{
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 62px;
+
+    li{
+        display: flex;
+        justify-content: space-between;
+        padding: 25px 30px;
+        box-sizing: border-box;
+        border-radius: 20px;
+        border: 2px solid #878787;
+        font-size: 22px;
+        text-align: center;
+        align-items: center;
+
+        a{
+            border: none;
+            color: white;
+            background-color: #7B61FF;
+
+            &:hover{
+                background-color: #1410D6;
+            }
+
+            &.active{
+                background-color: #0BEB65;
+            }
+        }
+    }
+}

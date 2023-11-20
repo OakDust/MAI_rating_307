@@ -2,7 +2,7 @@ const Student = require('../models/student')
 const StudentsByGroups = require('../models/studentsByGroups')
 const service = require('../service/student.service')
 const Quiz = require("../models/quiz");
-
+const {getGroupId} = require("../service/student.service");
 
 // defines all the group members of current student
 // RETURN:
@@ -26,6 +26,28 @@ exports.show = async (req, res) => {
   const students = await Student.findAll()
   
   res.status(200).json(students)
+}
+
+exports.getDistributedLoad = async (req, res) => {
+  try {
+    // to set the group course correctly
+    const queryYear = req.query.groups.split('-', 3)
+
+    const date = new Date()
+    const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+    // const numberOfCourse = 2023 - 2000 - queryYear[2] + 1
+    const semester = date.getMonth() > 1 ? 0 : 1
+
+    const groupName = queryYear[0] + '-' + numberOfCourse.toString() + queryYear[1] + '-' + queryYear[2]
+
+    const groups_id = await getGroupId(groupName)
+
+    const response = await service.applyDistributedLoad(semester, groups_id)
+
+    res.status(200).json(response)
+  } catch (err) {
+    res.status(500).json({message: err.message})
+  }
 }
 
 // finds entries of teachers in group curriculum
@@ -83,9 +105,11 @@ exports.setTeacherScore = async (req, res, next) => {
   try {
     const [lecturer, seminarian] = await service.teacherExists(req.body)
 
+    const groups_id = await getGroupId(req.body[0].groups)
+
     let lecturer_score = 0
     let seminarian_score = 0
-    for (let i = 3; i < 9; i++) {
+    for (let i = 1; i < 8; i++) {
       lecturer_score += Number(req.body[i].lecturer)
       seminarian_score += Number(req.body[i].seminarian)
     }
@@ -95,14 +119,16 @@ exports.setTeacherScore = async (req, res, next) => {
       seminarian_id: seminarian.id,
       lecturer_score: lecturer_score,
       seminarian_score: seminarian_score,
-      lecturer_pros: req.body[9].lecturer,
-      seminarian_pros: req.body[10].seminarian,
-      lecturer_cons: req.body[11].lecturer,
-      seminarian_cons: req.body[12].seminarian,
+      lecturer_pros: req.body[8].lecturer,
+      seminarian_pros: req.body[9].seminarian,
+      lecturer_cons: req.body[10].lecturer,
+      seminarian_cons: req.body[11].seminarian,
+      student_id: req.body[0].student_id,
+      group_id: groups_id,
     }
 
     await Quiz.create(quizData)
-      .then(res.status(200).end())
+      .then(res.status(200).json({message: "Saved"}))
       .catch((err) => {
         if (err) {
           res.status(500).json({message: err.stack})

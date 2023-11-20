@@ -11,7 +11,7 @@ const Group = () => {
 
     useEffect(  () => {
         const backendService = async () => {
-            const [groupmates, headStudent] = await getUserInfo(localStorage.getItem('User group'), url)
+            const [groupmates, headStudent] = await getUserInfo(JSON.parse(localStorage['authUser']).group, url)
 
             setGroupmates(groupmates)
             setHeadStudent(headStudent)
@@ -29,8 +29,9 @@ const Group = () => {
             .then()
     }, [])
 
-    if (localStorage['Authorization']) {
-        const token = localStorage['Authorization']
+    if (localStorage['authUser']) {
+        const user = JSON.parse(localStorage['authUser']);
+        const token = user.Authorization;
         const [student, isAuth] = token.split(' ')
 
         return(

@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
-
+const authMiddleware = require('../middleware/authMiddleware')
 const controller = require('../controllers/professor.controller')
 const Quiz = require("../models/quiz");
 
+router.use(authMiddleware)
 router.get('/', async (req, res, next) => {
     // await controller.showProfessors(req, res)
 });

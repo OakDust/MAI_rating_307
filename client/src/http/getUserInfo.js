@@ -31,8 +31,9 @@ exports.userFetch = async (groups, url) => {
 
         body: JSON.stringify(groups)
     }
+    const Authorization = JSON.parse(localStorage.getItem('authUser'))['Authorization']
 
-    const userInfo = await fetch(url, requestHeaders)
+    const userInfo = await fetch(url + '?' + new URLSearchParams(groups) + '&Authorization=' + Authorization, requestHeaders)
 
     const userData = await userInfo.json()
 
