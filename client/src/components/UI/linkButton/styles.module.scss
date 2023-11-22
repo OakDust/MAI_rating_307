@@ -10,4 +10,9 @@
     color: #00CFDC;
     text-decoration: none;
     border: 4px solid #00CFDC;
+
+    &:hover{
+        background: #00CFDC;
+        color: #FFF;
+    }
 }

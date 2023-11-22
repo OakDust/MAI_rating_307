@@ -36,14 +36,15 @@ exports.formSubmit = async (event, url, login, password) => {
     const token = parsedResponse.token
     const user = parsedResponse.user
 
-    localStorage.setItem("Authorization", token)
+    let authUser = {
+        'Authorization': token,
+        'role': user.role,
+        'name': user.name,
+        'group': user.groups,
+    }
 
-    localStorage.setItem("User role", user.role)
-    localStorage.setItem("User name", user.name)
-    localStorage.setItem("User group", user.groups)
-
-    // setting it to a state
-    // setResponse(message)
+    localStorage.setItem('authUser', JSON.stringify(authUser));
+    
     return [message, token]
 }
 

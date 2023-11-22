@@ -1,22 +1,26 @@
-exports.disciplineFetch = async (url, groups) => {
+exports.getDisciplines = async (url, groups) => {
     const requestHeaders = {
         method: "POST",
+        headers: {
+            "Authorization": JSON.parse(localStorage.getItem('authUser'))['Authorization']
+        }
     }
-    const Authorization = JSON.parse(localStorage.getItem('authUser'))['Authorization']
 
-    const response = await fetch(url + '?' + new URLSearchParams(groups) + '&Authorization=' + Authorization, requestHeaders)
+    const response = await fetch(url + '?' + new URLSearchParams(groups), requestHeaders)
+    const disciplines = await response.json()
 
-    const jsonResponse = await response.json()
+    setFormatDisciplines(disciplines.distributed_load);
 
-    return JSON.stringify(jsonResponse)
+    return disciplines;
 }
 
-exports.getDisciplines = async (url, groups) => {
-    const response = await this.disciplineFetch(url, groups)
-
-    const parsedResponse = await JSON.parse(response)
-
-    localStorage.setItem('disciplines', response)
-
-    return parsedResponse
+const setFormatDisciplines = (disciplines) => {
+    disciplines.forEach((discipline) => {
+        if (discipline.lecturer === '') {
+            discipline.lecturer = discipline.seminarian;
+        } 
+        else if (discipline.seminarian === '') {
+            discipline.seminarian = discipline.lecturer;
+        }
+    })
 }

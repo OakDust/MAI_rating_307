@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import classes from './styles.module.scss';
 
-const RatingScale = ({title, numberQuestion, answered}) => {
+const RatingScale = ({title, numberQuestion, answered, buttonDirty}) => {
 
     const [answerValue, setAnswerValue] = useState();
 
@@ -11,14 +11,14 @@ const RatingScale = ({title, numberQuestion, answered}) => {
     const ratingScale = [];
     const answerActiveStyle = classes['answer__field'] + ' ' + classes.active;
 
-    const submitAnswer = (value) => {
+    const answerHandler = (value) => {
         setAnswerValue(value);
         answered(value, numberQuestion, role);
     }
 
     for (let value = 1; value <= pointScale; value++) {
         ratingScale.push(
-            <span className={value === answerValue ? answerActiveStyle : classes.answer__field} onClick={() => submitAnswer(value)}>
+            <span className={value === answerValue ? answerActiveStyle : classes.answer__field} onClick={() => answerHandler(value)}>
                 {value}
             </span>
         )
@@ -27,8 +27,11 @@ const RatingScale = ({title, numberQuestion, answered}) => {
     return( 
 
         <div className={classes.rating__container}>
-            <p>{title}</p>
-
+            <div className={classes.title__answer}>
+                <p>{title}</p>
+                {(buttonDirty && !answerValue) && <p>Необходимо заполнить поле!</p>}
+            </div>
+        
             <div className={classes.rating__scale}>
                 {ratingScale}
             </div>

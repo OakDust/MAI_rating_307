@@ -4,7 +4,9 @@ const FieldRating = () => {
 
     return( 
 
-        <div>Здесь будет рейтинг</div>
+        <div>
+            Рейтинг
+        </div>
     );
 }
 export default FieldRating;

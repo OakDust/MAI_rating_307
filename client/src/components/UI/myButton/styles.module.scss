@@ -6,6 +6,11 @@
     font-family: Montserrat;
     font-size: 22px;
     font-weight: 800;
-    background-color: #00ACB7;
+    background-color: #00CFDC;
     color: #FFF;
+    cursor: pointer;
+
+    &:hover{
+        background: #1410D6;
+    }
 }

@@ -1,4 +1,4 @@
-export const templateAnswer = [
+export const fieldAnswers = [
     {
         id: 1,
         seminarian: '',

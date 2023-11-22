@@ -1,55 +1,33 @@
 import React, {useEffect, useState} from 'react';
 import Main from '../components/main/main';
 import FieldGroup from '../components/UI/fieldGroup/fieldGroup';
-import {getUserInfo} from "../http/getUserInfo";
-
+import {getStudentGroup} from "../http/getStudentGroup";
 
 const Group = () => {
-    let [groupmates, setGroupmates] = useState([])
-    let [headStudent, setHeadStudent] = useState()
-    const url = process.env.REACT_APP_HOSTNAME + '/student/students_by_groups'
+    const [studentGroup, setStudentGroup] = useState({students: [], headStudent: ''});
+    const user = JSON.parse(localStorage.getItem('authUser'));
 
-    useEffect(  () => {
-        const backendService = async () => {
-            const [groupmates, headStudent] = await getUserInfo(JSON.parse(localStorage['authUser']).group, url)
+    useEffect(() => {
+        const fetchStudentGroup = async () => {
+            const url = `${process.env.REACT_APP_HOSTNAME}/student/students_by_groups`;
+            const userId = user.id;
+            const userGroup = user.group
+            const response = await getStudentGroup(userId, userGroup, url);
 
-            setGroupmates(groupmates)
-            setHeadStudent(headStudent)
-
-            return [groupmates, headStudent]
+            setStudentGroup(response);
         }
 
-        backendService()
-            .catch((err) => {
-                return (
-                    //500
-                    <div>error</div>
-                )
-            })
-            .then()
+        fetchStudentGroup()
     }, [])
 
-    if (localStorage['authUser']) {
-        const user = JSON.parse(localStorage['authUser']);
-        const token = user.Authorization;
-        const [student, isAuth] = token.split(' ')
+    const students = studentGroup?.students ?? [];
+    const headStudent = studentGroup?.headStudent ?? '';
 
-        return(
-            <div>
-                {
-                    (isAuth && student == 'Student') ?
-                        <Main title='Моя группа'  displayField={<FieldGroup groupmates={groupmates} headStudent={headStudent}/>}/>
-                        :
-                        <div>error</div>
-                }
-            </div>
+    return(
+        <Main 
+        title='Моя группа'  
+        displayField={<FieldGroup students={students} headStudent={headStudent} userRole={user.role}/>}/>
 
-        );
-    } else {
-        return(
-            //401
-            <div>error</div>
-        )
-    }
+    );
 }
 export default Group;

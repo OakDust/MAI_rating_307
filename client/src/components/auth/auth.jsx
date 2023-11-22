@@ -3,8 +3,7 @@ import classes from './styles.module.scss';
 import AuthForm from '../UI/authForm/authForm';
 import RoleButtons from '../UI/roleButtons/roleButtons';
 import SubmitButtons from '../UI/submitButtons/submitButtons';
-import {formSubmit} from "../../http/auth";
-import {getDisciplines} from "../../http/getDisciplines";
+import {authStudent} from "../../http/auth";
 import {Navigate} from "react-router-dom";
 
 
@@ -13,19 +12,19 @@ const Auth = ({isRegistration}) => {
 
     const [fields, setFields] = useState({login: '', password: ''});
     const [role, setRole] = useState('student');
-    const [logged, setLogged] = useState(false);
-
-    const idForm = (isRegistration ? 'registrationForm' : 'authForm');
+    const [isAuth, setIsAuth] = useState(false);
 
     const url = process.env.REACT_APP_HOSTNAME + '/auth/studentAuth'
 
     const submitForm = async (event) => {
-        // get response from api
-        await formSubmit(event, url, fields.login, fields.password)
+        console.log(fields.login, fields.password);
+        await authStudent(event, url, fields.login, fields.password)
             .then(() => {
-                setLogged(true);
+                setIsAuth(true);
             })
     } 
+
+    const idForm = (isRegistration ? 'registrationForm' : 'authForm');
 
     return(
         <div className={classes.auth__container}>
@@ -49,7 +48,7 @@ const Auth = ({isRegistration}) => {
                 submitForm={submitForm}
             />
 
-            {logged ? (<Navigate to='/surveys'/>) : null}
+            {isAuth ? (<Navigate to='/'/>) : null}
         </div>
     );
 }

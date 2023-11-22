@@ -3,7 +3,7 @@ import classes from './styles.module.scss';
 import RatingScale from '../ratingScale/ratingScale';
 import { questionsList } from './questions';
 
-const QuestionsList = ({answered}) => {
+const QuestionsList = ({answered, buttonDirty}) => {
     return( 
 
         <ul className={classes.questions__list}>
@@ -13,8 +13,8 @@ const QuestionsList = ({answered}) => {
                     {type === 'blitz' 
                     ?
                     <>
-                        <RatingScale title='Лекции:' numberQuestion={number} answered={answered}/>
-                        <RatingScale title='Семинары:' numberQuestion={number} answered={answered}/>
+                        <RatingScale title='Лекции:' numberQuestion={number} answered={answered} buttonDirty={buttonDirty}/>
+                        <RatingScale title='Семинары:' numberQuestion={number} answered={answered} buttonDirty={buttonDirty}/>
                     </>
                         
                     : <textarea onChange={(e) => answered(e.target.value, number, role)} type="text"/>}

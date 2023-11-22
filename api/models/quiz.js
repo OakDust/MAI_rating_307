@@ -10,6 +10,10 @@ const Quiz = db.define('quizzes', {
             allowNull: false,
             unique: true
         },
+        discipline_id: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
         lecturer_id: {
             type: DataTypes.INTEGER,
             allowNull: false,

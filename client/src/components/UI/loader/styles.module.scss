@@ -1,0 +1,36 @@
+.loader__container{ 
+    width: 100%;
+    height: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+
+
+    img { 
+        width: 110px;
+        height: 110px;
+        animation: rotate 1.0s infinite linear;
+    }
+
+    h3{
+        color: #606063;
+        font-family: Montserrat;
+        font-size: 20px;
+    }
+}
+
+
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    80% {
+        transform: rotate(-300deg);
+    }
+    100% { 
+        transform: rotate(-360deg);
+    }
+}

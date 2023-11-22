@@ -1,21 +1,16 @@
-import React, {useState} from 'react';
+import React from 'react';
 import classes from './styles.module.scss';
 import pointerIcon from '../../assets/icons/pointer.webp';
 import AboutUser from '../UI/aboutUser/aboutUser.jsx';
-import MyButton from '../UI/myButton/myButton';
+import LinkButton from '../UI/linkButton/linkButton.jsx';
 import FieldMain from '../UI/fieldMain/fieldMain.jsx';
-import {Navigate} from "react-router-dom";
 
 const Main = (props) => {
-    let [logged, setLogged] = useState(true)
-
+    
     const userInfo = JSON.parse(localStorage.getItem('authUser'));
 
-    const exit = (event) => {
-        event.preventDefault()
-        setLogged(false)
-        localStorage.removeItem('token')
-        localStorage.removeItem('disciplines')
+    const exit = () => {
+        localStorage.clear();
     }
 
     return( 
@@ -27,18 +22,14 @@ const Main = (props) => {
                     <h1>ОПРОС КАФЕДРЫ 307</h1>
                 </div>
 
-                <MyButton onClick={event => { exit(event) } }>
+                <LinkButton to="/auth" onClick={exit}>
                     Выйти
-                </MyButton>
+                </LinkButton>
             </div>
 
             <div className={classes.main__body}>
                 <AboutUser userInfo={userInfo}/>
                 <FieldMain title={props.title} displayField={props.displayField}/>
-            </div>
-
-            <div>
-                {!logged ? <Navigate to='/auth'/> : null}
             </div>
 
         </div>

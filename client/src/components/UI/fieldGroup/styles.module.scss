@@ -17,10 +17,46 @@
             }
         }
     }
+
+    .group__background{
+        width: 750px;
+        height: 500px;
+        margin: auto 0;
+    }
 }
 
-.group__background{
-    width: 750px;
-    height: 500px;
-    margin: auto 0;
+.table__group{
+    width: 100%;
+    border: 2px solid #D9D9D9;
+    border-radius: 16px;
+    margin-top: 35px;
+
+    text-align: left;
+    color: #000;
+    font-family: Montserrat;
+    font-size: 20px;
+    font-style: normal;
+
+    thead > tr > td,
+    tbody > tr > td{
+        border-right: 2px solid #D9D9D9;
+        border-bottom: 2px solid #D9D9D9;
+        box-sizing: border-box;
+        padding: 11px 0 11px 63px;
+
+        &:first-child{
+            text-align: center;
+            padding: 11px;
+        }
+
+        &:last-child{
+            border-right: none;
+        }
+    }
+
+    tbody > tr > td{
+        border-bottom: none;
+    }
+
 }
+

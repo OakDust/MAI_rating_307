@@ -28,13 +28,13 @@ const AboutUser = ({userInfo}) => {
                 {userInfo.role === 'Студент' ? (
                     <div>
                         <p>{userInfo.role}</p>
-                        <p>{userInfo.groups}</p>
+                        <p>{userInfo.group}</p>
                         <LinkButton to={buttonforStudent.route}>{buttonforStudent.title}</LinkButton>
                     </div>
                 ) : userInfo.role === 'Староста' ? (
                     <div>
                         <p>{userInfo.role}</p>
-                        <p>{userInfo.groups}</p>
+                        <p>{userInfo.group}</p>
                         <LinkButton to={buttonforStudent.route}>{buttonforStudent.title}</LinkButton>
                     </div>
                 ) : userInfo.role === 'Преподаватель' ? (

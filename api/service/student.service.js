@@ -3,6 +3,8 @@ const Teacher = require("../models/teacher");
 const GroupsDB = require("../models/groups");
 const DistributedLoad = require("../models/distributed_load");
 const {QueryTypes} = require("sequelize");
+const Quiz = require("../models/quiz");
+const Student = require("../models/student");
 
 
 exports.clearArray = (array) => {
@@ -14,6 +16,45 @@ exports.clearArray = (array) => {
     })
 
     return replacedArray
+}
+
+exports.getSurveysStudentPassed = async (student) => {
+    let surveys_passed = []
+    const surveys = await Quiz.findAll({
+        where: {
+            student_id: student.dataValues.id
+        }
+    })
+
+    if (surveys.length === 0) {
+        surveys_passed.push({
+            student_id: student.dataValues.id,
+            surveys_passed: 0,
+        })
+    } else {
+        surveys_passed = this.fillSubmittedSurveys(surveys, student)
+    }
+
+    return surveys_passed
+}
+
+exports.fillSubmittedSurveys = async (surveys, student) => {
+    const submitted_surveys = []
+    const arrayToFill = []
+    for (let i = 0; i < surveys.length; i++) {
+        const temp = {
+            discipline_id: surveys[i].dataValues.discipline_id,
+            quiz_id: surveys[i].dataValues.id
+        }
+        submitted_surveys.push(temp)
+    }
+
+    arrayToFill.push({
+        student_id: student.dataValues.id,
+        submitted_surveys: submitted_surveys
+    })
+
+    return arrayToFill
 }
 
 exports.prettyArray = (array, obj) => {
@@ -206,6 +247,7 @@ exports.getName = (obj) => {
 }
 
 exports.getGroupId = async (groupName) => {
+
     const groups = await GroupsDB.findOne({
         where: {
             name: groupName
@@ -255,6 +297,7 @@ exports.applyDistributedLoad = async (semester, groups_id) => {
             lecturer: lecturer,
             seminarian: seminarian,
             discipline: disciplinesResponse[i].name,
+            discipline_id: disciplinesResponse[i].id,
             key: i,
             // groups: groupName
         })

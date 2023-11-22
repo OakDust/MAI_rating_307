@@ -8,9 +8,9 @@ function passRole(is_head_student) {
     return is_head_student ? 'Староста' : 'Студент'
 }
 
-const generateAccessToken = (id, role) => {
+const generateAccessToken = (id, role, email, password) => {
     const payload = {
-        id, role
+        id, role, email, password
     }
 
     return jwt.sign(payload, process.env.AUTH_SECRET, {expiresIn: '4h'})
@@ -26,7 +26,8 @@ exports.professorAuth = async (req, res, next) => {
     if (!professor) {
         await res.status(400).json({
             message: "Пользователь не существует",
-            token: false
+            token: false,
+            statusCode: res.statusCode,
         })
         return
     }
@@ -36,7 +37,8 @@ exports.professorAuth = async (req, res, next) => {
     if (!validPasswordProfessor) {
         await res.status(400).json({
             message: "Логин или пароль введен неправильно!",
-            token: false
+            token: false,
+            statusCode: res.statusCode,
         })
         return
     }
@@ -60,7 +62,8 @@ exports.studentAuth = async (req, res, next) => {
         if (!student) {
             await res.status(400).json({
                 message: "Пользователь не существует",
-                token: false
+                token: false,
+                statusCode: res.statusCode,
             })
             return
         }
@@ -70,12 +73,13 @@ exports.studentAuth = async (req, res, next) => {
         if (!validPasswordStudent) {
             await res.status(400).json({
                 message: "Логин или пароль введен неправильно!",
-                token: false
+                token: false,
+                statusCode: res.statusCode,
             })
             return
         }
 
-        const token = await generateAccessToken(student.id, 'Student')
+        const token = await generateAccessToken(student.id, 'Student', student.email, student.password)
 
         const role = passRole(student.dataValues.is_head_student)
 
@@ -83,7 +87,6 @@ exports.studentAuth = async (req, res, next) => {
             id: student.dataValues.id,
             name: student.dataValues.name,
             email: student.dataValues.email,
-            password: student.dataValues.password,
             role: role,
             groups: student.dataValues.groups,
             is_head_student: student.dataValues.is_head_student,
@@ -93,11 +96,15 @@ exports.studentAuth = async (req, res, next) => {
 
         res.status(200).json({
             user: studentData,
+            statusCode: res.statusCode,
             message: false,
-            token: 'Student ' + token
+            token: 'Bearer ' + token
         })
     } catch (err) {
-        res.status(500).json({message: err.stack})
+        res.status(500).json({
+            statusCode: res.statusCode,
+            message: err.stack,
+        })
     }
 
 }

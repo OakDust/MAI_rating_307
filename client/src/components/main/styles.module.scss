@@ -30,6 +30,17 @@
             line-height: 100%;
         }
     }
+
+    a {
+        text-decoration: none;
+        border: none;
+        background-color: #00CFDC;
+        color: #FFF;
+
+        &:hover{
+            background: #1410D6;
+        }
+    }
 }
 
 .main__body{

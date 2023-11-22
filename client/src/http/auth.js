@@ -1,7 +1,7 @@
-
-// POST /auth in authForm
-exports.studentFetch = async (event, userObject, url) => {
+exports.authStudent = async (event, url, login, password) => {
     event.preventDefault()
+
+    const userObject = {email: login, password: password};
 
     const requestHeaders = {
         method: "POST", 
@@ -18,33 +18,21 @@ exports.studentFetch = async (event, userObject, url) => {
     }
 
     const response = await fetch(url, requestHeaders)
-    
-    const data = await response.json()
+    console.log(response)
+    const studentData = await response.json()
 
-    return JSON.stringify(data)
+    saveStudent(studentData)
 }
 
-exports.formSubmit = async (event, url, login, password) => {
-    let userObject = {email: login, password: password}
+const saveStudent = (data) => {
+    const authStudent = {
+        'Authorization': data.token,
+        'role': data.user.role,
+        'name': data.user.name,
+        'group': data.user.groups,
+        'id': data.user.id
+    };
 
-    // waiting till api return the response
-    const apiResponse = await this.studentFetch(event, userObject, url)
-
-    const parsedResponse = JSON.parse(apiResponse)
-
-    const message = parsedResponse.message
-    const token = parsedResponse.token
-    const user = parsedResponse.user
-
-    let authUser = {
-        'Authorization': token,
-        'role': user.role,
-        'name': user.name,
-        'group': user.groups,
-    }
-
-    localStorage.setItem('authUser', JSON.stringify(authUser));
-    
-    return [message, token]
+    localStorage.setItem('authUser', JSON.stringify(authStudent));
 }
 

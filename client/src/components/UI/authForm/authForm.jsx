@@ -1,9 +1,8 @@
 import React from 'react';
 import classes from './styles.module.scss';
 import {registrationForm, authForm} from './formFields.js';
-import SubmitButtons from "../submitButtons/submitButtons";
 
-const AuthForm = ({isRegistration, idForm, fields, setFields, errorMessage}) => {
+const AuthForm = ({isRegistration, idForm, fields, setFields}) => {
 
     const formFields = (isRegistration ? registrationForm : authForm);
 
@@ -25,7 +24,6 @@ const AuthForm = ({isRegistration, idForm, fields, setFields, errorMessage}) => 
                         />
                     </div>
                 )}
-                {errorMessage}
             </form>
         </div>
 
