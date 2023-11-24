@@ -21,9 +21,9 @@ const FieldGroup = ({students, headStudent, userRole}) => {
                     {students.map((student, index) => (
                         <tr>
                             <td>{index + 1}</td>
-                            <td>{student}</td>
+                            <td>{student.name}</td>
                             <td>
-                                <StatIndication/>
+                                <StatIndication student={student}/>
                             </td>
                         </tr>
                     ))}

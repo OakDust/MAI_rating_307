@@ -17,23 +17,46 @@ exports.getStudentGroup = async (userId, userGroup, url) => {
     }
 
     const response = await fetch(url, requestHeaders)
-
     const groupList = await response.json()
+    
+    console.log(groupList);
 
-    console.log(groupList)
-
-    const studentGroup = setFormatGroup(groupList.students);
+    const studentGroup = setInfoGroup(groupList.students, groupList.surveys_passed);
 
     return studentGroup;
 }
 
-const setFormatGroup = (groupList) => {
+const setInfoGroup = (groupList, surveysPassed) => {
     const [students, headStudent] = fillArray(groupList);
-    const groupMembers = {
-        'students': students,
-        'headStudent': headStudent,
-    }
+    let groupMembers = {}
 
+    if (surveysPassed.length > 1) {
+        surveysPassed.sort((a, b) => a.student_id - b.student_id);
+
+        const aboutStudents = []
+
+        for (let i = 0; i < groupList.length; i++) {
+            const infoStudent = {
+                id: groupList[i].id,
+                name: students[i],
+                submitted_surveys: surveysPassed[i].submitted_surveys,
+            }
+
+            aboutStudents.push(infoStudent);
+        }
+
+        groupMembers = {
+            'students': aboutStudents,
+            'headStudent': headStudent,
+        }
+    } 
+    else {
+        groupMembers = {
+            'students': students,
+            'headStudent': headStudent,
+        }
+    }
+    
     return groupMembers;
 }
 

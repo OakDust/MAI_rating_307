@@ -1,17 +1,21 @@
 import React from 'react';
 import classes from './styles.module.scss';
 
-const StatIndication = () => {
-
-    // const disciplines = JSON.parse(localStorage['disciplines']);
-    const countSurveys = 6;
-    const countCompletedSurveys = 0;
+const StatIndication = ({student}) => {
+    const countSurveys = 4;
+    const countCompletedSurveys = student.submitted_surveys?.length ?? 0;
 
     let indication = [];
 
     for (let i = 0; i < countSurveys; i++) {
+        let indicatorStyle = classes['indicator'];
+
+        if (i < countCompletedSurveys) {
+            indicatorStyle = classes['indicator'] + ' ' + classes.active;
+        }
+
         indication.push(
-            <span className={classes.indicator}></span>
+            <span className={indicatorStyle}></span>
         )
     }
 

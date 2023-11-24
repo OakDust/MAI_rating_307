@@ -1,0 +1,45 @@
+.rating__container{
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 27px;
+    text-align: left;
+
+    font-family: Montserrat;
+    font-size: 22px;
+
+    a, div {
+        box-sizing: border-box;
+        padding: 14px 10px 14px 60px;
+        border: 2px solid #878787;
+        border-radius: 20px;
+    }
+
+    a {
+        text-decoration: none;
+        color: #000;
+    }
+
+    div {
+        display: inline-flex;
+        justify-content: space-between;
+
+        .dropdown__button{
+            width: 30px;
+            height: 30px;
+            background-color: #00CFDC;
+            color: white;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+            &.active{
+                transform: rotate(90deg);
+                background: #625FFA;
+            }
+        }
+
+    }
+}

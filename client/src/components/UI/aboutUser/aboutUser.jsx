@@ -48,6 +48,10 @@ const AboutUser = ({userInfo}) => {
                 <div>
                     <p>{userInfo.role}</p>
                     <p>{userInfo.group}</p>
+                    {location.pathname !== '/' 
+                    ? (<LinkButton to='/'>Главная</LinkButton>)
+                    :(null)}
+                    
                 </div>
             )
         }

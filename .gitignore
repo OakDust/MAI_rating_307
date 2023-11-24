@@ -3,6 +3,7 @@
 /client/.env
 /client/node_modules
 /.idea
+deploy.sh
 # dependencies
 /client//.pnp
 /client/.pnp.js

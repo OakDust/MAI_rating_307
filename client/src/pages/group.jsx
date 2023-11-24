@@ -4,7 +4,7 @@ import FieldGroup from '../components/UI/fieldGroup/fieldGroup';
 import {getStudentGroup} from "../http/getStudentGroup";
 
 const Group = () => {
-    const [studentGroup, setStudentGroup] = useState({students: [], headStudent: ''});
+    const [infoGroup, setInfoGroup] = useState({students: [], headStudent: ''});
     const user = JSON.parse(localStorage.getItem('authUser'));
     const userId = user.id;
     const userGroup = user.group;
@@ -14,14 +14,14 @@ const Group = () => {
             const url = `${process.env.REACT_APP_HOSTNAME}/student/students_by_groups`;
             const response = await getStudentGroup(userId, userGroup, url);
 
-            setStudentGroup(response);
+            setInfoGroup(response);
         }
 
         fetchStudentGroup()
     }, [userId, userGroup])
 
-    const students = studentGroup?.students ?? [];
-    const headStudent = studentGroup?.headStudent ?? '';
+    const students = infoGroup?.students ?? [];
+    const headStudent = infoGroup?.headStudent ?? '';
 
     return(
         <Main 

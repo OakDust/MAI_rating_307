@@ -27,7 +27,7 @@ const FieldSurveys = () => {
     }, [user.group])
 
     const checkSubmittedSurveys = (disciplineId) => {
-        const submittedSurveys = surveysPassed[0]?.submitted_surveys;
+        const submittedSurveys = surveysPassed?.submitted_surveys;
         let submitted = false;
 
         if (submittedSurveys) {

@@ -36,7 +36,9 @@ export const registrationForm = [
         type: 'text',
         title: 'Номер группы',
         name: 'group',
-        placeholder: 'Введите номер группы'
+        placeholder: 'Введите номер группы (М3О-21Б-23)',
+        pattern: /М[0-9]О-[0-9]{2}Б-[0-9]{2}/,
+        message: 'Некорректное написание группы'
     },
     {
         type: 'email',

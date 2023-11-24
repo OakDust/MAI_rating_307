@@ -6,17 +6,16 @@ import SubmitButtons from '../UI/submitButtons/submitButtons';
 import {authStudent, saveStudent} from "../../http/auth";
 import {Navigate} from "react-router-dom";
 
-
-
 const Auth = ({isRegistration}) => {
 
     const [role, setRole] = useState('student');
     const [isAuth, setIsAuth] = useState(false);
     const [error, setError] = useState('');
-
-    const url = process.env.REACT_APP_HOSTNAME + '/auth/studentAuth'
+    const idForm = (isRegistration ? 'registrationForm' : 'authForm');
 
     const submitForm = async (fields) => {
+        const url = `${process.env.REACT_APP_HOSTNAME}/auth/studentAuth`;
+
         await authStudent(url, fields.email, fields.password)
 
         .then((response) => {
@@ -32,8 +31,6 @@ const Auth = ({isRegistration}) => {
             console.log('Сервер не отвечает')
         })
     } 
-
-    const idForm = (isRegistration ? 'registrationForm' : 'authForm');
 
     return(
         <div className={classes.auth__container}>
