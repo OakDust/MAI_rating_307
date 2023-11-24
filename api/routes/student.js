@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
+const checkRole = require('../middleware/roleMiddleware')
 
 const controller = require('../controllers/student.controller')
 
 router.use(authMiddleware)
+router.use(checkRole('Student'))
 /* GET users listing. */
 router.post('/students_by_groups', async (req, res, next) => {
     // controller.checkHeadStudent(req, res)

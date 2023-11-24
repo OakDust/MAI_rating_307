@@ -4,7 +4,7 @@ import MyButton from '../myButton/myButton';
 import LinkButton from '../linkButton/linkButton';
 
 
-const SubmitButtons = ({isRegistration, idForm, submitForm}) => {
+const SubmitButtons = ({isRegistration, idForm}) => {
 
     let titleSubmitButton = 'Войти';
     let titleLinkButton = 'Зарегистрироваться';
@@ -21,7 +21,6 @@ const SubmitButtons = ({isRegistration, idForm, submitForm}) => {
         <div className={classes.button__container}>
             <MyButton
                 type="submit"
-                onClick={submitForm}
                 form={idForm}
             >
                 {titleSubmitButton}

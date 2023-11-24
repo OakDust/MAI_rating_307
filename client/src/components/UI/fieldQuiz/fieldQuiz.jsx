@@ -7,11 +7,12 @@ import CompletedQuiz from '../completedQuiz/completedQuiz';
 import {postQuiz} from "../../../http/submitQuiz";
 
 const FieldQuiz = ({disciplineInfo, setTitle}) => {
-    const authUser = JSON.parse(localStorage.getItem('authUser'))
     const [answers, setAnswers] = useState(fieldAnswers);
     const [validateAnswers, setValidateAnswers] = useState(false);
     const [buttonDirty, setButtonDirty] = useState(false);
     const [isCompleteQuiz, setIsCompleteQuiz] = useState(false);
+
+    const authUser = JSON.parse(localStorage.getItem('authUser'));
 
     const validateQuiz = () => {
         let validateFlag = true;
@@ -59,9 +60,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
                 ...answers
             ]
 
-            const response = await postQuiz(newAnswers)
-
-            await console.log(response)
+            await postQuiz(newAnswers)
         }
     }
 
@@ -89,7 +88,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
 
             <QuestionsList answered={answerHandler} buttonDirty={buttonDirty}/>
             
-            {(!validateAnswers && buttonDirty) && <p>Необходимо заполнить все поля!</p>}
+            {(!validateAnswers && buttonDirty) && <p className={classes.validate__error}>Необходимо заполнить все поля!</p>}
             <MyButton onClick={submitQuiz}>Завершить</MyButton>
         </div>
     );

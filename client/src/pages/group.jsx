@@ -6,19 +6,19 @@ import {getStudentGroup} from "../http/getStudentGroup";
 const Group = () => {
     const [studentGroup, setStudentGroup] = useState({students: [], headStudent: ''});
     const user = JSON.parse(localStorage.getItem('authUser'));
+    const userId = user.id;
+    const userGroup = user.group;
 
     useEffect(() => {
         const fetchStudentGroup = async () => {
             const url = `${process.env.REACT_APP_HOSTNAME}/student/students_by_groups`;
-            const userId = user.id;
-            const userGroup = user.group
             const response = await getStudentGroup(userId, userGroup, url);
 
             setStudentGroup(response);
         }
 
         fetchStudentGroup()
-    }, [])
+    }, [userId, userGroup])
 
     const students = studentGroup?.students ?? [];
     const headStudent = studentGroup?.headStudent ?? '';

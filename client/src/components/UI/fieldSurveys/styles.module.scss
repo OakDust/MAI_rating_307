@@ -30,5 +30,11 @@
                 background-color: #0BEB65;
             }
         }
+
+        button{
+            background: #0BEB65;
+            pointer-events: none;
+            padding: 15px 55px;
+        }
     }
 }

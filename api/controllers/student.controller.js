@@ -2,7 +2,7 @@ const Student = require('../models/student')
 const StudentsByGroups = require('../models/studentsByGroups')
 const service = require('../service/student.service')
 const Quiz = require("../models/quiz");
-const {getGroupId, getSurveysStudentPassed} = require("../service/student.service");
+const {getGroupId} = require("../service/student.service");
 
 // defines all the group members of current student
 // RETURN:
@@ -31,7 +31,7 @@ exports.getUserInfo = async (req, res) => {
                 })
 
                 if (surveys.length !== 0) {
-                    surveys_passed = service.fillSubmittedSurveys(surveys, student)
+                    surveys_passed = [service.fillSubmittedSurveys(surveys, entry), ...surveys_passed]
                 } else {
                     surveys_passed.push({
                         student_id: entry.dataValues.id,
@@ -44,7 +44,7 @@ exports.getUserInfo = async (req, res) => {
                 students: students,
             })
         } else {
-            surveys_passed = await getSurveysStudentPassed(student)
+            surveys_passed = await service.getSurveysStudentPassed(student)
 
             res.status(200).json({
                 surveys_passed: surveys_passed,
@@ -91,7 +91,7 @@ exports.getDistributedLoad = async (req, res) => {
                 id: req.user.id
             }
         })
-        const surveys_passed = await getSurveysStudentPassed(student)
+        const surveys_passed = await service.getSurveysStudentPassed(student)
 
         res.status(200).json({
             distributed_load: distributed_load,

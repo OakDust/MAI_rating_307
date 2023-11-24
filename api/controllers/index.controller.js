@@ -3,12 +3,37 @@ const Professor = require('../models/professor')
 const service = require('../service/index.service')
 const bcrypt = require('bcryptjs')
 const Teacher = require("../models/teacher");
+const Groups = require("../models/groups");
 
+
+exports.getGroupsList = async (req, res) => {
+    try {
+        const groupsList = await Groups.findAll()
+
+        const groups = []
+
+        for (const group of groupsList) {
+            groups.push({
+                group_id: group.dataValues.id,
+                group_name: group.dataValues.name
+            })
+        }
+
+        res.status(200).json({
+            groups: groups
+        })
+    } catch (err) {
+        res.status(500).json({
+            statusCode: res.statusCode,
+            message: "Ошибка сервера."
+        })
+    }
+}
 
 exports.createStudent = async (req, res) => {
     if (!(req.body.name && req.body.email && req.body.password && req.body.role)) {
         res.status(400).send({
-          message: "Allow null is false can not be empty!"
+          message: "Заполните все поля."
         });
         return;
       }

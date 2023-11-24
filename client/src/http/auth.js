@@ -1,5 +1,4 @@
-exports.authStudent = async (event, url, login, password) => {
-    event.preventDefault()
+exports.authStudent = async (url, login, password) => {
 
     const userObject = {email: login, password: password};
 
@@ -17,14 +16,15 @@ exports.authStudent = async (event, url, login, password) => {
         body: JSON.stringify(userObject)
     }
 
+    
+
     const response = await fetch(url, requestHeaders)
-    console.log(response)
     const studentData = await response.json()
 
-    saveStudent(studentData)
+    return studentData;
 }
 
-const saveStudent = (data) => {
+exports.saveStudent = (data) => {
     const authStudent = {
         'Authorization': data.token,
         'role': data.user.role,

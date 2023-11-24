@@ -38,9 +38,8 @@ exports.getSurveysStudentPassed = async (student) => {
     return surveys_passed
 }
 
-exports.fillSubmittedSurveys = async (surveys, student) => {
+exports.fillSubmittedSurveys = (surveys, entry) => {
     const submitted_surveys = []
-    const arrayToFill = []
     for (let i = 0; i < surveys.length; i++) {
         const temp = {
             discipline_id: surveys[i].dataValues.discipline_id,
@@ -49,12 +48,12 @@ exports.fillSubmittedSurveys = async (surveys, student) => {
         submitted_surveys.push(temp)
     }
 
-    arrayToFill.push({
-        student_id: student.dataValues.id,
+    const objectToFill = {
+        student_id: entry.dataValues.id,
         submitted_surveys: submitted_surveys
-    })
+    }
 
-    return arrayToFill
+    return objectToFill
 }
 
 exports.prettyArray = (array, obj) => {

@@ -17,9 +17,12 @@ exports.getStudentGroup = async (userId, userGroup, url) => {
     }
 
     const response = await fetch(url, requestHeaders)
+
     const groupList = await response.json()
 
-    const studentGroup = setFormatGroup(groupList);
+    console.log(groupList)
+
+    const studentGroup = setFormatGroup(groupList.students);
 
     return studentGroup;
 }

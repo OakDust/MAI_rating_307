@@ -29,7 +29,7 @@ const RatingScale = ({title, numberQuestion, answered, buttonDirty}) => {
         <div className={classes.rating__container}>
             <div className={classes.title__answer}>
                 <p>{title}</p>
-                {(buttonDirty && !answerValue) && <p>Необходимо заполнить поле!</p>}
+                {(buttonDirty && !answerValue) && <p className={classes.validate__error}>Необходимо заполнить поле!</p>}
             </div>
         
             <div className={classes.rating__scale}>

@@ -3,25 +3,34 @@ import classes from './styles.module.scss';
 import AuthForm from '../UI/authForm/authForm';
 import RoleButtons from '../UI/roleButtons/roleButtons';
 import SubmitButtons from '../UI/submitButtons/submitButtons';
-import {authStudent} from "../../http/auth";
+import {authStudent, saveStudent} from "../../http/auth";
 import {Navigate} from "react-router-dom";
 
 
 
 const Auth = ({isRegistration}) => {
 
-    const [fields, setFields] = useState({login: '', password: ''});
     const [role, setRole] = useState('student');
     const [isAuth, setIsAuth] = useState(false);
+    const [error, setError] = useState('');
 
     const url = process.env.REACT_APP_HOSTNAME + '/auth/studentAuth'
 
-    const submitForm = async (event) => {
-        console.log(fields.login, fields.password);
-        await authStudent(event, url, fields.login, fields.password)
-            .then(() => {
+    const submitForm = async (fields) => {
+        await authStudent(url, fields.email, fields.password)
+
+        .then((response) => {
+            if (response.token) {
+                saveStudent(response);
                 setIsAuth(true);
-            })
+            } else {
+                setError(response.message);
+            }
+            
+        })
+        .catch(() => {
+            console.log('Сервер не отвечает')
+        })
     } 
 
     const idForm = (isRegistration ? 'registrationForm' : 'authForm');
@@ -38,8 +47,8 @@ const Auth = ({isRegistration}) => {
             <AuthForm 
                 isRegistration={isRegistration} 
                 idForm={idForm}
-                fields={fields}
-                setFields={setFields}
+                submitForm={submitForm}
+                error={error}
             />
 
             <SubmitButtons

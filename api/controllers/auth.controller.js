@@ -43,11 +43,11 @@ exports.professorAuth = async (req, res, next) => {
         return
     }
 
-    const token = await generateAccessToken(professor.id, req.body.role)
+    const token = await generateAccessToken(professor.id, 'Professor', professor.email, professor.password)
 
     await res.json({
         message: false,
-        token: token
+        token: 'Bearer ' + token
     })
 }
 

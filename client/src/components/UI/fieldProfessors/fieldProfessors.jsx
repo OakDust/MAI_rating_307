@@ -15,9 +15,10 @@ const FieldProfessors = () => {
                 const url = `${process.env.REACT_APP_HOSTNAME}/student/disciplines`
                 const response = await getDisciplines(url, {groups: user.group});
 
-                localStorage.setItem('disciplines', JSON.stringify(response));
+                localStorage.setItem('disciplines', JSON.stringify(response.distributed_load));
+                localStorage.setItem('surveysPassed', JSON.stringify(response.surveys_passed));
         
-                setDisciplines(response);
+                setDisciplines(response.distributed_load);
             } 
         }
         fetchDisciplines().then(() => setIsLoading(false));

@@ -3,13 +3,22 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const controller = require('../controllers/professor.controller')
 const Quiz = require("../models/quiz");
+const checkRole = require('../middleware/roleMiddleware')
 
 router.use(authMiddleware)
-router.get('/', async (req, res, next) => {
+router.use(checkRole('Professor'))
+router.get('/rating', async (req, res, next) => {
     // await controller.showProfessors(req, res)
+    // if (req.user.role === 'Преподаватель') {
+    //     await controller.getRating(req, res)
+    // } else {
+    //     res.status(403).json({message: "Недостаточно прав."})
+    // }
+    await controller.getRating(req, res)
+
 });
 
-router.get('/rating', async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     const quizzes = await Quiz.findAll({
         where: {
             seminarian_id: 35
