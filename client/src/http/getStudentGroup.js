@@ -1,4 +1,4 @@
-exports.getStudentGroup = async (userId, userGroup, url) => {
+export const getStudentGroup = async (userId, userGroup, url) => {
     const id = {id: userId, groups: userGroup};
 
     const requestHeaders = {

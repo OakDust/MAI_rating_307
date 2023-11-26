@@ -1,4 +1,4 @@
-exports.registrateStudent = async (url, userObject) => {
+export const registrateStudent = async (url, userObject) => {
 
     const requestHeaders = {
         method: "POST", 

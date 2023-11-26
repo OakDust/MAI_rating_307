@@ -1,5 +1,5 @@
 const DataTypes = require('sequelize');
-const db = require('../bin/kaf307_20200')
+const db = require('../bin/kaf307_2023')
 
 
 const Discipline = db.define('discipline', {
@@ -18,7 +18,6 @@ const Discipline = db.define('discipline', {
       allowNull: true
     }
   }, {
-    sequelize,
     tableName: 'discipline',
     timestamps: false,
     indexes: [

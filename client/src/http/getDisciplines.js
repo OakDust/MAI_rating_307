@@ -1,4 +1,4 @@
-exports.getDisciplines = async (url, groups) => {
+export const getDisciplines = async (url, groups) => {
     const requestHeaders = {
         method: "POST",
         headers: {

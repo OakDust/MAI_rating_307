@@ -1,127 +1,51 @@
-const cheerio = require("cheerio");
 const Teacher = require("../models/teacher");
 const GroupsDB = require("../models/groups");
 const DistributedLoad = require("../models/distributed_load");
 const {QueryTypes} = require("sequelize");
 const Quiz = require("../models/quiz");
-const Student = require("../models/student");
 
 
-exports.clearArray = (array) => {
-    const replacedArray = []
-
-    array.map((element) => {
-        const temp = element.toString()
-        replacedArray.push(temp.replace('.', ''))
-    })
-
-    return replacedArray
-}
-
-exports.getSurveysStudentPassed = async (student) => {
+exports.getSurveysStudentPassed = async (student_id) => {
     let surveys_passed = []
-    const surveys = await Quiz.findAll({
-        where: {
-            student_id: student.dataValues.id
-        }
+    let dbName = process.env.DB_NAME
+
+    const surveysQuery = `SELECT discipline.name as discipline_name, discipline.id as discipline_id, quizzes.id as quiz_id, quizzes.student_id FROM \`quizzes\` join ${dbName}.discipline on kaf307_2023.discipline.id = quizzes.discipline_id where quizzes.student_id = ${student_id}`
+
+    const surveys = await Quiz.sequelize.query(surveysQuery, {
+        type: QueryTypes.SELECT,
+        logging: false
     })
 
     if (surveys.length === 0) {
         surveys_passed.push({
-            student_id: student.dataValues.id,
+            student_id: student_id,
             surveys_passed: 0,
         })
     } else {
-        surveys_passed = this.fillSubmittedSurveys(surveys, student)
+        surveys_passed = this.fillSubmittedSurveys(student_id, surveys)
     }
 
     return surveys_passed
 }
 
-exports.fillSubmittedSurveys = (surveys, entry) => {
+exports.fillSubmittedSurveys = (student_id, surveys) => {
     const submitted_surveys = []
+
     for (let i = 0; i < surveys.length; i++) {
         const temp = {
-            discipline_id: surveys[i].dataValues.discipline_id,
-            quiz_id: surveys[i].dataValues.id
+            discipline_id: surveys[i].discipline_id,
+            discipline_name: surveys[i].discipline_name,
+            quiz_id: surveys[i].quiz_id
         }
         submitted_surveys.push(temp)
     }
 
     const objectToFill = {
-        student_id: entry.dataValues.id,
+        student_id: student_id,
         submitted_surveys: submitted_surveys
     }
 
     return objectToFill
-}
-
-exports.prettyArray = (array, obj) => {
-    const pretty = [{}]
-
-    for (let i = 0; i < array.length; i++) {
-        if (!obj[i]) continue
-
-        let discipline = array[i][0]
-        let groups = array[i][1]
-
-        let lecturer = obj[i].lecturer
-        let seminarian = obj[i].seminarian
-
-        if (array[i][0] !== 'Итого:' && array[i].length !== 0) {
-            let string = groups.toString().substring(0, 4) + groups.toString().substring(5, groups.toString().length)
-
-            pretty.push({
-                lecturer: lecturer,
-                seminarian: seminarian,
-                discipline: discipline,
-                groups: string,
-            })
-        }
-
-        pretty.filter(value => Object.keys(value).length !== 0)
-    }
-
-    return pretty.splice(2, pretty.length)
-}
-
-exports.parseTable = (html) => {
-    // Загрузка HTML с помощью cheerio
-    const $ = cheerio.load(html);
-
-// Массив для хранения извлеченных данных
-    const extractedData = [];
-    const links = []
-// Перебор строк таблицы
-    $('table tr').each((rowIndex, row) => {
-        const rowData = [];
-
-        // Перебор ячеек строки
-        const current = $(row).find('td').last().text()
-
-        if (current !== 'Не распределено.') {
-            $(row).find('td').each((cellIndex, cell) => {
-                const cellText = $(cell).text().trim(); // Извлечение текста из ячейки
-
-                const a = $(cell).find('a').first().attr('href')
-                if (a !== undefined) {
-                    links.push(a)
-                }
-
-                if (cellText !== '' && cellText !== undefined && cellText !== 'Не распределено.') {
-                    rowData.push(cellText); // Сохранение текста в массив данных строки
-                }
-            });
-        }
-
-        extractedData.push(rowData); // Сохранение данных строки в массив извлеченных данных
-    });
-
-    const linkArray = links.filter(val => val)
-
-    const outArray = this.clearArray(linkArray)
-
-    return [outArray, extractedData]
 }
 
 exports.teacherExists = async (body) => {
@@ -129,6 +53,7 @@ exports.teacherExists = async (body) => {
     const [seminarianSurname, seminarianName, seminarianPatronymic] = body[0].seminarian_name.split(' ')
 
     const lecturer = await Teacher.findOne({
+        logging: false,
         where: {
             name: lecturerName,
             surname: lecturerSurname,
@@ -137,6 +62,7 @@ exports.teacherExists = async (body) => {
     })
 
     const seminarian = await Teacher.findOne({
+        logging: false,
         where: {
             name: seminarianName,
             surname: seminarianSurname,
@@ -145,49 +71,6 @@ exports.teacherExists = async (body) => {
     })
 
     return [lecturer, seminarian]
-}
-
-exports.comprehensiveArray = async (req, res, link) => {
-    const response = await this.fetchProfessorLoad(req, res, link)
-
-    const [links, parsed] = this.parseTable(response)
-
-    const pretty = parsed.filter(val => val !== '' && val.length !== 0)
-
-    const comprehensive = pretty.splice(1, pretty.length - 2)
-
-    return comprehensive
-}
-
-exports.getObject = async (req, res, link) => {
-    const comprehensive = await this.comprehensiveArray(req, res, link)
-
-    let lecturer = ''
-    let seminarian = ''
-
-    for (let i = 0; i < comprehensive.length; i++) {
-        if (comprehensive[i][0] === 'Итого:') {continue}
-
-        switch (comprehensive.length) {
-            case 2:
-                lecturer = comprehensive[0][0]
-                seminarian = comprehensive[0][0]
-            case 1:
-                lecturer = comprehensive[0][0]
-                seminarian = comprehensive[0][0]
-            default:
-                if (comprehensive[i][1] !== '-' || comprehensive[i][5] !== '-') {lecturer = comprehensive[i][0]}
-
-                if (comprehensive[i][2] !== '-') {seminarian = comprehensive[i][0]}
-        }
-    }
-
-    const obj = {
-        lecturer: lecturer,
-        seminarian: seminarian
-    }
-
-    return obj
 }
 
 exports.fetchProfessorLoad = async (req, res, link) => {
@@ -242,12 +125,19 @@ exports.sum = (obj) => {
 }
 
 exports.getName = (obj) => {
-    return obj.surname + ' ' + obj.name + ' ' + obj.patronymic
+    if (obj.surname && obj.name && obj.patronymic) {
+        return obj.surname + ' ' + obj.name + ' ' + obj.patronymic
+    } else if (obj.teacher_surname && obj.teacher_name && obj.teacher_patronymic) {
+        return obj.teacher_surname + ' ' + obj.teacher_name + ' ' + obj.teacher_patronymic
+    } else {
+        throw new Error('Object type is undefined')
+        return
+    }
 }
 
 exports.getGroupId = async (groupName) => {
-
     const groups = await GroupsDB.findOne({
+        logging: false,
         where: {
             name: groupName
         }
@@ -256,11 +146,14 @@ exports.getGroupId = async (groupName) => {
     return groups.id
 }
 
-exports.applyDistributedLoad = async (semester, groups_id) => {
-    const disciplinesQuery = `SELECT discipline.id, discipline.name from \`workload\` join discipline on discipline.id = workload.id_discipline where workload.id_group = ${groups_id} and workload.semester = ${semester}`
-    const disciplinesResponse = await DistributedLoad.sequelize.query(disciplinesQuery, {type: QueryTypes.SELECT})
+exports.applyDistributedLoad = async (semester, groups_id, db_name) => {
+    const disciplinesQuery = `SELECT ${db_name}.discipline.id, ${db_name}.discipline.name from ${db_name}.\`workload\` join ${db_name}.discipline on ${db_name}.discipline.id = ${db_name}.workload.id_discipline where ${db_name}.workload.id_group = ${groups_id} and ${db_name}.workload.semester = ${semester}`
+    const disciplinesResponse = await DistributedLoad.sequelize.query(disciplinesQuery, {
+        type: QueryTypes.SELECT,
+        logging: false
+    })
 
-    const teachersQuery = `SELECT discipline.name as 'discipline', teacher.name, teacher.surname, teacher.patronymic, distributed_load.lectures, distributed_load.practical, distributed_load.laboratory from \`groups\` join workload on workload.id_group = groups.id join discipline on discipline.id = workload.id_discipline join distributed_load on distributed_load.id_load_group = workload.id and distributed_load.lectures = workload.lectures join teacher on teacher.id = distributed_load.id_teacher where groups.id = ${groups_id} and workload.semester = ${semester}`
+    const teachersQuery = `SELECT ${db_name}.discipline.name as 'discipline', ${db_name}.teacher.name, ${db_name}.teacher.surname, ${db_name}.teacher.patronymic, ${db_name}.distributed_load.lectures, ${db_name}.distributed_load.practical, ${db_name}.distributed_load.laboratory from ${db_name}.\`groups\` join ${db_name}.workload on ${db_name}.workload.id_group = ${db_name}.groups.id join ${db_name}.discipline on ${db_name}.discipline.id = ${db_name}.workload.id_discipline join ${db_name}.distributed_load on ${db_name}.distributed_load.id_load_group = ${db_name}.workload.id and ${db_name}.distributed_load.lectures = ${db_name}.workload.lectures join ${db_name}.teacher on ${db_name}.teacher.id = ${db_name}.distributed_load.id_teacher where ${db_name}.groups.id = ${groups_id} and ${db_name}.workload.semester = ${semester}`
 
     let check = []
     for (let i = 0; i < disciplinesResponse.length; i++) {
@@ -268,7 +161,10 @@ exports.applyDistributedLoad = async (semester, groups_id) => {
         let seminarian = ''
         let laborant = ''
 
-        const teachers = await DistributedLoad.sequelize.query(teachersQuery + ` and discipline.id = ${disciplinesResponse[i].id}`, {type: QueryTypes.SELECT})
+        const teachers = await DistributedLoad.sequelize.query(teachersQuery + ` and discipline.id = ${disciplinesResponse[i].id}`, {
+            type: QueryTypes.SELECT,
+            logging: false
+        })
 
         if (teachers.length === 1) {
             lecturer = this.getName(teachers[0])
@@ -299,6 +195,65 @@ exports.applyDistributedLoad = async (semester, groups_id) => {
             discipline_id: disciplinesResponse[i].id,
             key: i,
             // groups: groupName
+        })
+    }
+
+    return check
+}
+
+exports.getCrudDistributedLoad = (distributed_load) => {
+    let discipline_ids = new Set()
+    let discipline_names = new Set()
+    for (let i = 0; i < distributed_load.length; i++) {
+        discipline_ids.add(distributed_load[i].dataValues.discipline_id)
+        discipline_names.add(distributed_load[i].dataValues.discipline_name)
+    }
+
+    discipline_ids = Array.from(discipline_ids)
+    discipline_names = Array.from(discipline_names)
+    const check = []
+
+    for (let i = 0; i < discipline_ids.length; i++) {
+        let count = 0
+        let data = []
+
+        for (let j = 0; j < distributed_load.length; j++) {
+            if (distributed_load[j].dataValues.discipline_id === discipline_ids[i]) {
+                count++
+                data.push(distributed_load[j].dataValues)
+            }
+        }
+
+        let lecturer = ''
+        let seminarian = ''
+        let laborant = ''
+
+        if (count === 1) {
+            lecturer = this.getName(data[0])
+            seminarian = lecturer
+        } else if (count === 2) {
+            for (let j = 0; j < count; j++) {
+                this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) :  null
+
+                data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
+            }
+        } else if (count === 3) {
+            for (let j = 0; j < count; j++) {
+                this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) : null
+
+                data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
+
+                data[j].laboratory !== 0 ? laborant = this.getName(data[j]) : null
+            }
+        }
+
+        check.push({
+            lecturer: lecturer,
+            seminarian: seminarian,
+            // laborant: laborant,
+            discipline_id: discipline_ids[i],
+            discipline: discipline_names[i],
+            key: i,
         })
     }
 

@@ -1,4 +1,4 @@
-exports.postQuiz = async (answers) => {
+export const postQuiz = async (answers) => {
     const requestHeaders = {
         method: "POST",
         mode: "cors",

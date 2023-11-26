@@ -1,4 +1,4 @@
-exports.authStudent = async (url, login, password) => {
+export const authStudent = async (url, login, password) => {
 
     const userObject = {email: login, password: password};
 
@@ -24,7 +24,7 @@ exports.authStudent = async (url, login, password) => {
     return studentData;
 }
 
-exports.saveStudent = (data) => {
+export const saveStudent = (data) => {
     const authStudent = {
         'Authorization': data.token,
         'role': data.user.role,

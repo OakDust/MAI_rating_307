@@ -4,6 +4,7 @@ const service = require('../service/index.service')
 const bcrypt = require('bcryptjs')
 const Teacher = require("../models/teacher");
 const Groups = require("../models/groups");
+const StudentsByGroups = require("../models/studentsByGroups");
 
 
 exports.getGroupsList = async (req, res) => {
@@ -31,117 +32,87 @@ exports.getGroupsList = async (req, res) => {
 }
 
 exports.createStudent = async (req, res) => {
-    if (!(req.body.name && req.body.email && req.body.password && req.body.role)) {
-        res.status(400).send({
-          message: "Заполните все поля."
-        });
-        return;
-      }
-
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
-    switch (req.body.role) {
-        case 'Студент':
-            const student = {
-                groups: req.body.groups,
-                id: req.body.id,
-                name: req.body.name,
-                email: req.body.email,
-                password: hashedPassword,
-                role: req.body.role,
-                is_head_student: req.body.is_head_student
-            };
+    if (!req.body.groups) {
+        res.status(400).json({message: 'Укажите группу'})
+        return
+    }
 
-            Student.create(student)
-                .then(data => {
-                    res.status(201).redirect(process.env.REACT_APP_API_URL);
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        message: err.message
-                });
-            });
+    const dbStudent = await StudentsByGroups.findOne({
+        where: {
+            name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
+            groups: req.body.groups
+        }
+    })
 
-            break;
+    const existStudent = await Student.findOne({
+        where: {
+            groups: req.body.groups,
+            name: req.body.name,
+            role: req.body.role
+        }
+    })
 
-          case 'Староста':
-                // if headstudent does already exist
-                req.body.is_head_student = await service.checkHeadStudent(req, res)
+    if (!dbStudent || existStudent) {
+        res.status(400).json({message: 'Такой студент не существует.'})
+        return
+    }
 
-                if (req.body.is_head_student) {
-                    res.status(403).json({
-                        message: 'Head student already exists in this group'
-                    })
-                    break
-                } 
+    const student = {
+        id: dbStudent.dataValues.id,
+        groups: req.body.groups,
+        name: dbStudent.dataValues.name,
+        email: req.body.email,
+        password: hashedPassword,
+        role: req.body.role,
+        is_head_student: dbStudent.dataValues.is_head_student,
+    };
 
-                const headStudent = {
-                    groups: req.body.groups,
-                    id: req.body.id,
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: hashedPassword,
-                    role: req.body.role,
-                    is_head_student: req.body.is_head_student
-                };
+    try {
+        await Student.create(student)
+        res.status(201).json({message: 'Регистрация прошла успешно.'})
+    } catch (err) {
+        res.status(500).json({message: 'Не получилось зарегистрироваться.'});
+    }
 
-                await Student.create(headStudent)
-                    .then(data => {
-                        res.status(201).redirect(process.env.REACT_APP_API_URL);
-                    })
-                    .catch(err => {
-                        res.status(500).send({
-                            message: err.message
-                    });
-                });
-
-                break;
-
-        default:
-            break;
-      }
 }
 
 exports.createProfessor = async (req, res, next) => {
-    if (!(req.body.name && req.body.email && req.body.password && req.body.role)) {
-        res.status(400).send({
-            message: "Allow null is false can not be empty!"
-        });
-        return;
-    }
-
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
-    try {
-        const [surname, name, patronymic] = req.body.name.split(' ')
-        const teacherInDB = await Teacher.findOne({
-            where: {
-                name: name,
-                surname: surname,
-                patronymic: patronymic,
-            }
-        })
-
-        if (teacherInDB) {
-            const professor = {
-                id: teacherInDB.id,
-                name: req.body.name,
-                email: req.body.email,
-                role: req.body.role,
-                password: hashedPassword
-            };
-
-            await Professor.create(professor)
-                .then(data => {
-                    res.status(201).redirect(process.env.REACT_APP_API_URL);
-                })
-                .catch(err => {
-                    res.status(500).send({
-                        message: err.message
-                    });
-                });
+    const dbTeacher = await Teacher.findOne({
+        where: {
+            name: req.body.name,
+            surname: req.body.surname,
+            patronymic: req.body.patronymic,
         }
+    })
+
+    const existTeacher = await Professor.findOne({
+        where: {
+            name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
+            role: req.body.role
+        }
+    })
+
+    if (!dbTeacher || existTeacher) {
+        res.status(400).json({message: 'Такой преподаватель не существует.'})
+        return
+    }
+
+    try {
+        const professor = {
+            id: dbTeacher.dataValues.id,
+            name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
+            email: req.body.email,
+            role: req.body.role,
+            password: hashedPassword
+        };
+
+        await Professor.create(professor)
+        res.status(201).json({message: 'Регистрация прошла успешно.'})
     } catch (err) {
-        res.status(400).json({message: err.stack})
+        res.status(400).json({message: 'Не получилось зарегистрироваться.'})
     }
 }
