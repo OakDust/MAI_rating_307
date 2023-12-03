@@ -2,10 +2,19 @@ import React from 'react';
 import classes from './styles.module.scss';
 import background from '../../../assets/backgrounds/groupBackground.webp';
 import StatIndication from '../statIndication/statIndication';
+import Loader from '../loader/loader';
 
 
-const FieldGroup = ({students, headStudent, userRole}) => {
+const FieldGroup = ({groupList, userRole, loading}) => {
+    const students = groupList.students;
+    const headStudent = groupList.headStudent;
 
+    if (loading) {
+        return (
+            <Loader/>
+        )
+    }
+    
     if (userRole === 'Староста') {
         return(
             <table className={classes.table__group}>

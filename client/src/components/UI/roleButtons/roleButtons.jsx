@@ -6,7 +6,7 @@ const RoleButtons = ({role, setRole}) => {
     const [isStudent, setIsStudent] = useState(true);
 
     useEffect(() => {
-        setIsStudent(role === 'student');
+        setIsStudent(role === 'Студент');
 
     }, [role, setRole])
 
@@ -15,10 +15,10 @@ const RoleButtons = ({role, setRole}) => {
     return(
 
         <div className={classes.button__container}>
-            <button className={isStudent ? (activeButtonStyle) : classes.role__button} onClick={() => setRole('student')}>
+            <button className={isStudent ? (activeButtonStyle) : classes.role__button} onClick={() => setRole('Студент')}>
                 Студент
             </button>
-            <button className={!isStudent ? (activeButtonStyle) : classes.role__button} onClick={() => setRole('professor')}>
+            <button className={!isStudent ? (activeButtonStyle) : classes.role__button} onClick={() => setRole('Преподаватель')}>
                 Преподаватель
             </button>
         </div>

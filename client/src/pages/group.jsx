@@ -1,32 +1,30 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Main from '../components/main/main';
 import FieldGroup from '../components/UI/fieldGroup/fieldGroup';
-import {getStudentGroup} from "../http/getStudentGroup";
+import { AuthContext } from '../context';
+import { useFetching } from '../hooks/useFetching';
+import { formattingGroupList } from '../utils/student';
+import StudentService from '../http/studentService';
+
 
 const Group = () => {
-    const [infoGroup, setInfoGroup] = useState({students: [], headStudent: ''});
-    const user = JSON.parse(localStorage.getItem('authUser'));
-    const userId = user.id;
-    const userGroup = user.group;
+    const [groupList, setGroupList] = useState({students: [], headStudent: ''});
+    const {dataUser} = useContext(AuthContext);
+    const [fetchGroupList, groupListLoading] = useFetching( async () => {
+        const response = await StudentService.getGroupList(dataUser);
+        const formattedGroupList = formattingGroupList(response.students, response.surveys_passed);
+
+        setGroupList({students: formattedGroupList.students, headStudent: formattedGroupList.headStudent});
+    })
 
     useEffect(() => {
-        const fetchStudentGroup = async () => {
-            const url = `${process.env.REACT_APP_HOSTNAME}/student/students_by_groups`;
-            const response = await getStudentGroup(userId, userGroup, url);
-
-            setInfoGroup(response);
-        }
-
-        fetchStudentGroup()
-    }, [userId, userGroup])
-
-    const students = infoGroup?.students ?? [];
-    const headStudent = infoGroup?.headStudent ?? '';
+        fetchGroupList();
+    }, [])
 
     return(
         <Main 
         title='Моя группа'  
-        displayField={<FieldGroup students={students} headStudent={headStudent} userRole={user.role}/>}/>
+        displayField={<FieldGroup groupList={groupList} userRole={dataUser.role} loading={groupListLoading}/>}/>
 
     );
 }

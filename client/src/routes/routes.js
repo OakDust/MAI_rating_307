@@ -20,11 +20,6 @@ import Professors from '../pages/professors.jsx';
 
 export const publicRoutes = [
     {
-        path: HOME_ROUTE,
-        Component: Home,
-        title: 'МАИ | Опросы',
-    },
-    {
         path: AUTH_ROUTE,
         Component: Auth,
         title: 'Авторизация',
@@ -33,6 +28,14 @@ export const publicRoutes = [
         path: REGISTRATION_ROUTE,
         Component: Registration,
         title: 'Регистрация',
+    }
+]
+
+export const privateRoutes = [
+    {
+        path: HOME_ROUTE,
+        Component: Home,
+        title: 'МАИ | Опросы',
     },
     {
         path: SURVEYS_ROUTE,

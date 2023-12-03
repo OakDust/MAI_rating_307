@@ -1,6 +1,6 @@
-export const authForm = [
+export const authFields = [
     {
-        type: 'login',
+        type: 'email',
         title: 'Логин',
         name: 'email',
         placeholder: 'Введите логин',
@@ -13,7 +13,7 @@ export const authForm = [
     },
 ]
 
-export const registrationForm = [
+export const registrationFields = [
     {
         type: 'text',
         title: 'Имя',
@@ -31,14 +31,6 @@ export const registrationForm = [
         title: 'Отчество',
         name: 'patronymic',
         placeholder: 'Введите отчество',
-    },
-    {
-        type: 'text',
-        title: 'Номер группы',
-        name: 'group',
-        placeholder: 'Введите номер группы (М3О-21Б-23)',
-        pattern: /М[0-9]О-[0-9]{2}Б-[0-9]{2}/,
-        message: 'Некорректное написание группы'
     },
     {
         type: 'email',

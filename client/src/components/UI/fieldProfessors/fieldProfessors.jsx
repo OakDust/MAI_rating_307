@@ -1,30 +1,26 @@
-import React, {useState, useEffect} from 'react';
-import { getDisciplines } from '../../../http/getDisciplines';
+import React, {useState, useEffect, useContext} from 'react';
 import classes from './styles.module.scss';
 import Loader from '../loader/loader';
+import { AuthContext } from '../../../context';
+import { useFetching } from '../../../hooks/useFetching';
+import StudentService from '../../../http/studentService';
+import { formattingProfessorsList } from '../../../utils/student';
 
 const FieldProfessors = () => {
-    const [disciplines, setDisciplines] = useState(JSON.parse(localStorage.getItem('disciplines')));
-    const [isLoading, setIsLoading] = useState(true);
-
-    const user = JSON.parse(localStorage['authUser']);
+    const [disciplines, setDisciplines] = useState([]);
+    const {dataUser} = useContext(AuthContext);
+    const [fetchDisciplines, isDisciplinesLoading] = useFetching(async () => {
+        const response = await StudentService.getDisciplines(dataUser);
+        formattingProfessorsList(response.distributed_load);
+        
+        setDisciplines(response.distributed_load);
+    })
 
     useEffect(() => {
-        const fetchDisciplines = async () => {
-            if (disciplines === null) {
-                const url = `${process.env.REACT_APP_HOSTNAME}/student/disciplines`
-                const response = await getDisciplines(url, {groups: user.group});
-
-                localStorage.setItem('disciplines', JSON.stringify(response.distributed_load));
-                localStorage.setItem('surveysPassed', JSON.stringify(response.surveys_passed));
-        
-                setDisciplines(response.distributed_load);
-            } 
-        }
-        fetchDisciplines().then(() => setIsLoading(false));
-    })
+        fetchDisciplines();
+    }, [])
     
-    if (isLoading) {
+    if (isDisciplinesLoading) {
         return (
             <Loader/>
         )

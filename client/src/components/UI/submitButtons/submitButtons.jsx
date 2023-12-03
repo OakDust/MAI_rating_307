@@ -1,32 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from './styles.module.scss';
 import MyButton from '../myButton/myButton';
 import LinkButton from '../linkButton/linkButton';
 
+const SubmitButtons = ({isRegistration}) => {
+    const [buttons, setButtons] = useState({
+        titleSubmit: 'Войти',
+        titleLink: 'Зарегистрироваться',
+        backRoute: '/registration',
+        idForm: 'authForm',
+    })
 
-const SubmitButtons = ({isRegistration, idForm}) => {
-
-    let titleSubmitButton = 'Войти';
-    let titleLinkButton = 'Зарегистрироваться';
-    let backRoute = '/registration';
-
-    if (isRegistration) {
-        titleSubmitButton = 'Зарегистрироваться';
-        titleLinkButton = 'Войти';
-        backRoute = '/auth';
-    }
+    useEffect(() => {
+        if (isRegistration) {
+            setButtons({
+                titleSubmit: 'Зарегистрироваться',
+                titleLink: 'Войти',
+                backRoute: '/auth',
+                idForm: 'registrationForm',
+            })
+        }
+    }, [isRegistration])
 
     return( 
 
         <div className={classes.button__container}>
             <MyButton
                 type="submit"
-                form={idForm}
+                form={buttons.idForm}
             >
-                {titleSubmitButton}
+                {buttons.titleSubmit}
             </MyButton>
 
-            <LinkButton to={backRoute}>{titleLinkButton}</LinkButton>
+            <LinkButton to={buttons.backRoute}>{buttons.titleLink}</LinkButton>
         </div>
     );
 }
