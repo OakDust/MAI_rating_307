@@ -10,7 +10,8 @@ import classes from './styles.module.scss';
 
 const Auth = ({isRegistration}) => {
     const [role, setRole] = useState('Студент');
-    const [serverError, setServerError] = useState('');
+    const [serverMessage, setServerMessage] = useState('');
+    const [studentGroup, setStudentGroup] = useState('');
     const {isAuth, setIsAuth, setDataUser} = useContext(AuthContext);
 
     const submitAuthForm = async (authFields) => {
@@ -24,7 +25,7 @@ const Auth = ({isRegistration}) => {
                 setIsAuth(true); 
             }
             else {
-                setServerError(response.message);
+                setServerMessage(response.message);
             }
         }
         catch {
@@ -32,24 +33,18 @@ const Auth = ({isRegistration}) => {
         }
     } 
 
-    const submitRegistrationForm = async(registrationFields) => {
+    const submitRegistrationForm = async (registrationFields) => {
         try {
-            const response = await AuthService.registrateUser(role, registrationFields);
-
-            console.log(response);
-
-            if (response.message === 'Регистрация прошла успешно.') {
-                return (
-                    <Navigate to='/auth'/>
-                )
-            }
-            else {
-                setServerError(response.message);
-            }
+            const response = await AuthService.registrateUser(role, registrationFields, studentGroup); 
+            setServerMessage(response.message);
         }
         catch {
             console.log('Server loosed');
         }
+    }
+
+    if (isAuth) {
+        <Navigate to='*'/>
     }
 
     return(
@@ -67,15 +62,14 @@ const Auth = ({isRegistration}) => {
             <AuthForm 
                 isRegistration={isRegistration}
                 submitForm={isRegistration ? submitRegistrationForm : submitAuthForm}
-                serverError={serverError}
+                serverMessage={serverMessage}
                 role={role}
+                setStudentGroup={setStudentGroup}
             />
 
             <SubmitButtons
                 isRegistration={isRegistration}
             />
-
-            {isAuth ? (<Navigate to='*'/>) : null}
         </div>
     );
 }

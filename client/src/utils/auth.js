@@ -28,16 +28,26 @@ export const formatUserData = (data, role) => {
     return dataUser;
 }
 
-export const formatBodyRegistration = (fields, role) => {
+export const formatBodyRegistration = (fields, role, studentGroup) => {
     const body = {
         'name': fields.name,
         'surname': fields.surname,
         'patronymic': fields.patronymic,
         'email': fields.email,
         'password': fields.password,
-        'groups': fields.groups,
+        'groups': studentGroup,
         'role': role,
     }
 
     return body;
+}
+
+export const formattingGroupsList = (groupsArray) => {
+    let groupsList = []
+
+    groupsArray.map((group) => (
+        groupsList.push(group.group_name)
+    ))
+
+    return groupsList;
 }
