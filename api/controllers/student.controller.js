@@ -255,20 +255,131 @@ exports.provideDistributedLoad = async (req, res) => {
 
     const groupName = queryYear[0] + '-' + numberOfCourse.toString() + queryYear[1] + '-' + queryYear[2]
 
-    const groups_id = await getGroupId(groupName)
-    const distributed_load = await StudentCrudLoad.findAll({
-        where: {
-            group_name: groupName,
-            group_id: groups_id,
-            semester: semester
+    try {
+        const groups_id = await getGroupId(groupName)
+        const distributed_load = await StudentCrudLoad.findAll({
+            where: {
+                group_name: groupName,
+                group_id: groups_id,
+                semester: semester
+            }
+        })
+
+        const check = service.getCrudDistributedLoad(distributed_load)
+
+        res.status(200).json({
+            distributed_load: check,
+            surveys_passed: surveys_passed,
+        })
+    } catch (err) {
+        res.status(400).json({
+            message: err.message,
+            statusCode: res.statusCode,
+        })
+    }
+
+}
+
+exports.createDiscipline = async (req, res) => {
+    const userRequest = {
+        discipline_name: req.body.discipline_name,
+        teacher_surname: req.body.teacher_surname,
+        teacher_name: req.body.teacher_name,
+        teacher_patronymic: req.body.teacher_patronymic,
+        group_id: req.body.group_id,
+        group_name: req.body.group_name,
+        semester: req.body.semester,
+        lectures: req.body.lectures,
+        practical: req.body.practical,
+        laboratory: req.body.laboratory
+    }
+
+    try {
+        const dataExists = await StudentCrudLoad.findOne({
+            where: {
+                discipline_name: req.body.discipline_name,
+                teacher_surname: req.body.teacher_surname,
+                teacher_name: req.body.teacher_name,
+                teacher_patronymic: req.body.teacher_patronymic,
+                group_id: req.body.group_id,
+                group_name: req.body.group_name,
+                semester: req.body.semester,
+                lectures: req.body.lectures,
+                practical: req.body.practical,
+                laboratory: req.body.laboratory
+            }
+        })
+
+        if (dataExists) {
+            res.status(400).json({
+                message: 'Такая дисциплина уже существует.',
+                statusCode: res.statusCode
+            })
+
+            return
         }
-    })
 
-    const check = service.getCrudDistributedLoad(distributed_load)
+        const teacher = await Teacher.findOne({
+            where: {
+                surname: req.body.teacher_surname,
+                name: req.body.teacher_name,
+                patronymic: req.body.teacher_patronymic,
+            }
+        })
 
-    res.status(200).json({
-        distributed_load: check,
-        surveys_passed: surveys_passed,
-    })
+        if (!teacher) {
+            res.status(400).json({
+                message: 'Такой преподаватель не существует.',
+                statusCode: res.statusCode
+            })
 
+            return
+        }
+
+        let discipline = await Discipline.findOne({
+            where: {
+                name: userRequest.discipline_name
+            }
+        })
+
+        if (!discipline) {
+            await Discipline.create({
+                name: userRequest.discipline_name,
+                comment: '',
+            })
+
+            discipline = await Discipline.findOne({
+                where: {
+                    name: userRequest.discipline_name
+                }
+            })
+
+            userRequest.discipline_id = discipline.dataValues.id
+            userRequest.teacher_id = teacher.dataValues.id
+
+            await StudentCrudLoad.create(userRequest)
+
+            res.status(201).json({
+                message: "Учебная дисциплина успешно создана.",
+                statusCode: res.statusCode
+            })
+        }
+
+        userRequest.discipline_id = discipline.dataValues.id
+        userRequest.teacher_id = teacher.dataValues.id
+
+        await StudentCrudLoad.create(userRequest)
+
+        res.status(201).json({
+            message: "Учебная дисциплина успешно создана.",
+            statusCode: res.statusCode
+        })
+    } catch (err) {
+        res.status(400).json({
+            message: 'Не получается найти данные.',
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
 }
