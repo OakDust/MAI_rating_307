@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import classes from './styles.module.scss';
 import pointerIcon from '../../assets/icons/pointer.webp';
 import AboutUser from '../UI/aboutUser/aboutUser.jsx';
 import LinkButton from '../UI/linkButton/linkButton.jsx';
 import FieldMain from '../UI/fieldMain/fieldMain.jsx';
+import { AuthContext } from '../../context/index.js';
 
 const Main = (props) => {
-    
+
+    const {setIsAuth} = useContext(AuthContext);
     const userInfo = JSON.parse(localStorage.getItem('authUser'));
 
-    const exit = () => {
+    const logout = () => {
+        setIsAuth(false);
         localStorage.clear();
     }
 
@@ -22,7 +25,7 @@ const Main = (props) => {
                     <h1>ОПРОС КАФЕДРЫ 307</h1>
                 </div>
 
-                <LinkButton to="/auth" onClick={exit}>
+                <LinkButton to="/auth" onClick={logout}>
                     Выйти
                 </LinkButton>
             </div>

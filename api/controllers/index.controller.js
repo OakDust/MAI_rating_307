@@ -5,18 +5,28 @@ const bcrypt = require('bcryptjs')
 const Teacher = require("../models/teacher");
 const Groups = require("../models/groups");
 const StudentsByGroups = require("../models/studentsByGroups");
+const {Op} = require("sequelize");
 
 
 exports.getGroupsList = async (req, res) => {
     try {
-        const groupsList = await Groups.findAll()
+        const groupsList = await Groups.findAll({
+            where: {
+                id: {
+                    [Op.ne]: 1
+                }
+            }
+        })
 
         const groups = []
 
         for (const group of groupsList) {
+            const group_string = group.dataValues.name.split('-', 3)
+
+            const group_name = group_string[0] + '-' + group_string[1].substring(1) + '-' + group_string[2]
             groups.push({
                 group_id: group.dataValues.id,
-                group_name: group.dataValues.name
+                group_name: group_name
             })
         }
 

@@ -104,6 +104,22 @@ exports.getDisciplines = async (req, res) => {
 }
 
 exports.getTeachers = async (req, res) => {
+    // begin
+    const student = await Student.findOne({
+        where: {
+            id: req.user.id
+        }
+    })
+
+    if (!student || student.dataValues.is_head_student !== '1') {
+        res.status(500).json({
+            message: "Ошибка авторизации или пользователь не является старостой.",
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+    // end
     try {
         const teachers = await Teacher.findAll({
             attributes: ['id', 'name', 'surname', 'patronymic'],

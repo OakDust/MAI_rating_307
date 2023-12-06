@@ -1,30 +1,29 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import classes from './styles.module.scss';
 import LinkButton from '../linkButton/linkButton';
-import { getDisciplines } from '../../../http/getDisciplines';
 import Loader from '../loader/loader';
 import MyButton from '../myButton/myButton';
+import StudentService from '../../../http/studentService';
+import { formattingProfessorsList } from '../../../utils/student';
+import { useFetching } from '../../../hooks/useFetching';
+import { AuthContext } from '../../../context';
+
 const FieldSurveys = () => {
+    const [disciplines, setDisciplines] = useState([]);
+    const [surveysPassed, setSurveysPassed] = useState([]);
 
-    const [disciplines, setDisciplines] = useState(JSON.parse(localStorage.getItem('disciplines')));
-    const [surveysPassed, setSurveysPassed] = useState(JSON.parse(localStorage.getItem('surveysPassed')));
-    const [isLoading, setIsLoading] = useState(true);
+    const {dataUser} = useContext(AuthContext);
+    const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
+        const response = await StudentService.getDisciplines(dataUser);
+        formattingProfessorsList(response.distributed_load);
 
-    const user = JSON.parse(localStorage['authUser']);
+        setDisciplines(response.distributed_load);
+        setSurveysPassed(response.surveys_passed)
+    })
 
     useEffect(() => {
-        const fetchDisciplines = async () => {
-            const url = `${process.env.REACT_APP_HOSTNAME}/student/disciplines`
-            const response = await getDisciplines(url, {groups: user.group});
-
-            localStorage.setItem('disciplines', JSON.stringify(response.distributed_load));
-            localStorage.setItem('surveysPassed', JSON.stringify(response.surveys_passed));
-    
-            setDisciplines(response.distributed_load);
-            setSurveysPassed(response.surveys_passed)
-        }
-        fetchDisciplines().then(() => setIsLoading(false));
-    }, [user.group])
+        fetchDisciplines();
+    }, [])
 
     const checkSubmittedSurveys = (disciplineId) => {
         const submittedSurveys = surveysPassed?.submitted_surveys;
@@ -41,7 +40,7 @@ const FieldSurveys = () => {
         return submitted;
     }
 
-    if (isLoading) {
+    if (isDisciplinesLoading) {
         return (
             <Loader/>
         )

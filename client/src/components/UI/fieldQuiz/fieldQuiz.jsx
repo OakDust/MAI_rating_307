@@ -1,18 +1,18 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import classes from './styles.module.scss';
 import QuestionsList from '../questionsList/questionsList';
 import MyButton from '../myButton/myButton';
-import { fieldAnswers } from './fieldAnswers';
 import CompletedQuiz from '../completedQuiz/completedQuiz';
-import {postQuiz} from "../../../http/submitQuiz";
+import StudentService from '../../../http/studentService';
+import { fieldAnswers } from './fieldAnswers';
+import { formatBodyAnswers } from '../../../utils/student';
+import { AuthContext } from '../../../context';
 
 const FieldQuiz = ({disciplineInfo, setTitle}) => {
     const [answers, setAnswers] = useState(fieldAnswers);
-    const [validateAnswers, setValidateAnswers] = useState(false);
     const [buttonDirty, setButtonDirty] = useState(false);
     const [isCompleteQuiz, setIsCompleteQuiz] = useState(false);
-
-    const authUser = JSON.parse(localStorage.getItem('authUser'));
+    const {dataUser} = useContext(AuthContext);
 
     const validateQuiz = () => {
         let validateFlag = true;
@@ -24,14 +24,8 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
             }
         }
 
-        if (validateFlag) {
-            setValidateAnswers(true);
-        }
+        return validateFlag;
     }
-
-    useEffect(() => {
-        validateQuiz();
-    }, )
 
     const answerHandler = (newAnswer, numberQuestion, role) => {
         const updatedAnswers = answers.map((answer) => {
@@ -46,21 +40,17 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
 
     const submitQuiz = async () => {
         setButtonDirty(true);
+        const body = formatBodyAnswers(answers, dataUser, disciplineInfo);
 
-        if (validateAnswers) {
-            setIsCompleteQuiz(true);
-
-            const newAnswers = [{
-                "student_id": authUser.id,
-                "groups": authUser.group,
-                "lecturer_name": disciplineInfo.lecturer,
-                "seminarian_name": disciplineInfo.seminarian,
-                "discipline_id": disciplineInfo.discipline_id,
-            },
-                ...answers
-            ]
-
-            await postQuiz(newAnswers)
+        if (validateQuiz()) {
+            try{
+                const response = await StudentService.submitQuiz(dataUser, body)
+                if (response.statusCode === 201) {
+                    setIsCompleteQuiz(true);
+                }
+            } catch (e) {
+                console.log(e.message);
+            }
         }
     }
 
@@ -88,7 +78,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
 
             <QuestionsList answered={answerHandler} buttonDirty={buttonDirty}/>
             
-            {(!validateAnswers && buttonDirty) && <p className={classes.validate__error}>Необходимо заполнить все поля!</p>}
+            {(!validateQuiz() && buttonDirty) && <p className={classes.validate__error}>Необходимо заполнить все поля!</p>}
             <MyButton onClick={submitQuiz}>Завершить</MyButton>
         </div>
     );
