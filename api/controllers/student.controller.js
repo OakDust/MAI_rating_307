@@ -2,7 +2,7 @@ const Student = require('../models/student')
 const StudentsByGroups = require('../models/studentsByGroups')
 const service = require('../service/student.service')
 const Quiz = require("../models/quiz");
-const {getGroupId} = require("../service/student.service");
+const {getGroupId, teacherExists} = require("../service/student.service");
 const Discipline = require("../models/discipline");
 const {Op, QueryTypes} = require("sequelize");
 const Teacher = require("../models/teacher");
@@ -215,22 +215,34 @@ exports.setTeacherScore = async (req, res, next) => {
 
 exports.updateTeacher = async (req, res) => {
     try {
-        const distributed_load = await StudentCrudLoad.findOne({
-            where: {
-                group_id: req.body.group_id,
-                lectures: req.body.lectures,
-                practical: req.body.practical,
-                semester: req.body.semester,
-                teacher_id: req.body.teacher_id,
-                discipline_id: req.body.discipline_id
-            }
-        })
+        const [distributed_load, teacher] = await service.updateTeacherCheckBody(req.body)
+
+        if (!teacher || !distributed_load) {
+            res.status(400).json({
+                message: 'Неизвестный преподаватель или не получается получить распределение нагрузки.',
+                statusCode: res.statusCode
+            })
+
+            return
+        }
 
         try {
-            if (distributed_load) {
                 const id = distributed_load.dataValues.id
+                const teacher_id = teacher.dataValues.id
 
-                const obj = {id: id, ...req.body}
+                const obj = {
+                    id: id,
+                    practical: req.body.practical,
+                    lectures: req.body.lectures,
+                    teacher_name: teacher.dataValues.name,
+                    teacher_surname: teacher.dataValues.surname,
+                    teacher_patronymic: teacher.dataValues.patronymic,
+                    laboratory: req.body.laboratory,
+                    teacher_id: teacher_id,
+                    semester: req.body.semester,
+                    group_id: req.body.group_id,
+                    group_name: req.body.group_name,
+                }
 
                 await StudentCrudLoad.update(obj, {
                     where: {
@@ -242,7 +254,6 @@ exports.updateTeacher = async (req, res) => {
                     message: "Информация обновлена успешно",
                     statusCode: res.statusCode,
                 })
-            }
         } catch (err) {
             res.status(400).json({
                 statusCode: res.statusCode,
@@ -277,7 +288,7 @@ exports.provideDistributedLoad = async (req, res) => {
             where: {
                 group_name: groupName,
                 group_id: groups_id,
-                semester: semester
+                semester: semester,
             }
         })
 
@@ -288,6 +299,7 @@ exports.provideDistributedLoad = async (req, res) => {
             surveys_passed: surveys_passed,
         })
     } catch (err) {
+        console.log(err)
         res.status(400).json({
             message: err.message,
             statusCode: res.statusCode,

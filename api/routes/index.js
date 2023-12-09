@@ -38,12 +38,20 @@ router.post('/register',
 
             req.body.role === 'Студент' ?
                 await controller.createStudent(req, res)
-                : req.body.role === 'Преподаватель' ?
-                    await controller.createProfessor(req, res)
-                    : res.status(400).json({
-                        message: 'Неверный формат данных.',
-                        statusCode: res.statusCode,
-                    })
+                :
+                res.status(400).json({
+                    message: 'Неверный формат данных.',
+                    statusCode: res.statusCode,
+                })
+
+            // req.body.role === 'Студент' ?
+            //     await controller.createStudent(req, res)
+            //     : req.body.role === 'Преподаватель' ?
+            //         await controller.createProfessor(req, res)
+            //         : res.status(400).json({
+            //             message: 'Неверный формат данных.',
+            //             statusCode: res.statusCode,
+            //         })
         } catch (err) {
             res.status(500).json({
                 message: "Не получилось зарегистрироваться.",
@@ -51,6 +59,19 @@ router.post('/register',
                 error: err.message,
             })
         }
+})
+
+router.post('/professorRegister', async (req, res, next) => {
+    if (req.query.security_token === process.env.REGISTER_PROFESSOR_LINK_TOKEN) {
+        await controller.createProfessor(req, res)
+    } else {
+        res.status(403).json({
+            message: 'Недостаточно прав для просмотра страницы',
+            statusCode: res.statusCode
+        })
+
+        return
+    }
 })
 
 module.exports = router;

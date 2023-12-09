@@ -6,6 +6,7 @@ const Teacher = require("../models/teacher");
 const Groups = require("../models/groups");
 const StudentsByGroups = require("../models/studentsByGroups");
 const {Op} = require("sequelize");
+const jwt = require("jsonwebtoken");
 
 
 exports.getGroupsList = async (req, res) => {
@@ -89,29 +90,29 @@ exports.createStudent = async (req, res) => {
 }
 
 exports.createProfessor = async (req, res, next) => {
-    const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-
-    const dbTeacher = await Teacher.findOne({
-        where: {
-            name: req.body.name,
-            surname: req.body.surname,
-            patronymic: req.body.patronymic,
-        }
-    })
-
-    const existTeacher = await Professor.findOne({
-        where: {
-            name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
-            role: req.body.role
-        }
-    })
-
-    if (!dbTeacher || existTeacher) {
-        res.status(400).json({message: 'Такой преподаватель не существует.'})
-        return
-    }
-
     try {
+        const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+
+        const dbTeacher = await Teacher.findOne({
+            where: {
+                name: req.body.name,
+                surname: req.body.surname,
+                patronymic: req.body.patronymic,
+            }
+        })
+
+        const existTeacher = await Professor.findOne({
+            where: {
+                name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
+                role: req.body.role
+            }
+        })
+
+        if (!dbTeacher || existTeacher) {
+            res.status(400).json({message: 'Такой преподаватель не существует.'})
+            return
+        }
+
         const professor = {
             id: dbTeacher.dataValues.id,
             name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,

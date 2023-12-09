@@ -1,8 +1,9 @@
 const Teacher = require("../models/teacher");
 const GroupsDB = require("../models/groups");
 const DistributedLoad = require("../models/distributed_load");
-const {QueryTypes} = require("sequelize");
+const {QueryTypes, Op} = require("sequelize");
 const Quiz = require("../models/quiz");
+const StudentCrudLoad = require("../models/student_crud_load");
 
 
 exports.getSurveysStudentPassed = async (student_id) => {
@@ -233,9 +234,10 @@ exports.getCrudDistributedLoad = (distributed_load) => {
             seminarian = lecturer
         } else if (count === 2) {
             for (let j = 0; j < count; j++) {
-                this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) :  null
 
-                data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
+                (this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '' ? lecturer = this.getName(data[j]) :  null
+
+                data[j].practical !== 0 && seminarian === '' ? seminarian = this.getName(data[j]) : null
             }
         } else if (count === 3) {
             for (let j = 0; j < count; j++) {
@@ -258,4 +260,69 @@ exports.getCrudDistributedLoad = (distributed_load) => {
     }
 
     return check
+}
+
+exports.updateTeacherCheckBody = async (body) => {
+    let dbWhere = {
+        group_id: body.group_id,
+        semester: body.semester,
+        discipline_id: body.discipline_id,
+        teacher_id: body.teacher_id,
+    }
+
+    const getAmountOfTeachers = await StudentCrudLoad.findAll({
+        where: {
+            group_id: body.group_id,
+            semester: body.semester,
+            discipline_id: body.discipline_id
+        }
+    })
+
+    let amountOfTeachers = getAmountOfTeachers.length
+    if (amountOfTeachers === 1) {
+        dbWhere.practical = getAmountOfTeachers[0].dataValues.practical
+    } else if (amountOfTeachers === 2) {
+        for (let i = 0; i < 2; i++) {
+            if (body.lectures !== 0) {
+                if (getAmountOfTeachers[i].dataValues.lectures !== 0 || this.sum(getAmountOfTeachers[i].dataValues) === 0) {
+                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
+                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
+                }
+            } else if (body.practical !== 0) {
+                if (getAmountOfTeachers[i].dataValues.practical !== 0) {
+                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
+                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
+                }
+            }
+        }
+
+    } else if (amountOfTeachers === 3) {
+        for (let i = 0; i < 3; i++) {
+            if (body.lectures !== 0) {
+                if (getAmountOfTeachers[i].dataValues.lectures !== 0 || this.sum(getAmountOfTeachers[i].dataValues) === 0) {
+                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
+                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
+                }
+            } else if (body.practical !== 0) {
+                if (getAmountOfTeachers[i].dataValues.practical !== 0) {
+                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
+                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
+                }
+            }
+        }
+    }
+
+    const distributed_load = await StudentCrudLoad.findOne({
+        where: dbWhere
+    })
+
+    const teacher = await Teacher.findOne({
+        where: {
+            name: body.teacher_name,
+            surname: body.teacher_surname,
+            patronymic: body.teacher_patronymic,
+        }
+    })
+
+    return [distributed_load, teacher]
 }
