@@ -62,4 +62,47 @@ export default class StudentService {
 
         return response.json();
     }
+
+    static async getTeachers (dataUser) { 
+        const url = `${process.env.REACT_APP_HOSTNAME}/student/getTeachers`;
+        const response = await fetch(url, {headers: {"Authorization": dataUser.Authorization}});
+
+        return response.json()
+    }
+
+    static async updateTeacher (teacher, discipline, dataUser, type) {
+        const url = `${process.env.REACT_APP_HOSTNAME}/student/updateTeacher`;
+        const [surname, name, patronymic] = teacher.value.split(' ');
+
+        const body = {
+            group_id: 50,
+            group_name: 'М3О-221Б-22',
+            lectures: type[0],
+            practical: type[1],
+            semester: 0,
+            teacher_name: name,
+            teacher_surname: surname,
+            teacher_patronymic: patronymic,
+            teacher_id: teacher.key,
+            discipline_name: discipline.discipline,
+            discipline_id: discipline.discipline_id,
+        }
+
+        console.log(body);
+
+        const requestHeaders = {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": dataUser.Authorization,
+            },
+            body: JSON.stringify(body)
+        }
+    
+        const response = await fetch(url, requestHeaders);
+
+        console.log(response);
+
+        return response.json();
+    }
 }

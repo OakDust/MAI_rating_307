@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const checkRole = require('../middleware/roleMiddleware')
+const headStudentCheck = require('../middleware/headStudentCheckMiddleware')
 
 const controller = require('../controllers/student.controller')
 
@@ -36,8 +37,12 @@ router.get('/getDisciplines', async (req, res, next) => {
     await controller.getDisciplines(req, res)
 })
 
-router.put('/updateTeacher', async (req, res, next) => {
+router.put('/updateTeacher', headStudentCheck(), async (req, res, next) => {
     await controller.updateTeacher(req, res)
+})
+
+router.put('/createDiscipline', headStudentCheck(), async (req, res, next) => {
+    await controller.createDiscipline(req, res)
 })
 
 

@@ -45,7 +45,18 @@ exports.professorAuth = async (req, res, next) => {
 
     const token = await generateAccessToken(professor.id, 'Professor', professor.email, professor.password)
 
+    const professorData = {
+        id: professor.dataValues.id,
+        name: professor.dataValues.name,
+        email: professor.dataValues.email,
+        role: professor.dataValues.role,
+        createdAt: professor.dataValues.createdAt,
+        updatedAt: professor.dataValues.updatedAt
+    }
+
     await res.json({
+        user: professorData,
+        statusCode: res.statusCode,
         message: false,
         token: 'Bearer ' + token
     })

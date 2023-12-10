@@ -12,7 +12,7 @@ export const getUrlByRole = (role) => {
 }
 
 export const formatUserData = (data, role) => {
-    const userData = (role === 'Студент' ? data.user : data);
+    const userData = data.user;
 
     let dataUser = {
         'Authorization': data.token,
@@ -46,8 +46,10 @@ export const formattingGroupsList = (groupsArray) => {
     let groupsList = []
 
     groupsArray.map((group) => (
-        groupsList.push(group.group_name)
-    ))
+        groupsList.push({
+            key: group.group_id,
+            value: group.group_name
+    })))
 
     return groupsList;
 }

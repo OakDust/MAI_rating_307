@@ -8,15 +8,23 @@ const StatIndication = ({student}) => {
     let indication = [];
 
     for (let i = 0; i < countSurveys; i++) {
-        let indicatorStyle = classes['indicator'];
+        const completedSurveys = student.submitted_surveys;
 
         if (i < countCompletedSurveys) {
-            indicatorStyle = classes['indicator'] + ' ' + classes.active;
+            indication.push(
+                <div className={classes['indicator'] + ' ' + classes.active}>
+                    <div></div>
+                    <p className={classes.indicator__info}>{completedSurveys[i].discipline_name}</p>
+                </div>
+            )
+        } 
+        else {
+            indication.push(
+                <div className={classes['indicator']}>
+                    <div/>
+                </div>
+            )
         }
-
-        indication.push(
-            <span className={indicatorStyle}></span>
-        )
     }
 
 

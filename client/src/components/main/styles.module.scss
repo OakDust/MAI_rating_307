@@ -9,26 +9,27 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    
-    .main__title{
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        gap: 69px;
 
-        img{
-            width: 300px;
-            height: auto;;
-        }
+    .user__info{
+        display: flex;
+        flex-direction: column;
+        color: #FFF;
+        font-family: Montserrat;
+        font-size: 20px;
 
-        h1{
-            color: #F4F4F4;
-            font-family: Tektur;
-            font-size: 82px;
-            font-style: normal;
-            font-weight: 800;
-            line-height: 100%;
+        p{
+            margin-top: 10px;
+            font-size: 16px;
         }
+    }
+
+    h1{
+        color: #F4F4F4;
+        font-family: Tektur;
+        font-size: 82px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 100%;
     }
 
     a {
@@ -44,8 +45,5 @@
 }
 
 .main__body{
-    display: flex;
-    gap: 160px;
-    align-items: flex-start;
     margin-top: 60px;
 }

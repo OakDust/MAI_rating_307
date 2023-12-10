@@ -2,7 +2,7 @@ const Student = require('../models/student')
 const StudentsByGroups = require('../models/studentsByGroups')
 const service = require('../service/student.service')
 const Quiz = require("../models/quiz");
-const {getGroupId} = require("../service/student.service");
+const {getGroupId, teacherExists} = require("../service/student.service");
 const Discipline = require("../models/discipline");
 const {Op, QueryTypes} = require("sequelize");
 const Teacher = require("../models/teacher");
@@ -104,6 +104,22 @@ exports.getDisciplines = async (req, res) => {
 }
 
 exports.getTeachers = async (req, res) => {
+    // begin
+    const student = await Student.findOne({
+        where: {
+            id: req.user.id
+        }
+    })
+
+    if (!student || !student.dataValues.is_head_student) {
+        res.status(500).json({
+            message: "Ошибка авторизации или пользователь не является старостой.",
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+    // end
     try {
         const teachers = await Teacher.findAll({
             attributes: ['id', 'name', 'surname', 'patronymic'],
@@ -199,22 +215,34 @@ exports.setTeacherScore = async (req, res, next) => {
 
 exports.updateTeacher = async (req, res) => {
     try {
-        const distributed_load = await StudentCrudLoad.findOne({
-            where: {
-                group_id: req.body.group_id,
-                lectures: req.body.lectures,
-                practical: req.body.practical,
-                semester: req.body.semester,
-                teacher_id: req.body.teacher_id,
-                discipline_id: req.body.discipline_id
-            }
-        })
+        const [distributed_load, teacher] = await service.updateTeacherCheckBody(req.body)
+
+        if (!teacher || !distributed_load) {
+            res.status(400).json({
+                message: 'Неизвестный преподаватель или не получается получить распределение нагрузки.',
+                statusCode: res.statusCode
+            })
+
+            return
+        }
 
         try {
-            if (distributed_load) {
                 const id = distributed_load.dataValues.id
+                const teacher_id = teacher.dataValues.id
 
-                const obj = {id: id, ...req.body}
+                const obj = {
+                    id: id,
+                    practical: req.body.practical,
+                    lectures: req.body.lectures,
+                    teacher_name: teacher.dataValues.name,
+                    teacher_surname: teacher.dataValues.surname,
+                    teacher_patronymic: teacher.dataValues.patronymic,
+                    laboratory: req.body.laboratory,
+                    teacher_id: teacher_id,
+                    semester: req.body.semester,
+                    group_id: req.body.group_id,
+                    group_name: req.body.group_name,
+                }
 
                 await StudentCrudLoad.update(obj, {
                     where: {
@@ -226,7 +254,6 @@ exports.updateTeacher = async (req, res) => {
                     message: "Информация обновлена успешно",
                     statusCode: res.statusCode,
                 })
-            }
         } catch (err) {
             res.status(400).json({
                 statusCode: res.statusCode,
@@ -255,20 +282,132 @@ exports.provideDistributedLoad = async (req, res) => {
 
     const groupName = queryYear[0] + '-' + numberOfCourse.toString() + queryYear[1] + '-' + queryYear[2]
 
-    const groups_id = await getGroupId(groupName)
-    const distributed_load = await StudentCrudLoad.findAll({
-        where: {
-            group_name: groupName,
-            group_id: groups_id,
-            semester: semester
+    try {
+        const groups_id = await getGroupId(groupName)
+        const distributed_load = await StudentCrudLoad.findAll({
+            where: {
+                group_name: groupName,
+                group_id: groups_id,
+                semester: semester,
+            }
+        })
+
+        const check = service.getCrudDistributedLoad(distributed_load)
+
+        res.status(200).json({
+            distributed_load: check,
+            surveys_passed: surveys_passed,
+        })
+    } catch (err) {
+        console.log(err)
+        res.status(400).json({
+            message: err.message,
+            statusCode: res.statusCode,
+        })
+    }
+
+}
+
+exports.createDiscipline = async (req, res) => {
+    const userRequest = {
+        discipline_name: req.body.discipline_name,
+        teacher_surname: req.body.teacher_surname,
+        teacher_name: req.body.teacher_name,
+        teacher_patronymic: req.body.teacher_patronymic,
+        group_id: req.body.group_id,
+        group_name: req.body.group_name,
+        semester: req.body.semester,
+        lectures: req.body.lectures,
+        practical: req.body.practical,
+        laboratory: req.body.laboratory
+    }
+
+    try {
+        const dataExists = await StudentCrudLoad.findOne({
+            where: {
+                discipline_name: req.body.discipline_name,
+                teacher_surname: req.body.teacher_surname,
+                teacher_name: req.body.teacher_name,
+                teacher_patronymic: req.body.teacher_patronymic,
+                group_id: req.body.group_id,
+                group_name: req.body.group_name,
+                semester: req.body.semester,
+                lectures: req.body.lectures,
+                practical: req.body.practical,
+                laboratory: req.body.laboratory
+            }
+        })
+
+        if (dataExists) {
+            res.status(400).json({
+                message: 'Такая дисциплина уже существует.',
+                statusCode: res.statusCode
+            })
+
+            return
         }
-    })
 
-    const check = service.getCrudDistributedLoad(distributed_load)
+        const teacher = await Teacher.findOne({
+            where: {
+                surname: req.body.teacher_surname,
+                name: req.body.teacher_name,
+                patronymic: req.body.teacher_patronymic,
+            }
+        })
 
-    res.status(200).json({
-        distributed_load: check,
-        surveys_passed: surveys_passed,
-    })
+        if (!teacher) {
+            res.status(400).json({
+                message: 'Такой преподаватель не существует.',
+                statusCode: res.statusCode
+            })
 
+            return
+        }
+
+        let discipline = await Discipline.findOne({
+            where: {
+                name: userRequest.discipline_name
+            }
+        })
+
+        if (!discipline) {
+            await Discipline.create({
+                name: userRequest.discipline_name,
+                comment: '',
+            })
+
+            discipline = await Discipline.findOne({
+                where: {
+                    name: userRequest.discipline_name
+                }
+            })
+
+            userRequest.discipline_id = discipline.dataValues.id
+            userRequest.teacher_id = teacher.dataValues.id
+
+            await StudentCrudLoad.create(userRequest)
+
+            res.status(201).json({
+                message: "Учебная дисциплина успешно создана.",
+                statusCode: res.statusCode
+            })
+        }
+
+        userRequest.discipline_id = discipline.dataValues.id
+        userRequest.teacher_id = teacher.dataValues.id
+
+        await StudentCrudLoad.create(userRequest)
+
+        res.status(201).json({
+            message: "Учебная дисциплина успешно создана.",
+            statusCode: res.statusCode
+        })
+    } catch (err) {
+        res.status(400).json({
+            message: 'Не получается найти данные.',
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
 }

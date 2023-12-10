@@ -5,7 +5,7 @@ import Main from '../components/main/main';
 const Professors = () => {
     return( 
 
-        <Main title='Список преподавателей' displayField={<FieldProfessors/>}/>
+        <Main title='Список предметов и преподавателей' displayField={<FieldProfessors/>}/>
     );
 }
 export default Professors;

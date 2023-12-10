@@ -79,3 +79,16 @@ const formattingName = (fullName) => {
 
     return formattedNames.join(' ');
 }
+
+export const formattingTeachersList = (teachersList) => {
+    let formattedTeachersList = [];
+
+    teachersList.map((teacher) => (
+        formattedTeachersList.push({
+            key: teacher.id,
+            value: `${teacher.surname} ${teacher.name} ${teacher.patronymic}` 
+        })
+    ))
+
+    return formattedTeachersList;
+}

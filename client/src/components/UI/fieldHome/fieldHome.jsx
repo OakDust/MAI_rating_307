@@ -14,7 +14,7 @@ const FieldHome = () => {
             route: '/group',
         },
         {
-            title: 'Список преподавателей',
+            title: 'Список предметов и преподавателей',
             route: '/professors',
         }
     ]
