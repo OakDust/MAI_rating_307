@@ -202,7 +202,7 @@ exports.applyDistributedLoad = async (semester, groups_id, db_name) => {
     return check
 }
 
-exports.getCrudDistributedLoad = (distributed_load) => {
+exports.getCrudDistributedLoad = async (distributed_load) => {
     let discipline_ids = new Set()
     let discipline_names = new Set()
     for (let i = 0; i < distributed_load.length; i++) {
@@ -228,25 +228,66 @@ exports.getCrudDistributedLoad = (distributed_load) => {
         let lecturer = ''
         let seminarian = ''
         let laborant = ''
+        let lecturer_id
+        let seminarian_id
 
         if (count === 1) {
             lecturer = this.getName(data[0])
+            lecturer_id = data[0].teacher_id
             seminarian = lecturer
+            seminarian_id = data[0].teacher_id
         } else if (count === 2) {
             for (let j = 0; j < count; j++) {
 
-                (this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '' ? lecturer = this.getName(data[j]) :  null
+                if ((this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '') {
+                    lecturer = this.getName(data[j])
+                }
 
-                data[j].practical !== 0 && seminarian === '' ? seminarian = this.getName(data[j]) : null
+                if (data[j].practical !== 0 && seminarian === '') {
+                    seminarian = this.getName(data[j])
+                }
+                // data[j].practical !== 0 && seminarian === '' ?  : null
             }
         } else if (count === 3) {
             for (let j = 0; j < count; j++) {
-                this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) : null
+                // this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) : null
+                //
+                // data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
+                if ((this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '') {
+                    lecturer = this.getName(data[j])
+                }
 
-                data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
+                if (data[j].practical !== 0 && seminarian === '') {
+                    seminarian = this.getName(data[j])
+                }
 
                 data[j].laboratory !== 0 ? laborant = this.getName(data[j]) : null
             }
+        }
+
+        const teacherId = await Teacher.findAll({
+            where: {
+                [Op.or]: [
+                    {
+                        name: lecturer.split(' ')[1],
+                        surname: lecturer.split(' ')[0],
+                        patronymic: lecturer.split(' ')[2],
+                    },
+                    {
+                        name: seminarian.split(' ')[1],
+                        surname: seminarian.split(' ')[0],
+                        patronymic: seminarian.split(' ')[2],
+                    }
+                ]
+            }
+        })
+
+        if (this.getName(teacherId[0]) === lecturer && count !== 1) {
+            lecturer_id = teacherId[0].dataValues.id
+            seminarian_id = teacherId[1].dataValues.id
+        } else if (count !== 1) {
+            lecturer_id = teacherId[1].dataValues.id
+            seminarian_id = teacherId[0].dataValues.id
         }
 
         check.push({
@@ -255,6 +296,8 @@ exports.getCrudDistributedLoad = (distributed_load) => {
             // laborant: laborant,
             discipline_id: discipline_ids[i],
             discipline: discipline_names[i],
+            lecturer_id: lecturer_id,
+            seminarian_id: seminarian_id,
             key: i,
         })
     }

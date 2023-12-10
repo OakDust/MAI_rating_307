@@ -2,7 +2,7 @@ const Professor = require('../models/professor')
 const Student = require('../models/student')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const studentService = require('../service/student.service')
 
 function passRole(is_head_student) {
     return is_head_student ? 'Староста' : 'Студент'
@@ -18,6 +18,7 @@ const generateAccessToken = (id, role, email, password) => {
 
 exports.professorAuth = async (req, res, next) => {
     const professor = await Professor.findOne({
+        logging: false,
         where: {
             email: req.body.email
         }
@@ -65,6 +66,7 @@ exports.professorAuth = async (req, res, next) => {
 exports.studentAuth = async (req, res, next) => {
     try {
         const student = await Student.findOne({
+            logging: false,
             where: {
                 email: req.body.email
             }
@@ -94,12 +96,20 @@ exports.studentAuth = async (req, res, next) => {
 
         const role = passRole(student.dataValues.is_head_student)
 
+        const groupNameParticials = student.dataValues.groups.split('-', 3)
+
+        const year = new Date().getFullYear()
+        const groupName = groupNameParticials[0] + '-' + String(year % 2000 - Number(groupNameParticials[2]) + 1) + groupNameParticials[1] + '-' + groupNameParticials[2]
+
+        const groupId = await studentService.getGroupId(groupName)
+
         const studentData = {
             id: student.dataValues.id,
             name: student.dataValues.name,
             email: student.dataValues.email,
             role: role,
             groups: student.dataValues.groups,
+            group_id: groupId,
             is_head_student: student.dataValues.is_head_student,
             createdAt: student.dataValues.createdAt,
             updatedAt: student.dataValues.updatedAt
@@ -117,5 +127,4 @@ exports.studentAuth = async (req, res, next) => {
             message: err.stack,
         })
     }
-
 }

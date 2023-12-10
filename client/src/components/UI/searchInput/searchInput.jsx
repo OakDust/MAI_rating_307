@@ -6,7 +6,7 @@ const SearchInput = ({list, setValue, ...props}) => {
     const [isDirtySelect, setIsDirtySelect] = useState(false);
 
     const searchedList = useMemo(() => {
-        return list.filter(item => item.includes(selectQuery));
+        return list.filter(item => item.value.includes(selectQuery));
 
     }, [selectQuery, list])
 
@@ -19,16 +19,16 @@ const SearchInput = ({list, setValue, ...props}) => {
 
     const selectHandler = (item) => {
         setIsDirtySelect(false);
-        setSelectQuery(item);
+        setSelectQuery(item.value);
         setValue(item);
     }
 
     const showSearchedList = (searchedList) => {
-        if (searchedList.length > 0 && searchedList.length != list.length && isDirtySelect) {
+        if (searchedList.length > 0 && searchedList.length !== list.length && isDirtySelect) {
             return (
                 <ul>
                     {searchedList.map(item => (
-                        <li onClick={() => selectHandler(item)}>{item}</li>
+                        <li onClick={() => selectHandler(item)}>{item.value}</li>
                     ))}
                 </ul>
             )

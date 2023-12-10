@@ -111,7 +111,7 @@ exports.getTeachers = async (req, res) => {
         }
     })
 
-    if (!student || student.dataValues.is_head_student !== '1') {
+    if (!student || !student.dataValues.is_head_student) {
         res.status(500).json({
             message: "Ошибка авторизации или пользователь не является старостой.",
             statusCode: res.statusCode,
@@ -227,33 +227,33 @@ exports.updateTeacher = async (req, res) => {
         }
 
         try {
-                const id = distributed_load.dataValues.id
-                const teacher_id = teacher.dataValues.id
+            const id = distributed_load.dataValues.id
+            const teacher_id = teacher.dataValues.id
 
-                const obj = {
-                    id: id,
-                    practical: req.body.practical,
-                    lectures: req.body.lectures,
-                    teacher_name: teacher.dataValues.name,
-                    teacher_surname: teacher.dataValues.surname,
-                    teacher_patronymic: teacher.dataValues.patronymic,
-                    laboratory: req.body.laboratory,
-                    teacher_id: teacher_id,
-                    semester: req.body.semester,
-                    group_id: req.body.group_id,
-                    group_name: req.body.group_name,
+            const obj = {
+                id: id,
+                practical: req.body.practical,
+                lectures: req.body.lectures,
+                teacher_name: teacher.dataValues.name,
+                teacher_surname: teacher.dataValues.surname,
+                teacher_patronymic: teacher.dataValues.patronymic,
+                laboratory: req.body.laboratory,
+                teacher_id: teacher_id,
+                semester: req.body.semester,
+                group_id: req.body.group_id,
+                group_name: req.body.group_name,
+            }
+
+            await StudentCrudLoad.update(obj, {
+                where: {
+                    id: id
                 }
+            })
 
-                await StudentCrudLoad.update(obj, {
-                    where: {
-                        id: id
-                    }
-                })
-
-                res.status(200).json({
-                    message: "Информация обновлена успешно",
-                    statusCode: res.statusCode,
-                })
+            res.status(200).json({
+                message: "Информация обновлена успешно",
+                statusCode: res.statusCode,
+            })
         } catch (err) {
             res.status(400).json({
                 statusCode: res.statusCode,
@@ -292,7 +292,7 @@ exports.provideDistributedLoad = async (req, res) => {
             }
         })
 
-        const check = service.getCrudDistributedLoad(distributed_load)
+        const check = await service.getCrudDistributedLoad(distributed_load)
 
         res.status(200).json({
             distributed_load: check,
@@ -348,6 +348,7 @@ exports.createDiscipline = async (req, res) => {
         }
 
         const teacher = await Teacher.findOne({
+            logging: false,
             where: {
                 surname: req.body.teacher_surname,
                 name: req.body.teacher_name,
@@ -365,6 +366,7 @@ exports.createDiscipline = async (req, res) => {
         }
 
         let discipline = await Discipline.findOne({
+            logging: false,
             where: {
                 name: userRequest.discipline_name
             }
@@ -372,11 +374,13 @@ exports.createDiscipline = async (req, res) => {
 
         if (!discipline) {
             await Discipline.create({
+                logging: false,
                 name: userRequest.discipline_name,
                 comment: '',
             })
 
             discipline = await Discipline.findOne({
+                logging: false,
                 where: {
                     name: userRequest.discipline_name
                 }

@@ -16,15 +16,15 @@ export const authFields = [
 export const registrationFields = [
     {
         type: 'text',
-        title: 'Имя',
-        name: 'name',
-        placeholder: 'Введите имя'
-    },
-    {
-        type: 'text',
         title: 'Фамилия',
         name: 'surname',
         placeholder: 'Введите фамилию',
+    },
+    {
+        type: 'text',
+        title: 'Имя',
+        name: 'name',
+        placeholder: 'Введите имя'
     },
     {
         type: 'text',

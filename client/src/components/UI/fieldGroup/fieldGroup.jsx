@@ -49,7 +49,10 @@ const FieldGroup = ({groupList, userRole, loading}) => {
                         {student}
                     </li>
                 ))}
-                <li>Староста: {headStudent}</li>
+                <li>
+                    Староста: 
+                    <div>{headStudent}</div>
+                </li>
             </ul>
 
             <img className={classes.group__background} src={background} alt='group'/>
