@@ -1,7 +1,6 @@
 import React from 'react';
 import classes from './styles.module.scss';
 
-
 const MyButton = ({children, ...props}) => {
 
     return(

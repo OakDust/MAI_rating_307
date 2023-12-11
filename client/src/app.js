@@ -4,7 +4,6 @@ import { AuthContext } from './context';
 import AppRouter from './components/appRouter/appRouter';
 import classes from './styles/indexStyles.scss';
 
-
 function App() {
   const [isAuth, setIsAuth] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,6 +19,7 @@ function App() {
   }, [])
   
   return (
+
     <div className={classes}>
       <AuthContext.Provider value={{
         isAuth, setIsAuth, dataUser, setDataUser, isLoading

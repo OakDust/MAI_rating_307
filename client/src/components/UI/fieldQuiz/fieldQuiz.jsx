@@ -32,6 +32,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
             if (answer.id === numberQuestion) {
                 return {...answer, [role]: newAnswer};
             }
+            
             return answer;
         });
         

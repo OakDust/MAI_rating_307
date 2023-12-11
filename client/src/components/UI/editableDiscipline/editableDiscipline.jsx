@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import editIcon from '../../../assets/icons/edit.webp';
 import classes from './styles.module.scss';
 import doneIcon from '../../../assets/icons/done.webp';
 
-const EditableItem = ({discipline, teacher, type, listItems, updateValue}) => {
+const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue}) => {
     const [editMode, setEditMode] = useState(false);
     const [newValue, setNewValue] = useState('');
 
@@ -26,8 +26,8 @@ const EditableItem = ({discipline, teacher, type, listItems, updateValue}) => {
                 </td>
                 <td>{type}</td>
                 <td>
-                    <div className={classes.done__icon}>
-                        <img onClick={() => editHandler()} src={doneIcon}/>
+                    <div className={classes.done__icon} onClick={() => editHandler()}>
+                        <img src={doneIcon} alt='Отредактировать'/>
                     </div>
                 </td>
             </tr>
@@ -46,4 +46,4 @@ const EditableItem = ({discipline, teacher, type, listItems, updateValue}) => {
 
     
 }
-export default EditableItem;
+export default EditableDiscipline;

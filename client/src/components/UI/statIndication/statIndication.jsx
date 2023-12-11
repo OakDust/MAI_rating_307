@@ -3,7 +3,6 @@ import classes from './styles.module.scss';
 
 const StatIndication = ({student, countSurveys}) => {
     const countCompletedSurveys = student.submitted_surveys?.length ?? 0;
-
     let indication = [];
 
     for (let i = 0; i < countSurveys; i++) {
@@ -12,7 +11,7 @@ const StatIndication = ({student, countSurveys}) => {
         if (i < countCompletedSurveys) {
             indication.push(
                 <div className={classes['indicator'] + ' ' + classes.active}>
-                    <div></div>
+                    <div/>
                     <p className={classes.indicator__info}>{completedSurveys[i].discipline_name}</p>
                 </div>
             )
@@ -25,7 +24,6 @@ const StatIndication = ({student, countSurveys}) => {
             )
         }
     }
-
 
     return( 
         <div className={classes.indication__container}>

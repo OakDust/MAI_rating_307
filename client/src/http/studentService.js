@@ -1,4 +1,4 @@
-import { getInfoByType, setFullFormatGroup } from "../utils/student";
+import { getDisciplineInfoByType, setFullFormatGroup } from "../utils/student";
 
 export default class StudentService {
     static async getDisciplines (dataUser) {
@@ -75,9 +75,9 @@ export default class StudentService {
     static async updateTeacher (teacher, discipline, dataUser, type) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/updateTeacher`;
         const [surname, name, patronymic] = teacher.split(' ');
-        const fullFormatGroup = setFullFormatGroup(dataUser.group);
 
-        const infoByType = getInfoByType(discipline, type);
+        const fullFormatGroup = setFullFormatGroup(dataUser.group);
+        const infoByType = getDisciplineInfoByType(discipline, type);
 
         const body = {
             group_id: dataUser.group_id,
@@ -93,8 +93,6 @@ export default class StudentService {
             discipline_id: discipline.discipline_id,
         }
 
-        console.log(body);
-
         const requestHeaders = {
             method: "PUT",
             headers: {
@@ -105,8 +103,6 @@ export default class StudentService {
         }
     
         const response = await fetch(url, requestHeaders);
-
-        console.log(response);
 
         return response.json();
     }

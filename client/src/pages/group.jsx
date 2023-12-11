@@ -6,7 +6,6 @@ import { useFetching } from '../hooks/useFetching';
 import { formattingGroupList } from '../utils/student';
 import StudentService from '../http/studentService';
 
-
 const Group = () => {
     const [groupList, setGroupList] = useState({students: [], headStudent: ''});
     const {dataUser} = useContext(AuthContext);

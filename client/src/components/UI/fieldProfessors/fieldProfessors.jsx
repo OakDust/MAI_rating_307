@@ -5,9 +5,7 @@ import { AuthContext } from '../../../context';
 import { useFetching } from '../../../hooks/useFetching';
 import { formattingProfessorsList, formattingTeachersList} from '../../../utils/student';
 import StudentService from '../../../http/studentService';
-import editIcon from '../../../assets/icons/edit.webp';
-import EditableItem from '../editableItem/editableItem';
-
+import EditableDiscipline from '../editableDiscipline/editableDiscipline';
 
 const FieldProfessors = () => {
     const [disciplines, setDisciplines] = useState([]);
@@ -16,13 +14,12 @@ const FieldProfessors = () => {
     const [fetchDisciplines, isDisciplinesLoading] = useFetching(async () => {
         const response = await StudentService.getDisciplines(dataUser);
         formattingProfessorsList(response.distributed_load);
-        console.log(response);
+        
         setDisciplines(response.distributed_load);
     })
 
     const [fetchTeachers, isTeachersLoading] = useFetching(async () => {
         const response = await StudentService.getTeachers(dataUser);
-        console.log(response);
         const teachers = formattingTeachersList(response);
 
         setTeachersList(teachers);
@@ -34,8 +31,7 @@ const FieldProfessors = () => {
     }, [])
 
     const updateTeacher = async (teacher, discipline, type) => {
-        const response = await StudentService.updateTeacher(teacher, discipline, dataUser, type);
-        console.log(response);
+        await StudentService.updateTeacher(teacher, discipline, dataUser, type);
         fetchDisciplines();
     }
 
@@ -48,22 +44,22 @@ const FieldProfessors = () => {
     return( 
         <table className={classes.disciplines__table}>
             <thead>
-                <th>Дисциплина</th>
-                <th>ФИО преподавателя</th>
-                <th>Форма</th>
-                <th>Ред.</th>
+                <td>Дисциплина</td>
+                <td>ФИО преподавателя</td>
+                <td>Форма</td>
+                <td>Ред.</td>
             </thead>
             <tbody>
                 {disciplines.map(discipline => (
                     <>
-                        <EditableItem 
+                        <EditableDiscipline
                             discipline={discipline} 
                             teacher={discipline.lecturer} 
                             type={'ЛК'}
                             listItems={teachersList}
                             updateValue={updateTeacher}
                         />
-                        <EditableItem 
+                        <EditableDiscipline 
                             discipline={discipline} 
                             teacher={discipline.seminarian} 
                             type={'ПЗ'}

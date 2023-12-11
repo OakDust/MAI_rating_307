@@ -93,7 +93,7 @@ export const formattingTeachersList = (teachersList) => {
     return formattedTeachersList;
 }
 
-export const getInfoByType = (discipline, type) => {
+export const getDisciplineInfoByType = (discipline, type) => {
     let disciplineInfoByType = {
         lectures: 1,
         practical: 0,
@@ -121,12 +121,11 @@ export const setFullFormatGroup = (group) => {
 
 const getYearOfStudy = (group) => {
     const currentDate = new Date();
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
 
     const receiptMonth = 8;
     const receiptYear = `20${group.split('-')[2]}`;
-
-    const month = currentDate.getMonth();
-    const year = currentDate.getFullYear();
 
     const countMounts = Math.abs(receiptYear - year) * 12 + month - receiptMonth;
 

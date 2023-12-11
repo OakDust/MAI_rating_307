@@ -146,7 +146,7 @@ exports.getTeacherRatingById = async (req, res) => {
                 lecturerScore: lecturerScore / lecturerCount / 7,
                 seminarianScore: seminarianScore / seminarianCount / 7,
                 // test: disciplines,
-                totalScore: totalScore / totalCount
+                totalScore: (totalScore / totalCount).toFixed(2),
             })
         } else {
             res.status(200).json({

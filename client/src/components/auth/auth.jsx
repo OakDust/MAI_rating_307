@@ -18,8 +18,6 @@ const Auth = ({isRegistration}) => {
         try {
             const response = await AuthService.authUser(role, authFields);
 
-            console.log(response);
-
             if (response?.token) {
                 const dataUser = formatUserData(response, role);
                 localStorage.setItem('authUser', JSON.stringify(dataUser));
