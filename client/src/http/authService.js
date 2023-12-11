@@ -32,6 +32,7 @@ export default class AuthService {
     static async registrateUser(role, registraionFields, studentGroup) {
         const url = `${process.env.REACT_APP_HOSTNAME}/register`;
         const body = formatBodyRegistration(registraionFields, role, studentGroup);
+        console.log(registraionFields, studentGroup);
         
         const requestHeaders = {
             method: "POST", 

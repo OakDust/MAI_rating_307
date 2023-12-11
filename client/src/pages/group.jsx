@@ -24,7 +24,7 @@ const Group = () => {
     return(
         <Main 
         title='Моя группа'  
-        displayField={<FieldGroup groupList={groupList} userRole={dataUser.role} loading={groupListLoading}/>}/>
+        displayField={<FieldGroup groupList={groupList} dataUser={dataUser} loading={groupListLoading}/>}/>
 
     );
 }
