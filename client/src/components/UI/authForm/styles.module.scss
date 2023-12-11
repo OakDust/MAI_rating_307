@@ -49,3 +49,39 @@
         text-align: center;
     }
 }
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .auth__container{
+        width: 400px;
+    }
+
+    .auth__form {
+        padding: 24px;
+        gap: 20px; 
+
+        div {
+            label, input {
+                font-size: 16px;
+            }
+
+            input {
+                padding: 15px;
+            }
+        }
+    }
+    
+}
+
+@media screen and (min-width: 360px) and (max-width: 480px) {
+    .auth__container{
+        width: 300px;
+    }
+
+    .auth__form {
+        div {
+            label, input {
+                font-size: 14px;
+            }
+        }
+    }
+}

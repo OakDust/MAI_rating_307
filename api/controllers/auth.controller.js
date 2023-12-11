@@ -1,5 +1,6 @@
 const Professor = require('../models/professor')
 const Student = require('../models/student')
+const studentService = require('../service/student.service')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
@@ -94,12 +95,20 @@ exports.studentAuth = async (req, res, next) => {
 
         const role = passRole(student.dataValues.is_head_student)
 
+        const groupNameParticials = student.dataValues.groups.split('-', 3)
+
+        const year = new Date().getFullYear()
+        const groupName = groupNameParticials[0] + '-' + String(year % 2000 - Number(groupNameParticials[2]) + 1) + groupNameParticials[1] + '-' + groupNameParticials[2]
+
+        const groupId = await studentService.getGroupId(groupName)
+
         const studentData = {
             id: student.dataValues.id,
             name: student.dataValues.name,
             email: student.dataValues.email,
             role: role,
             groups: student.dataValues.groups,
+            group_id: groupId,
             is_head_student: student.dataValues.is_head_student,
             createdAt: student.dataValues.createdAt,
             updatedAt: student.dataValues.updatedAt

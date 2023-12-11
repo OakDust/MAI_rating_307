@@ -292,7 +292,7 @@ exports.provideDistributedLoad = async (req, res) => {
             }
         })
 
-        const check = service.getCrudDistributedLoad(distributed_load)
+        const check = await service.getCrudDistributedLoad(distributed_load)
 
         res.status(200).json({
             distributed_load: check,

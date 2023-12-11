@@ -6,10 +6,9 @@ import { AuthContext } from '../../context/index.js';
 
 const Main = (props) => {
 
-    const {setIsAuth} = useContext(AuthContext);
-    const userInfo = JSON.parse(localStorage.getItem('authUser'));
+    const {setIsAuth, dataUser} = useContext(AuthContext);
 
-    const [name, surname] = userInfo.name.split(' ');
+    const [name, surname] = dataUser.name.split(' ');
 
     const logout = () => {
         setIsAuth(false);
@@ -23,7 +22,7 @@ const Main = (props) => {
                 <div className={classes.user__info}>
                     <h3>{name}</h3>
                     <h3>{surname}</h3>
-                    <p>{userInfo.group}</p>
+                    <p>{dataUser.group}</p>
                 </div>
 
                 <h1>ОПРОС КАФЕДРЫ 307</h1>
@@ -34,7 +33,7 @@ const Main = (props) => {
             </div>
 
             <div className={classes.main__body}>
-                <FieldMain title={props.title} displayField={props.displayField}/>
+                <FieldMain title={props.title} displayField={props.displayField} dataUser={dataUser}/>
             </div>
 
         </div>

@@ -22,7 +22,7 @@ export const formatUserData = (data, role) => {
     }
 
     if (role === 'Студент') {
-        dataUser = {...dataUser, 'group': userData.groups,}
+        dataUser = {...dataUser, 'group': userData.groups, 'group_id': userData.group_id}
     }
 
     return dataUser;
