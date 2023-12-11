@@ -31,21 +31,11 @@ export const publicRoutes = [
     }
 ]
 
-export const privateRoutes = [
-    {
-        path: HOME_ROUTE,
-        Component: Home,
-        title: 'МАИ | Опросы',
-    },
+const studentRoutes = [
     {
         path: SURVEYS_ROUTE,
         Component: Surveys,
         title: 'Опросы',
-    },
-    {
-        path: RATING_ROUTE,
-        Component: Rating,
-        title: 'Рейтинг',
     },
     {
         path: GROUP_ROUTE,
@@ -57,9 +47,30 @@ export const privateRoutes = [
         Component: Quiz,
         title: 'Опрос по дисциплине',
     },
-    {
-        path: PROFESSORS_ROUTE,
-        Component: Professors,
-        title: 'Список преподавателей',
-    }
 ]
+
+export const privateRoutes = {
+    'Студент': studentRoutes,
+
+    'Староста': [
+        ...studentRoutes,
+        {
+            path: HOME_ROUTE,
+            Component: Home,
+            title: 'МАИ | Опросы',
+        },
+        {
+            path: PROFESSORS_ROUTE,
+            Component: Professors,
+            title: 'Список преподавателей',
+        }
+    ],
+
+    'Преподаватель': [
+        {
+            path: RATING_ROUTE,
+            Component: Rating,
+            title: 'Рейтинг',
+        },
+    ]
+}

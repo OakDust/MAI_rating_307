@@ -16,7 +16,7 @@ const AppRouter = () => {
     if (isAuth) {
         return (
             <Routes>
-                {privateRoutes.map(({path, Component, title}) => {
+                {privateRoutes[dataUser.role].map(({path, Component, title}) => {
                     return (
                         <Route path={path} element={<Component title={title} />}/>
                     )
