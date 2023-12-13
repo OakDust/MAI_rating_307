@@ -1,33 +1,44 @@
-.editable__item {
-    display: flex;
-    align-items: center;
-    gap: 15px;
+.selected__field { 
 
-    input{
-        font-family: Montserrat;
-        font-size: 16px;
-        width: 300px;
-        padding: 10px;
-        box-sizing: border-box;
-        border-radius: 8px;
-        border: 1px black solid;
-        outline: none;
+    td:last-child{
+        display: flex;
+        border: none;
+        justify-content: center;
     }
 
-    .done {
-        background: #1410D6;
-        border-radius: 8px;
-        width: 30px;
-        height: 30px;
+    select {
+        text-align: center;
+        width: 100%;
+        border: none;
+        outline: none;
+        font-size: 22px;
+        font-family: Montserrat;
+
+        overflow-y: auto;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+
+        &::-webkit-scrollbar{
+            display: none;
+        }
+    }
+
+    .done__icon{
         display: flex;
         justify-content: center;
         align-items: center;
-        cursor: pointer;
-    }
-    
-    img {
-        width: 15px;
-        height: 15px;
-        cursor: pointer;
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        background-color: #0045BD;
+
+        img {
+            width: 18px;
+            height: 16px;
+        }
+
+        &:hover {
+            background-color: #00CFDC;
+        }
     }
 }

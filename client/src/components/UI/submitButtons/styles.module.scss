@@ -3,3 +3,9 @@
     justify-content: center;
     gap: 30px;
 }
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .button__container {
+        gap: 20px;
+    }
+}

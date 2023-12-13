@@ -10,9 +10,16 @@
     font-family: Montserrat;
     text-align: center;
 
-    h4{
-        font-size: 26px;
-        font-style: normal;
-        font-weight: 600;
+    .navigation__block{
+        display: flex;
+        justify-content: space-between;
+        
+        h4{
+            font-size: 26px;
+            font-style: normal;
+            font-weight: 600;
+        }
     }
+
+    
 }

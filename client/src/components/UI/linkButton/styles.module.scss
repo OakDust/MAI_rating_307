@@ -16,3 +16,16 @@
         color: #FFF;
     }
 }
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .button__link {
+        font-size: 20px;
+        padding: 10px 20px;
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 460px) {
+    .button__link {
+        font-size: 16px;
+    }
+}

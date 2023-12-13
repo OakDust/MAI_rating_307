@@ -1,3 +1,5 @@
+import { getInfoByType, setFullFormatGroup } from "../utils/student";
+
 export default class StudentService {
     static async getDisciplines (dataUser) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/disciplines?${new URLSearchParams({groups: dataUser.group})}`;
@@ -72,18 +74,21 @@ export default class StudentService {
 
     static async updateTeacher (teacher, discipline, dataUser, type) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/updateTeacher`;
-        const [surname, name, patronymic] = teacher.value.split(' ');
+        const [surname, name, patronymic] = teacher.split(' ');
+        const fullFormatGroup = setFullFormatGroup(dataUser.group);
+
+        const infoByType = getInfoByType(discipline, type);
 
         const body = {
-            group_id: 50,
-            group_name: 'М3О-221Б-22',
-            lectures: type[0],
-            practical: type[1],
+            group_id: dataUser.group_id,
+            group_name: fullFormatGroup,
+            lectures: infoByType.lectures,
+            practical: infoByType.practical,
             semester: 0,
             teacher_name: name,
             teacher_surname: surname,
             teacher_patronymic: patronymic,
-            teacher_id: teacher.key,
+            teacher_id: infoByType.teacherId,
             discipline_name: discipline.discipline,
             discipline_id: discipline.discipline_id,
         }

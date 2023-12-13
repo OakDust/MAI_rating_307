@@ -92,3 +92,43 @@ export const formattingTeachersList = (teachersList) => {
 
     return formattedTeachersList;
 }
+
+export const getInfoByType = (discipline, type) => {
+    let disciplineInfoByType = {
+        lectures: 1,
+        practical: 0,
+        teacherId: discipline.lecturer_id,
+    }
+
+    if (type === 'ПЗ') { 
+        disciplineInfoByType = {
+            lectures: 0,
+            practical: 1,
+            teacherId: discipline.seminarian_id,
+        }
+    }
+
+    return disciplineInfoByType;
+}
+
+export const setFullFormatGroup = (group) => {
+    const yearOfStudy = getYearOfStudy(group);
+    const codeGroup = group.split('-');
+    const fullFormatGroup = codeGroup[0] + '-' + yearOfStudy + codeGroup[1] + '-' + codeGroup[2];
+
+    return fullFormatGroup;
+}
+
+const getYearOfStudy = (group) => {
+    const currentDate = new Date();
+
+    const receiptMonth = 8;
+    const receiptYear = `20${group.split('-')[2]}`;
+
+    const month = currentDate.getMonth();
+    const year = currentDate.getFullYear();
+
+    const countMounts = Math.abs(receiptYear - year) * 12 + month - receiptMonth;
+
+    return Math.ceil(countMounts / 12);
+}

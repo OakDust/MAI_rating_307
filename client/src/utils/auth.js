@@ -22,7 +22,7 @@ export const formatUserData = (data, role) => {
     }
 
     if (role === 'Студент') {
-        dataUser = {...dataUser, 'group': userData.groups,}
+        dataUser = {...dataUser, 'group': userData.groups, 'group_id': userData.group_id}
     }
 
     return dataUser;
@@ -35,7 +35,7 @@ export const formatBodyRegistration = (fields, role, studentGroup) => {
         'patronymic': fields.patronymic,
         'email': fields.email,
         'password': fields.password,
-        'groups': studentGroup,
+        'groups': studentGroup.value,
         'role': role,
     }
 

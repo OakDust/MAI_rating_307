@@ -1,8 +1,7 @@
 import React from 'react';
 import classes from './styles.module.scss';
 
-const StatIndication = ({student}) => {
-    const countSurveys = 4;
+const StatIndication = ({student, countSurveys}) => {
     const countCompletedSurveys = student.submitted_surveys?.length ?? 0;
 
     let indication = [];

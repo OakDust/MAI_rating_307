@@ -1,12 +1,11 @@
 import React, {useEffect, useState} from 'react';
 import editIcon from '../../../assets/icons/edit.webp';
 import classes from './styles.module.scss';
-import SearchInput from '../searchInput/searchInput';
 import doneIcon from '../../../assets/icons/done.webp';
 
-const EditableItem = ({children, listItems, updateValue, discipline, type}) => {
+const EditableItem = ({discipline, teacher, type, listItems, updateValue}) => {
     const [editMode, setEditMode] = useState(false);
-    const [newValue, setNewValue] = useState();
+    const [newValue, setNewValue] = useState('');
 
     const editHandler = () => {
         updateValue(newValue, discipline, type);
@@ -15,21 +14,34 @@ const EditableItem = ({children, listItems, updateValue, discipline, type}) => {
 
     if (editMode) {
         return (
-            <div className={classes.editable__item}>
-                <SearchInput list={listItems} setValue={setNewValue}/>
-                <div className={classes.done} onClick={() => editHandler()}>
-                    <img src={doneIcon} alt='Завершить редактирование'/>
-                </div>
-            </div>
+            <tr className={classes.selected__field}>
+                <td>{discipline.discipline}</td>
+                <td>
+                    <select value={teacher.value} onChange={(event) => setNewValue((event.target.value))}>
+                        <option>{teacher}</option>
+                        {listItems.map(item => (
+                            <option value={item.value}>{item.value}</option>
+                        ))}
+                    </select>
+                </td>
+                <td>{type}</td>
+                <td>
+                    <div className={classes.done__icon}>
+                        <img onClick={() => editHandler()} src={doneIcon}/>
+                    </div>
+                </td>
+            </tr>
         )
     }
 
     return( 
 
-        <div className={classes.editable__item}>
-            <p>{children}</p>
-            <img src={editIcon} alt='Редактировать' onClick={() => setEditMode(true)}/>
-        </div>
+        <tr>
+            <td>{discipline.discipline}</td>
+            <td>{teacher}</td>
+            <td>{type}</td>
+            <td><img src={editIcon} alt='Редактировать' onClick={() => setEditMode(true)}/></td>
+        </tr>
     );
 
     

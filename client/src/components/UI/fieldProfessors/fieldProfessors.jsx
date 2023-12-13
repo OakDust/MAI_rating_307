@@ -56,49 +56,24 @@ const FieldProfessors = () => {
             <tbody>
                 {disciplines.map(discipline => (
                     <>
-                        <tr>
-                            <td>{discipline.discipline}</td>
-                            <td>{discipline.lecturer}</td>
-                            <td>ЛК</td>
-                            <td><img src={editIcon} atl='Редактировать'/></td>
-                        </tr>
-                        <tr>
-                            <td>{discipline.discipline}</td>
-                            <td>{discipline.seminarian}</td>
-                            <td>ПЗ</td>
-                            <td><img src={editIcon} atl='Редактировать'/></td>
-                        </tr>
+                        <EditableItem 
+                            discipline={discipline} 
+                            teacher={discipline.lecturer} 
+                            type={'ЛК'}
+                            listItems={teachersList}
+                            updateValue={updateTeacher}
+                        />
+                        <EditableItem 
+                            discipline={discipline} 
+                            teacher={discipline.seminarian} 
+                            type={'ПЗ'}
+                            listItems={teachersList}
+                            updateValue={updateTeacher}
+                        />
                     </>
                 ))}
             </tbody>
         </table>
-
-        // <ul className={classes.disciplines__list}>
-        //     {disciplines.map(discipline => (
-        //         <>
-        //             <li className={classes.discipline__table}>
-        //                 <p className={classes.discipline__info}>{discipline.discipline}</p>
-        //                 <EditableItem 
-        //                     listItems={teachersList} 
-        //                     updateValue={updateTeacher}
-        //                     discipline={discipline}
-        //                     type={[1, 0]}
-        //                 >{discipline.lecturer}</EditableItem>
-        //                 <p>ЛК</p>
-        //             </li>
-        //             <li className={classes.discipline__table}>
-        //                 <p className={classes.discipline__info}>{discipline.discipline}</p>
-        //                 <EditableItem 
-        //                     listItems={teachersList} 
-        //                     updateValue={updateTeacher}
-        //                     discipline={discipline}
-        //                     type={[0, 1]}
-        //                 >{discipline.seminarian}</EditableItem>
-        //                 <p>ПЗ</p>
-        //             </li>
-        //         </>
-        //     ))}
-        // </ul>
     );
 }
 export default FieldProfessors;

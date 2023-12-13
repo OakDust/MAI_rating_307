@@ -21,3 +21,24 @@
         }
     }
 }
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .button__container {
+        gap: 20px;
+        
+        .role__button {
+            padding: 10px 30px;
+            font-size: 18px;
+        }
+    }
+    
+}
+
+@media screen and (min-width: 360px) and (max-width: 460px) {
+    .button__container {
+        .role__button {
+            font-size: 14px;
+        }
+    }
+    
+}

@@ -1,21 +1,33 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useFetching } from '../../../hooks/useFetching';
 import classes from './styles.module.scss';
 import background from '../../../assets/backgrounds/groupBackground.webp';
 import StatIndication from '../statIndication/statIndication';
 import Loader from '../loader/loader';
+import StudentService from '../../../http/studentService';
 
+const FieldGroup = ({groupList, dataUser, loading}) => {
+    const [disciplines, setDisciplines] = useState([]);
 
-const FieldGroup = ({groupList, userRole, loading}) => {
+    const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
+        const response = await StudentService.getDisciplines(dataUser);
+        setDisciplines(response.distributed_load);
+    })
+
+    useEffect(() => {
+        fetchDisciplines();
+    }, [])
+
     const students = groupList.students;
     const headStudent = groupList.headStudent;
 
-    if (loading) {
+    if (loading || isDisciplinesLoading) {
         return (
             <Loader/>
         )
     }
     
-    if (userRole === 'Староста') {
+    if (dataUser.role === 'Староста') {
         return(
             <table className={classes.table__group}>
                 <thead>
@@ -32,7 +44,7 @@ const FieldGroup = ({groupList, userRole, loading}) => {
                             <td>{index + 1}</td>
                             <td>{student.name}</td>
                             <td>
-                                <StatIndication student={student}/>
+                                <StatIndication student={student} countSurveys={disciplines.length}/>
                             </td>
                         </tr>
                     ))}

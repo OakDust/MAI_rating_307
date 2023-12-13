@@ -1,25 +1,38 @@
-import React, {useState} from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import classes from './styles.module.scss';
 import { Link } from 'react-router-dom';
-import DropDownRating from '../dropDownRating/dropDownRating';
+import { useFetching } from '../../../hooks/useFetching';
+import ProfessorServise from '../../../http/professorService';
+import { AuthContext } from '../../../context';
+import Loader from '../loader/loader';
 
 const FieldRating = () => {
+    const [professorRating, setProfessorRating] = useState({});
 
-    const [dropDownActive, setDropDownActive] = useState(false);
+    const {dataUser} = useContext(AuthContext);
+
+    const [fetchRating, isLoadingRating] = useFetching(async () => {
+        const response = await ProfessorServise.getRating(dataUser);
+        console.log(response);
+
+        setProfessorRating(response);
+    })
+
+    useEffect(() => {
+        fetchRating();
+    }, [])
+
+    if (isLoadingRating) {
+        return (
+            <Loader/>
+        )
+    }
 
     return( 
 
         <div className={classes.rating__container}>
-            <Link to='/rating/professors'>Общий рейтинг</Link>
-
-            <div>
-                <p>Рейтинг по группам</p>
-                <span 
-                className={dropDownActive ? classes['dropdown__button'] + ' ' + classes.active : classes.dropdown__button} 
-                onClick={() => {setDropDownActive(!dropDownActive)}}
-                >{`>`}</span>
-            </div>
-            <DropDownRating/>
+            <h5>Общий рейтинг:</h5>
+            <h5>{professorRating.totalScore}</h5>
         </div>
     );
 }
