@@ -3,6 +3,7 @@ const {QueryTypes, Op} = require("sequelize");
 const Quiz = require("../models/quiz");
 const Teacher = require("../models/teacher");
 const {sum} = require("../service/student.service");
+const service = require('../service/professor.service')
 
 
 exports.showProfessors = async (req, res) => {
@@ -78,75 +79,67 @@ exports.getTeacherRatingById = async (req, res) => {
             return
         }
 
-        const quizzes = await Quiz.findAll({
-            where: {
-                [Op.or]: [
-                    {seminarian_id: id},
-                    {lecturer_id: id},
-                ]
-            }
-        })
+        // const quizzes = await Quiz.findAll({
+        //     where: {
+        //         [Op.or]: [
+        //             {seminarian_id: id},
+        //             {lecturer_id: id},
+        //         ]
+        //     }
+        // })
+        const query = `SELECT DISTINCT quizzes.id, quizzes.discipline_id, student_crud_load.discipline_name, student_crud_load.teacher_surname, student_crud_load.teacher_name, student_crud_load.teacher_patronymic FROM \`quizzes\` join student_crud_load on student_crud_load.discipline_id = quizzes.discipline_id where (quizzes.lecturer_id = ${id} or quizzes.seminarian_id = ${id}) and student_crud_load.teacher_id = ${id}`
+        const quizzes = await Quiz.sequelize.query(query, {queryType: QueryTypes.SELECT})
 
-        const length = quizzes.length
+        const length = quizzes[0].length
 
         if (length !== 0) {
             let groups = new Set()
-            let disciplines = new Set()
+            let disciplines = new Map()
 
+            for (let i = 0; i < length; i++) {
+                disciplines.set(quizzes[0][i].discipline_id, quizzes[0][i].discipline_name)
+            }
+
+            // for future feature
+            groups = Array.from(groups)
+            disciplines = Array.from(disciplines.entries())
             let totalScore = 0
             let totalCount = 0
 
-            let seminarianScore = 0
-            let seminarianCount = 0
-            let lecturerScore = 0
-            let lecturerCount = 0
+            const ratingByDisciplines = []
 
-            for (let i = 0; i < length; i++) {
-                let [lecturer_id, seminarian_id] = [quizzes[i].dataValues.lecturer_id, quizzes[i].dataValues.seminarian_id]
-
-                // for future feature
-                groups.add(quizzes[i].dataValues.group_id)
-
-                if (seminarian_id === id) {
-                    seminarianCount += 1
-                    seminarianScore += quizzes[i].dataValues.seminarian_score
-
-                    if (quizzes[i].dataValues.seminarian_score !== 0) {
-                        totalScore += quizzes[i].dataValues.seminarian_score / 7
-                        totalCount += 1
-                    }
-                }
-
-                if (lecturer_id === id) {
-                    lecturerCount += 1
-                    lecturerScore += quizzes[i].dataValues.lecturer_score
-
-                    if (quizzes[i].dataValues.lecturer_score !== 0) {
-                        totalScore += quizzes[i].dataValues.lecturer_score / 7
-                        totalCount += 1
-                    }
-                }
-
-                disciplines.add({
-                    discipline_id: quizzes[i].dataValues.discipline_id,
-                    discipline_name: quizzes[i].dataValues.discipline_name,
-                    lecturerScore: lecturerScore / lecturerCount / 7,
-                    seminarianScore: seminarianScore / seminarianCount / 7
+            if (disciplines.length === 0) {
+                res.status(200).json({
+                    teacherRatingByDiscipline: [],
+                    totalScore: 0
                 })
 
+                return
             }
 
-            groups = Array.from(groups)
-            disciplines = Array.from(disciplines)
+            for (let i = 0; i < disciplines.length; i++) {
+                const disciplineRating = await service.getScoreByDiscipline(id, disciplines[i])
+
+                if (disciplineRating.lecturer_score == "NaN" || disciplineRating.lecturer_score === 0) {
+                    totalCount -= 1
+                }
+                if (disciplineRating.seminarian_score == "NaN" || disciplineRating.seminarian_score === 0) {
+                    totalCount -= 1
+                }
+
+                ratingByDisciplines.push({
+                    discipline_id: disciplines[i][0],
+                    discipline_name: disciplines[i][1],
+                    ...disciplineRating
+                })
+
+                totalCount += 2
+                totalScore += Number(disciplineRating.lecturer_score) + Number(disciplineRating.seminarian_score)
+            }
 
             res.status(200).json({
-                // teacher: teacher,
-                // quizzes: quizzes,
-                // groups: groups,
-                lecturerScore: lecturerScore / lecturerCount / 7,
-                seminarianScore: seminarianScore / seminarianCount / 7,
-                // test: disciplines,
-                totalScore: (totalScore / totalCount).toFixed(2),
+                teacherRatingByDiscipline: ratingByDisciplines,
+                totalScore: (totalScore / totalCount).toFixed(2)
             })
         } else {
             res.status(200).json({

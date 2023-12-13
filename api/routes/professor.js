@@ -14,9 +14,13 @@ router.get('/allRating', async (req, res, next) => {
     // } else {
     //     res.status(403).json({message: "Недостаточно прав."})
     // }
-    await controller.getRating(req, res)
+    await controller.getAllTeachersRating(req, res)
 
 });
+
+router.get('/myRating', async (req, res) => {
+    await controller.getTeacherRatingById(req, res)
+})
 
 router.get('/', async (req, res, next) => {
     const quizzes = await Quiz.findAll({
@@ -26,10 +30,6 @@ router.get('/', async (req, res, next) => {
     })
 
     res.status(200).json(quizzes)
-})
-
-router.get('/myRating', async (req, res, next) => {
-    await controller.getTeacherRatingById(req, res)
 })
 
 module.exports = router;

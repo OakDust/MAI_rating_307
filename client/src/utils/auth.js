@@ -29,14 +29,20 @@ export const formatUserData = (data, role) => {
 }
 
 export const formatBodyRegistration = (fields, role, studentGroup) => {
-    const body = {
+    let body = {
         'name': fields.name,
         'surname': fields.surname,
         'patronymic': fields.patronymic,
         'email': fields.email,
         'password': fields.password,
-        'groups': studentGroup.value,
         'role': role,
+    }
+
+    if (role === 'Студент') {
+        body = {
+            ...body,
+            'groups': studentGroup,
+        }
     }
 
     return body;

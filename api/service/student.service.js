@@ -250,7 +250,7 @@ exports.getCrudDistributedLoad = async (distributed_load) => {
             }
         } else if (count === 3) {
             for (let j = 0; j < count; j++) {
-                // this.sum(data[j]) === 0  data[j].lectures !== 0 ? lecturer = this.getName(data[j]) : null
+                // this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) : null
                 //
                 // data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
                 if ((this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '') {

@@ -1,12 +1,49 @@
 .rating__container{
-    display: flex;
-    gap: 64px;
-    align-items: center;
-    margin-top: 60px;
-    text-align: left;
-
     h5{
+        text-align: left;
         font-family: Montserrat;
         font-size: 24px;
     }
+
+    .total__score{
+        display: flex;
+        gap: 64px;
+        margin-top: 60px;
+        text-align: left;
+    }
+
+    .rating__table{
+        margin-top: 50px;
+
+        table {
+            margin-top: 30px;
+            width: 100%;
+            border: 2px solid #D9D9D9;
+            border-radius: 16px;
+            border-collapse: separate;
+            text-align: center;
+            color: #000;
+            font-family: Montserrat;
+            font-size: 20px;
+
+            thead > tr > td,
+            tbody > tr > td{
+                border-right: 2px solid #D9D9D9;
+                border-bottom: 2px solid #D9D9D9;
+                box-sizing: border-box;
+                padding: 22px 0;
+        
+                &:last-child{
+                    border-right: none;
+                }
+            }
+            
+            tbody > tr > td{
+                border-bottom: none;
+            }
+        }
+    }
+    
+
+    
 }

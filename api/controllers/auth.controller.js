@@ -1,9 +1,8 @@
 const Professor = require('../models/professor')
 const Student = require('../models/student')
-const studentService = require('../service/student.service')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-
+const studentService = require('../service/student.service')
 
 function passRole(is_head_student) {
     return is_head_student ? 'Староста' : 'Студент'
@@ -19,6 +18,7 @@ const generateAccessToken = (id, role, email, password) => {
 
 exports.professorAuth = async (req, res, next) => {
     const professor = await Professor.findOne({
+        logging: false,
         where: {
             email: req.body.email
         }
@@ -66,6 +66,7 @@ exports.professorAuth = async (req, res, next) => {
 exports.studentAuth = async (req, res, next) => {
     try {
         const student = await Student.findOne({
+            logging: false,
             where: {
                 email: req.body.email
             }
@@ -126,5 +127,4 @@ exports.studentAuth = async (req, res, next) => {
             message: err.stack,
         })
     }
-
 }
