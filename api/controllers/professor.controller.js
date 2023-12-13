@@ -87,7 +87,7 @@ exports.getTeacherRatingById = async (req, res) => {
         //         ]
         //     }
         // })
-        const query = `SELECT DISTINCT quizzes.id, quizzes.discipline_id, student_crud_load.discipline_name, student_crud_load.teacher_surname, student_crud_load.teacher_name, student_crud_load.teacher_patronymic FROM \`quizzes\` join student_crud_load on student_crud_load.discipline_id = quizzes.discipline_id where (quizzes.lecturer_id = ${id} or quizzes.seminarian_id = ${id}) and student_crud_load.teacher_id = 35`
+        const query = `SELECT DISTINCT quizzes.id, quizzes.discipline_id, student_crud_load.discipline_name, student_crud_load.teacher_surname, student_crud_load.teacher_name, student_crud_load.teacher_patronymic FROM \`quizzes\` join student_crud_load on student_crud_load.discipline_id = quizzes.discipline_id where (quizzes.lecturer_id = ${id} or quizzes.seminarian_id = ${id}) and student_crud_load.teacher_id = ${id}`
         const quizzes = await Quiz.sequelize.query(query, {queryType: QueryTypes.SELECT})
 
         const length = quizzes[0].length
@@ -103,7 +103,6 @@ exports.getTeacherRatingById = async (req, res) => {
             // for future feature
             groups = Array.from(groups)
             disciplines = Array.from(disciplines.entries())
-
             let totalScore = 0
             let totalCount = 0
 
@@ -120,6 +119,13 @@ exports.getTeacherRatingById = async (req, res) => {
 
             for (let i = 0; i < disciplines.length; i++) {
                 const disciplineRating = await service.getScoreByDiscipline(id, disciplines[i])
+
+                if (disciplineRating.lecturer_score == "NaN" || disciplineRating.lecturer_score === 0) {
+                    totalCount -= 1
+                }
+                if (disciplineRating.seminarian_score == "NaN" || disciplineRating.seminarian_score === 0) {
+                    totalCount -= 1
+                }
 
                 ratingByDisciplines.push({
                     discipline_id: disciplines[i][0],

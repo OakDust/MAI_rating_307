@@ -48,9 +48,18 @@ exports.getScoreByDiscipline = async (teacherID, disciplineID) => {
         }
     }
 
+    lecturerScore = (lecturerScore / lecturerCount).toFixed(2)
+    seminarianScore = (seminarianScore / seminarianCount).toFixed(2)
+    if (lecturerScore == "NaN") {
+        lecturerScore = 0
+    }
+    if (seminarianScore == "NaN") {
+        seminarianScore = 0
+    }
+
     const ratingDTO = {
-        lecturer_score: (lecturerScore / lecturerCount).toFixed(2),
-        seminarian_score: (seminarianScore / seminarianCount).toFixed(2),
+        lecturer_score: lecturerScore,
+        seminarian_score: seminarianScore,
     }
 
     return ratingDTO
