@@ -1,11 +1,24 @@
-export const getUrlByRole = (role) => {
-    let url = `${process.env.REACT_APP_HOSTNAME}/auth/`;
+export const getAuthUrlByRole = (role) => {
+    let url = `${process.env.REACT_APP_HOSTNAME}/auth`;
 
     if (role === 'Студент') {
-        url += `studentAuth`;
+        url += `/studentAuth`;
     } 
     else {
-        url += `professor`;
+        url += `/professor`;
+    }
+
+    return url;
+}
+
+export const getRegistrateUrlByRole = (role) => {
+    let url = `${process.env.REACT_APP_HOSTNAME}`;
+
+    if (role === 'Студент') {
+        url += '/register';
+    }
+    else {
+        url += '/professorRegister'
     }
 
     return url;

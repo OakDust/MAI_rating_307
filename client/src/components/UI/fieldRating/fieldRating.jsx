@@ -13,8 +13,10 @@ const FieldRating = () => {
     const [fetchRating, isLoadingRating] = useFetching(async () => {
         const response = await ProfessorServise.getRating(dataUser);
 
-        setTotalScore(response.totalScore);
-        setRatingByDisciplines(response.teacherRatingByDiscipline);
+        if (response?.totalScore && response?.teacherRatingByDiscipline) {
+            setTotalScore(response.totalScore);
+            setRatingByDisciplines(response.teacherRatingByDiscipline);
+        }
     })
 
     useEffect(() => {
@@ -27,17 +29,9 @@ const FieldRating = () => {
         )
     }
 
-    return( 
-
-        <div className={classes.rating__container}>
-            <div className={classes.total__score}>
-                <h5>Общий рейтинг:</h5>
-                <h5>{totalScore}</h5>
-            </div>
-
-            <div className={classes.rating__table}>
-                <h5>Дисциплины</h5>
-
+    const showRatingByDisciplines = () => {
+        if (ratingByDisciplines.length > 0) {
+            return (
                 <table>
                     <thead>
                         <tr>
@@ -63,7 +57,26 @@ const FieldRating = () => {
                         ))}
                     </tbody>
                 </table>
+            )
+        }
+        else {
+            return (
+                <div className={classes.waste__list}>Нет данных...</div>
+            )
+        }
+    }
 
+    return( 
+
+        <div className={classes.rating__container}>
+            <div className={classes.total__score}>
+                <h5>Общий рейтинг:</h5>
+                <h5>{totalScore}</h5>
+            </div>
+
+            <div className={classes.rating__table}>
+                <h5>Дисциплины</h5>
+                {showRatingByDisciplines()}
             </div>
         </div>
     );

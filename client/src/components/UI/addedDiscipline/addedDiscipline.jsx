@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import { setFullFormatGroup } from '../../../utils/student';
 
-const AddedDiscipline = ({dataUser, fetchDisciplines}) => {
+const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode}) => {
     const [disciplineName, setDisciplineName] = useState('');
     const [teacherName, setTeacherName] = useState('');
     const [typeDiscipline, setTypeDiscipline] = useState('ПЗ');
@@ -23,8 +23,6 @@ const AddedDiscipline = ({dataUser, fetchDisciplines}) => {
             practical: (typeDiscipline === 'ПЗ' ? 1 : 0),
             laboratory: 0,
         }
-
-        console.log(body);
         
         const requestHeaders = {
             method: "PUT", 
@@ -40,36 +38,36 @@ const AddedDiscipline = ({dataUser, fetchDisciplines}) => {
             body: JSON.stringify(body)
         }
 
-        const response = await fetch(url, requestHeaders);
-        const message = response.json();
+        await fetch(url, requestHeaders);
 
-        console.log(message);
         fetchDisciplines();
     }
 
-    return( 
+    if (isAddMode) {
 
-        <tr>
-            <td>
-                <input 
-                    onChange={(e) => setDisciplineName(e.target.value)}
-                    value={disciplineName}
-                />
-            </td>
-            <td>
-                <input 
-                    onChange={(e) => setTeacherName(e.target.value)}
-                    value={teacherName}
-                />
-            </td>
-            <td>
-                <select value={typeDiscipline} onChange={(e) => setTypeDiscipline(e.target.value)}>
-                    <option value='ПЗ'>ПЗ</option>
-                    <option value='ЛК'>ЛК</option>
-                </select>
-            </td>
-            <td><div onClick={() => addDiscipline()}>add</div></td>
-        </tr>
-    );
+        return( 
+            <tr>
+                <td>
+                    <input 
+                        onChange={(e) => setDisciplineName(e.target.value)}
+                        value={disciplineName}
+                    />
+                </td>
+                <td>
+                    <input 
+                        onChange={(e) => setTeacherName(e.target.value)}
+                        value={teacherName}
+                    />
+                </td>
+                <td>
+                    <select value={typeDiscipline} onChange={(e) => setTypeDiscipline(e.target.value)}>
+                        <option value='ПЗ'>ПЗ</option>
+                        <option value='ЛК'>ЛК</option>
+                    </select>
+                </td>
+                <td><div onClick={() => addDiscipline()}>add</div></td>
+            </tr>
+        );
+    }
 }
 export default AddedDiscipline;

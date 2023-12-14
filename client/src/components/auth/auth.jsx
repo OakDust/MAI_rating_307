@@ -57,6 +57,7 @@ const Auth = ({isRegistration}) => {
             <RoleButtons 
                 role={role} 
                 setRole={setRole}
+                isRegistration={isRegistration}
             />
 
             <AuthForm 

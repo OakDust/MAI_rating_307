@@ -1,8 +1,8 @@
 .rating__container{
     h5{
-        text-align: left;
         font-family: Montserrat;
         font-size: 24px;
+        text-align: left;
     }
 
     .total__score{
@@ -41,6 +41,13 @@
             tbody > tr > td{
                 border-bottom: none;
             }
+        }
+
+        .waste__list{
+            color: red;
+            margin-top: 30px;
+            font-size: 20px;
+            text-align: left;
         }
     }
     

@@ -1,8 +1,8 @@
-import { formatBodyRegistration, getUrlByRole } from "../utils/auth";
+import { formatBodyRegistration, getAuthUrlByRole, getRegistrateUrlByRole } from "../utils/auth";
 
 export default class AuthService {
     static async authUser(role, authFields) {
-        let url = getUrlByRole(role);
+        let url = getAuthUrlByRole(role);
 
         const requestHeaders = {
             method: "POST", 
@@ -30,7 +30,7 @@ export default class AuthService {
     }
 
     static async registrateUser(role, registraionFields, studentGroup) {
-        const url = `${process.env.REACT_APP_HOSTNAME}/register`;
+        const url = getRegistrateUrlByRole(role);
         const body = formatBodyRegistration(registraionFields, role, studentGroup);
         console.log(body);
         

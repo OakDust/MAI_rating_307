@@ -5,6 +5,7 @@ import {
     PROFESSORS_ROUTE,
     QUIZ_ROUTE,
     RATING_ROUTE,
+    REGISTRATION_PRIVATE_ROUTE,
     REGISTRATION_ROUTE,
     SURVEYS_ROUTE,
 } from './consts.js'
@@ -26,6 +27,11 @@ export const publicRoutes = [
     },
     {
         path: REGISTRATION_ROUTE,
+        Component: Registration,
+        title: 'Регистрация',
+    },
+    {
+        path: REGISTRATION_PRIVATE_ROUTE,
         Component: Registration,
         title: 'Регистрация',
     }

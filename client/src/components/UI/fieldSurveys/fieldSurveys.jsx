@@ -15,8 +15,7 @@ const FieldSurveys = () => {
     const {dataUser} = useContext(AuthContext);
     const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
         const response = await StudentService.getDisciplines(dataUser);
-        formattingProfessorsList(response.distributed_load);
-        console.log(response)
+
         setDisciplines(response.distributed_load);
         setSurveysPassed(response.surveys_passed)
     })
