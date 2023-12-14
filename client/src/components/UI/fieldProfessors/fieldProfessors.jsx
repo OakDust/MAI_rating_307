@@ -6,6 +6,7 @@ import { useFetching } from '../../../hooks/useFetching';
 import { formattingProfessorsList, formattingTeachersList} from '../../../utils/student';
 import StudentService from '../../../http/studentService';
 import EditableDiscipline from '../editableDiscipline/editableDiscipline';
+import AddedDiscipline from '../addedDiscipline/addedDiscipline';
 
 const FieldProfessors = () => {
     const [disciplines, setDisciplines] = useState([]);
@@ -68,6 +69,7 @@ const FieldProfessors = () => {
                         />
                     </>
                 ))}
+                <AddedDiscipline dataUser={dataUser} fetchDisciplines={fetchDisciplines}/>
             </tbody>
         </table>
     );

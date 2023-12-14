@@ -42,6 +42,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
     const submitQuiz = async () => {
         setButtonDirty(true);
         const body = formatBodyAnswers(answers, dataUser, disciplineInfo);
+        console.log(body);
 
         if (validateQuiz()) {
             try{

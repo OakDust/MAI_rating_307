@@ -41,7 +41,7 @@ export const formatBodyRegistration = (fields, role, studentGroup) => {
     if (role === 'Студент') {
         body = {
             ...body,
-            'groups': studentGroup,
+            'groups': studentGroup.value,
         }
     }
 

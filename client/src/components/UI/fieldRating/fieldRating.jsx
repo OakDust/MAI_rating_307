@@ -4,6 +4,7 @@ import { useFetching } from '../../../hooks/useFetching';
 import ProfessorServise from '../../../http/professorService';
 import { AuthContext } from '../../../context';
 import Loader from '../loader/loader';
+import { checkNumberOfRating } from '../../../utils/professor';
 
 const FieldRating = () => {
     const [totalScore, setTotalScore] = useState(0);
@@ -51,12 +52,12 @@ const FieldRating = () => {
                             <tr>
                                 <td>ЛК</td>
                                 <td>{discipline.discipline_name}</td>
-                                <td>{discipline.lecturer_score}</td>
+                                <td>{checkNumberOfRating(discipline.lecturer_score)}</td>
                             </tr>
                             <tr>
                                 <td>ПЗ</td>
                                 <td>{discipline.discipline_name}</td>
-                                <td>{discipline.seminarian_score}</td>
+                                <td>{checkNumberOfRating(discipline.seminarian_score)}</td>
                             </tr>
                             </>
                         ))}
