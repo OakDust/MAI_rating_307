@@ -10,6 +10,14 @@ const Student = db.define('students', {
         allowNull: false,
         unique: true
     },
+    activation_link: {
+        type: DataTypes.TEXT,
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+    },
     name: {
         type: DataTypes.STRING(64),
         allowNull: false,

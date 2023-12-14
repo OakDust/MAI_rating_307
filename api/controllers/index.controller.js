@@ -1,12 +1,12 @@
 const Student = require('../models/student')
 const Professor = require('../models/professor')
-const service = require('../service/index.service')
 const bcrypt = require('bcryptjs')
 const Teacher = require("../models/teacher");
 const Groups = require("../models/groups");
 const StudentsByGroups = require("../models/studentsByGroups");
 const {Op} = require("sequelize");
-const jwt = require("jsonwebtoken");
+const mailService = require('../service/mail.service')
+const uuid = require('uuid')
 
 
 exports.getGroupsList = async (req, res) => {
@@ -45,7 +45,9 @@ exports.getGroupsList = async (req, res) => {
 exports.createStudent = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
-    if (!req.body.groups) {
+    const groupName = req.body.groups.value
+
+    if (!groupName) {
         res.status(400).json({message: 'Укажите группу'})
         return
     }
@@ -53,13 +55,13 @@ exports.createStudent = async (req, res) => {
     const dbStudent = await StudentsByGroups.findOne({
         where: {
             name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
-            groups: req.body.groups
+            groups: groupName
         }
     })
 
     const existStudent = await Student.findOne({
         where: {
-            groups: req.body.groups,
+            groups: groupName,
             name: req.body.name,
             role: req.body.role
         }
@@ -70,9 +72,14 @@ exports.createStudent = async (req, res) => {
         return
     }
 
+    // random unique string
+    const activationLink = uuid.v4()
+
     const student = {
         id: dbStudent.dataValues.id,
-        groups: req.body.groups,
+        activation_link: activationLink,
+        groups: groupName,
+        active: false,
         name: dbStudent.dataValues.name,
         email: req.body.email,
         password: hashedPassword,
@@ -82,9 +89,14 @@ exports.createStudent = async (req, res) => {
 
     try {
         await Student.create(student)
+        await mailService.sendActivationMail(student.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
+
         res.status(201).json({message: 'Регистрация прошла успешно.'})
     } catch (err) {
-        res.status(500).json({message: 'Не получилось зарегистрироваться.'});
+        res.status(500).json({
+            message: 'Не получилось зарегистрироваться.',
+            error: err.stack
+        });
     }
 
 }
@@ -112,9 +124,13 @@ exports.createProfessor = async (req, res, next) => {
             res.status(400).json({message: 'Такой преподаватель не существует.'})
             return
         }
+        const activationLink = uuid.v4()
 
         const professor = {
             id: dbTeacher.dataValues.id,
+            activation_link: activationLink,
+            active: false,
+            admin: false,
             name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
             email: req.body.email,
             role: req.body.role,
@@ -122,6 +138,8 @@ exports.createProfessor = async (req, res, next) => {
         };
 
         await Professor.create(professor)
+        await mailService.sendActivationMail(professor.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
+
         res.status(201).json({message: 'Регистрация прошла успешно.'})
     } catch (err) {
         res.status(400).json({message: 'Не получилось зарегистрироваться.'})
