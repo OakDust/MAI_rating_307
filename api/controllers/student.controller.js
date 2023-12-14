@@ -316,7 +316,6 @@ exports.provideDistributedLoad = async (req, res) => {
             surveys_passed: surveys_passed,
         })
     } catch (err) {
-        console.log(err)
         res.status(400).json({
             message: err.message,
             statusCode: res.statusCode,
@@ -328,9 +327,6 @@ exports.provideDistributedLoad = async (req, res) => {
 exports.createDiscipline = async (req, res) => {
     const userRequest = {
         discipline_name: req.body.discipline_name,
-        teacher_surname: req.body.teacher_surname,
-        teacher_name: req.body.teacher_name,
-        teacher_patronymic: req.body.teacher_patronymic,
         group_id: req.body.group_id,
         group_name: req.body.group_name,
         semester: req.body.semester,
@@ -340,27 +336,6 @@ exports.createDiscipline = async (req, res) => {
     }
 
     try {
-        const dataExists = await StudentCrudLoad.findOne({
-            where: {
-                discipline_name: req.body.discipline_name,
-                group_id: req.body.group_id,
-                group_name: req.body.group_name,
-                semester: req.body.semester,
-                lectures: req.body.lectures,
-                practical: req.body.practical,
-                laboratory: req.body.laboratory,
-            }
-        })
-
-        if (dataExists) {
-            res.status(400).json({
-                message: 'Такая дисциплина уже существует.',
-                statusCode: res.statusCode
-            })
-
-            return
-        }
-
         let teacher = await Teacher.findOne({
             logging: false,
             where: {
@@ -372,13 +347,12 @@ exports.createDiscipline = async (req, res) => {
 
         if (!teacher) {
             await Teacher.create({
-                logging: false,
                 surname: req.body.teacher_surname,
                 name: req.body.teacher_name,
                 patronymic: req.body.teacher_patronymic,
             })
 
-            teacher = Teacher.findOne({
+            teacher = await Teacher.findOne({
                 logging: false,
                 where: {
                     surname: req.body.teacher_surname,
@@ -386,13 +360,12 @@ exports.createDiscipline = async (req, res) => {
                     patronymic: req.body.teacher_patronymic,
                 }
             })
-
         }
 
         let discipline = await StudentCrudLoad.findOne({
             logging: false,
             where: {
-                discipline_name: userRequest.discipline_name
+                discipline_name: req.body.discipline_name
             }
         })
 
@@ -407,23 +380,14 @@ exports.createDiscipline = async (req, res) => {
                     name: req.body.discipline_name,
                 }
             })
-
-            userRequest.discipline_name = req.body.discipline_name
-            userRequest.discipline_id = discipline.dataValues.id
-            userRequest.teacher_id = teacher.dataValues.id
-
-            await StudentCrudLoad.create(userRequest)
-
-            res.status(201).json({
-                message: "Учебная дисциплина успешно создана.",
-                statusCode: res.statusCode
-            })
-
-            return
         }
 
-        userRequest.discipline_id = discipline.dataValues.discipline_id
+        userRequest.discipline_id = discipline.dataValues.id
+        userRequest.discipline_name = discipline.dataValues.name
         userRequest.teacher_id = teacher.dataValues.id
+        userRequest.teacher_name = teacher.dataValues.name
+        userRequest.teacher_surname = teacher.dataValues.surname
+        userRequest.teacher_patronymic = teacher.dataValues.patronymic
 
         await StudentCrudLoad.create(userRequest)
 
@@ -436,6 +400,42 @@ exports.createDiscipline = async (req, res) => {
     } catch (err) {
         res.status(400).json({
             message: 'Не получается найти данные.',
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+}
+
+exports.deleteDiscipline = async (req, res, next) => {
+    try {
+        await StudentCrudLoad.destroy({
+            where: {
+                teacher_id: req.body.teacher_id,
+                discipline_id: req.body.discipline_id,
+                group_id: req.body.group_id,
+            }
+        })
+
+        const whereCond = {
+            discipline_id: req.body.discipline_id,
+            group_id: req.body.group_id,
+            student_id: req.body.student_id,
+        }
+
+        req.body.lectures === 0 ? whereCond.practical = req.body.practical : whereCond.lectures = req.body.lectures
+
+        await Quiz.destroy({
+            where: whereCond
+        })
+
+        res.status(200).json({
+            message: 'Успешно удалено.',
+            statusCode: res.statusCode,
+        })
+    } catch (err) {
+        res.status(400).json({
+            message: 'Не получается удалить данные.',
             statusCode: res.statusCode,
         })
 

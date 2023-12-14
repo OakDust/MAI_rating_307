@@ -54,7 +54,6 @@ exports.getAllTeachersRating = async (req, res) => {
 
             index += 1
         }
-
     }
 
     res.status(200).json(rating)
