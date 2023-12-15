@@ -1,5 +1,19 @@
 .search__input{
     position: relative;
+
+    input{
+        width: 100%;
+        font-family: "Montserrat";
+        font-size: 18px;
+        border-radius: 16px;
+        background-color: #D9D9D9;
+        border: none;
+        height: 57px;
+        outline: none;
+        box-sizing: border-box;
+        padding: 18px;
+    } 
+
     ul{
         width: 100%;
         position: absolute;

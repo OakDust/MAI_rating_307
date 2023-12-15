@@ -1,0 +1,40 @@
+.main__header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+
+    .user__info{
+        display: flex;
+        flex-direction: column;
+        color: #FFF;
+        font-family: Montserrat;
+        font-size: 25px;
+
+        p{
+            margin-top: 10px;
+            font-size: 16px;
+        }
+    }
+
+    h1{
+        color: #F4F4F4;
+        font-family: Tektur;
+        font-size: 82px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 100%;
+    }
+
+    a {
+        text-decoration: none;
+        border: none;
+        background-color: #00CFDC;
+        color: #FFF;
+
+        &:hover{
+            background: #1410D6;
+        }
+    }
+}

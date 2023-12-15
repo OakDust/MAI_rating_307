@@ -226,9 +226,25 @@ exports.updateTeacher = async (req, res) => {
             return
         }
 
+        const checkDisciplineInDB = await StudentCrudLoad.findOne({
+            where: {
+                discipline_id: req.body.discipline_id
+            }
+        })
+
+        if (!checkDisciplineInDB) {
+            res.status(400).json({
+                message: "Невозможно найти указанную учебную дисциплину.",
+                statusCode: res.statusCode
+            })
+
+            return
+        }
+
         try {
             const id = distributed_load.dataValues.id
             const teacher_id = teacher.dataValues.id
+            const discipline_name = checkDisciplineInDB.dataValues.discipline_name
 
             const obj = {
                 id: id,
@@ -237,6 +253,7 @@ exports.updateTeacher = async (req, res) => {
                 teacher_name: teacher.dataValues.name,
                 teacher_surname: teacher.dataValues.surname,
                 teacher_patronymic: teacher.dataValues.patronymic,
+                discipline_name: discipline_name,
                 laboratory: req.body.laboratory,
                 teacher_id: teacher_id,
                 semester: req.body.semester,
@@ -311,43 +328,16 @@ exports.provideDistributedLoad = async (req, res) => {
 exports.createDiscipline = async (req, res) => {
     const userRequest = {
         discipline_name: req.body.discipline_name,
-        teacher_surname: req.body.teacher_surname,
-        teacher_name: req.body.teacher_name,
-        teacher_patronymic: req.body.teacher_patronymic,
         group_id: req.body.group_id,
         group_name: req.body.group_name,
         semester: req.body.semester,
         lectures: req.body.lectures,
         practical: req.body.practical,
-        laboratory: req.body.laboratory
+        laboratory: 0
     }
 
     try {
-        const dataExists = await StudentCrudLoad.findOne({
-            where: {
-                discipline_name: req.body.discipline_name,
-                teacher_surname: req.body.teacher_surname,
-                teacher_name: req.body.teacher_name,
-                teacher_patronymic: req.body.teacher_patronymic,
-                group_id: req.body.group_id,
-                group_name: req.body.group_name,
-                semester: req.body.semester,
-                lectures: req.body.lectures,
-                practical: req.body.practical,
-                laboratory: req.body.laboratory
-            }
-        })
-
-        if (dataExists) {
-            res.status(400).json({
-                message: 'Такая дисциплина уже существует.',
-                statusCode: res.statusCode
-            })
-
-            return
-        }
-
-        const teacher = await Teacher.findOne({
+        let teacher = await Teacher.findOne({
             logging: false,
             where: {
                 surname: req.body.teacher_surname,
@@ -357,48 +347,48 @@ exports.createDiscipline = async (req, res) => {
         })
 
         if (!teacher) {
-            res.status(400).json({
-                message: 'Такой преподаватель не существует.',
-                statusCode: res.statusCode
+            await Teacher.create({
+                surname: req.body.teacher_surname,
+                name: req.body.teacher_name,
+                patronymic: req.body.teacher_patronymic,
             })
 
-            return
+            teacher = await Teacher.findOne({
+                logging: false,
+                where: {
+                    surname: req.body.teacher_surname,
+                    name: req.body.teacher_name,
+                    patronymic: req.body.teacher_patronymic,
+                }
+            })
         }
 
-        let discipline = await Discipline.findOne({
+        let discipline = await StudentCrudLoad.findOne({
             logging: false,
             where: {
-                name: userRequest.discipline_name
+                discipline_name: req.body.discipline_name
             }
         })
 
         if (!discipline) {
             await Discipline.create({
-                logging: false,
-                name: userRequest.discipline_name,
+                name: req.body.discipline_name,
                 comment: '',
             })
 
             discipline = await Discipline.findOne({
-                logging: false,
                 where: {
-                    name: userRequest.discipline_name
+                    name: req.body.discipline_name,
                 }
-            })
-
-            userRequest.discipline_id = discipline.dataValues.id
-            userRequest.teacher_id = teacher.dataValues.id
-
-            await StudentCrudLoad.create(userRequest)
-
-            res.status(201).json({
-                message: "Учебная дисциплина успешно создана.",
-                statusCode: res.statusCode
             })
         }
 
         userRequest.discipline_id = discipline.dataValues.id
+        userRequest.discipline_name = discipline.dataValues.name
         userRequest.teacher_id = teacher.dataValues.id
+        userRequest.teacher_name = teacher.dataValues.name
+        userRequest.teacher_surname = teacher.dataValues.surname
+        userRequest.teacher_patronymic = teacher.dataValues.patronymic
 
         await StudentCrudLoad.create(userRequest)
 
@@ -406,10 +396,13 @@ exports.createDiscipline = async (req, res) => {
             message: "Учебная дисциплина успешно создана.",
             statusCode: res.statusCode
         })
+
+        return
     } catch (err) {
         res.status(400).json({
             message: 'Не получается найти данные.',
             statusCode: res.statusCode,
+            error: err.stack
         })
 
         return

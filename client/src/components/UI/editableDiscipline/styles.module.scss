@@ -11,6 +11,7 @@
         width: 100%;
         border: none;
         outline: none;
+        shape-outside: none;
         font-size: 22px;
         font-family: Montserrat;
 
@@ -26,6 +27,7 @@
     .done__icon{
         display: flex;
         justify-content: center;
+        vertical-align: center;
         align-items: center;
         width: 24px;
         height: 24px;

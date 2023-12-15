@@ -5,7 +5,7 @@ import MyButton from '../myButton/myButton';
 import CompletedQuiz from '../completedQuiz/completedQuiz';
 import StudentService from '../../../http/studentService';
 import { fieldAnswers } from './fieldAnswers';
-import { formatBodyAnswers } from '../../../utils/student';
+import { checkEmptyTeacher, formatBodyAnswers } from '../../../utils/student';
 import { AuthContext } from '../../../context';
 
 const FieldQuiz = ({disciplineInfo, setTitle}) => {
@@ -42,11 +42,12 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
     const submitQuiz = async () => {
         setButtonDirty(true);
         const body = formatBodyAnswers(answers, dataUser, disciplineInfo);
-        console.log(body);
 
         if (validateQuiz()) {
             try{
                 const response = await StudentService.submitQuiz(dataUser, body)
+                console.log(body)
+                console.log(response)
                 if (response.statusCode === 201) {
                     setIsCompleteQuiz(true);
                 }
@@ -70,11 +71,11 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
             <ul className={classes.teacher__list}>
                 <li>
                     <h3>Лектор</h3>
-                    <p>{disciplineInfo.lecturer}</p>
+                    <p>{checkEmptyTeacher(disciplineInfo.lecturer)}</p>
                 </li>
                 <li>
                     <h3>Семинарист</h3>
-                    <p>{disciplineInfo.seminarian}</p>
+                    <p>{checkEmptyTeacher(disciplineInfo.seminarian)}</p>
                 </li>
             </ul>
 

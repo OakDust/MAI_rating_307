@@ -6,7 +6,7 @@ import { useFetching } from '../hooks/useFetching';
 import { formattingGroupList } from '../utils/student';
 import StudentService from '../http/studentService';
 
-const Group = () => {
+const Group = (props) => {
     const [groupList, setGroupList] = useState({students: [], headStudent: ''});
     const {dataUser} = useContext(AuthContext);
     const [fetchGroupList, groupListLoading] = useFetching( async () => {
@@ -15,6 +15,9 @@ const Group = () => {
 
         setGroupList({students: formattedGroupList.students, headStudent: formattedGroupList.headStudent});
     })
+
+    const title = props.title + dataUser.group;
+    document.title = title;
 
     useEffect(() => {
         fetchGroupList();

@@ -1,13 +1,10 @@
-// export const formattingProfessorsList = (disciplines) => {
-//     disciplines.forEach((discipline) => {
-//         if (discipline.lecturer === '') {
-//             discipline.lecturer = discipline.seminarian;
-//         } 
-//         else if (discipline.seminarian === '') {
-//             discipline.seminarian = discipline.lecturer;
-//         }
-//     })
-// }
+export const checkEmptyTeacher = (teacher) => {
+    if (!teacher) {
+        return 'Не распределено'
+    }
+
+    return teacher
+}
 
 export const formatBodyAnswers = (answers, dataUser, disciplineInfo) => {
     const body = [{

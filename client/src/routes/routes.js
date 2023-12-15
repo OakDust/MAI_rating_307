@@ -23,17 +23,17 @@ export const publicRoutes = [
     {
         path: AUTH_ROUTE,
         Component: Auth,
-        title: 'Авторизация',
+        title: 'Опросы 307 | Вход',
     },
     {
         path: REGISTRATION_ROUTE,
         Component: Registration,
-        title: 'Регистрация',
+        title: 'Опросы 307 | Регистрация',
     },
     {
         path: REGISTRATION_PRIVATE_ROUTE,
         Component: Registration,
-        title: 'Регистрация',
+        title: 'Опросы 307 | Регистрация',
     }
 ]
 
@@ -41,17 +41,17 @@ const studentRoutes = [
     {
         path: SURVEYS_ROUTE,
         Component: Surveys,
-        title: 'Опросы',
+        title: 'Опросы 307',
     },
     {
         path: GROUP_ROUTE,
         Component: Group,
-        title: 'Моя группа',
+        title: 'Опросы 307 | ',
     },
     {
         path: QUIZ_ROUTE,
         Component: Quiz,
-        title: 'Опрос по дисциплине',
+        title: 'Опросы 307 | ',
     },
 ]
 
@@ -63,12 +63,12 @@ export const privateRoutes = {
         {
             path: HOME_ROUTE,
             Component: Home,
-            title: 'МАИ | Опросы',
+            title: 'Опросы 307 | Главная',
         },
         {
             path: PROFESSORS_ROUTE,
             Component: Professors,
-            title: 'Список преподавателей',
+            title: 'Опросы 307 | Список предметов и преподавателей',
         }
     ],
 
@@ -76,7 +76,7 @@ export const privateRoutes = {
         {
             path: RATING_ROUTE,
             Component: Rating,
-            title: 'Рейтинг',
+            title: 'Опросы 307 | Рейтинг',
         },
     ]
 }

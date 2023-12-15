@@ -29,6 +29,19 @@ const Professor = db.define('professors', {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
+    activation_link: {
+        type: DataTypes.TEXT,
+    },
+    active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+    },
+    admin: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+        allowNull: false
+    }
   }
 )
 

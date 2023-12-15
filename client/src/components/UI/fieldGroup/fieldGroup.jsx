@@ -11,7 +11,7 @@ const FieldGroup = ({groupList, dataUser, loading}) => {
 
     const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
         const response = await StudentService.getDisciplines(dataUser);
-        setDisciplines(response.distributed_load);
+        setDisciplines(response?.distributed_load || []);
     })
 
     useEffect(() => {

@@ -3,13 +3,14 @@ import { Routes, Route, Navigate} from 'react-router-dom';
 import { publicRoutes, privateRoutes } from '../../routes/routes.js';
 import { AuthContext } from '../../context/index.js';
 import RoleNavigation from '../roleNavigation/roleNavigation.jsx';
+import Loader from '../UI/loader/loader.jsx';
 
 const AppRouter = () => {
     const {isAuth, dataUser, isLoading} = useContext(AuthContext);
 
     if (isLoading) {
         return(
-            <div>Загрузка...</div>
+            <Loader/>
         )
     }
 

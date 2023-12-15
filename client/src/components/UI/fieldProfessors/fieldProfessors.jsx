@@ -16,9 +16,10 @@ const FieldProfessors = () => {
     const {dataUser} = useContext(AuthContext);
     const [fetchDisciplines, isDisciplinesLoading] = useFetching(async () => {
         const response = await StudentService.getDisciplines(dataUser);
-
-        setDisciplines(response.distributed_load);
+        
+        setDisciplines(response?.distributed_load || []);
     })
+    
 
     const [fetchTeachers, isTeachersLoading] = useFetching(async () => {
         const response = await StudentService.getTeachers(dataUser);
@@ -45,6 +46,20 @@ const FieldProfessors = () => {
         )
     }
 
+    const showNotEmptyTeacher = (discipline, teacher, type) => {
+        if (teacher) {
+            return (
+                <EditableDiscipline
+                    discipline={discipline} 
+                    teacher={teacher} 
+                    type={type}
+                    listItems={teachersList}
+                    updateValue={updateTeacher}
+                />
+            )
+        }
+    }
+
     if (isDisciplinesLoading || isTeachersLoading) {
         return (
             <Loader/>
@@ -65,24 +80,13 @@ const FieldProfessors = () => {
                     <AddedDiscipline 
                         dataUser={dataUser} 
                         fetchDisciplines={fetchDisciplines}
+                        teachersList={teachersList}
                         isAddMode={addDiscipline.mode}
                     />
                     {disciplines.map(discipline => (
                         <>
-                            <EditableDiscipline
-                                discipline={discipline} 
-                                teacher={discipline.lecturer} 
-                                type={'ЛК'}
-                                listItems={teachersList}
-                                updateValue={updateTeacher}
-                            />
-                            <EditableDiscipline 
-                                discipline={discipline} 
-                                teacher={discipline.seminarian} 
-                                type={'ПЗ'}
-                                listItems={teachersList}
-                                updateValue={updateTeacher}
-                            />
+                            {showNotEmptyTeacher(discipline, discipline.lecturer, 'ЛК')}
+                            {showNotEmptyTeacher(discipline, discipline.seminarian, 'ПЗ')}
                         </>
                     ))}
                 </tbody>

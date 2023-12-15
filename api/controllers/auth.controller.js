@@ -8,9 +8,9 @@ function passRole(is_head_student) {
     return is_head_student ? 'Староста' : 'Студент'
 }
 
-const generateAccessToken = (id, role, email, password) => {
+const generateAccessToken = (id, role, email, password, active) => {
     const payload = {
-        id, role, email, password
+        id, role, email, password, active
     }
 
     return jwt.sign(payload, process.env.AUTH_SECRET, {expiresIn: '4h'})
@@ -33,6 +33,15 @@ exports.professorAuth = async (req, res, next) => {
         return
     }
 
+    if (!professor.dataValues.active) {
+        res.status(403).json({
+            message: "Необходимо подтвердить адрес электронной почты.",
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+
     const validPasswordProfessor = bcrypt.compareSync(req.body.password, professor.password);
 
     if (!validPasswordProfessor) {
@@ -44,15 +53,18 @@ exports.professorAuth = async (req, res, next) => {
         return
     }
 
-    const token = await generateAccessToken(professor.id, 'Professor', professor.email, professor.password)
+    let role = 'Professor'
+    if (professor.admin) {
+        role = 'Administrator'
+    }
+
+    const token = await generateAccessToken(professor.id, role, professor.email, professor.password)
 
     const professorData = {
         id: professor.dataValues.id,
         name: professor.dataValues.name,
         email: professor.dataValues.email,
-        role: professor.dataValues.role,
-        createdAt: professor.dataValues.createdAt,
-        updatedAt: professor.dataValues.updatedAt
+        role: professor.dataValues.role
     }
 
     await res.json({
@@ -73,11 +85,20 @@ exports.studentAuth = async (req, res, next) => {
         })
 
         if (!student) {
-            await res.status(400).json({
+            res.status(400).json({
                 message: "Пользователь не существует",
                 token: false,
                 statusCode: res.statusCode,
             })
+            return
+        }
+
+        if (!student.dataValues.active) {
+            res.status(403).json({
+                message: "Необходимо подтвердить адрес электронной почты.",
+                statusCode: res.statusCode
+            })
+
             return
         }
 
@@ -92,7 +113,7 @@ exports.studentAuth = async (req, res, next) => {
             return
         }
 
-        const token = await generateAccessToken(student.id, 'Student', student.email, student.password)
+        const token = await generateAccessToken(student.id, 'Student', student.email, student.password, student.active)
 
         const role = passRole(student.dataValues.is_head_student)
 
@@ -110,9 +131,7 @@ exports.studentAuth = async (req, res, next) => {
             role: role,
             groups: student.dataValues.groups,
             group_id: groupId,
-            is_head_student: student.dataValues.is_head_student,
-            createdAt: student.dataValues.createdAt,
-            updatedAt: student.dataValues.updatedAt
+            is_head_student: student.dataValues.is_head_student
         }
 
         res.status(200).json({

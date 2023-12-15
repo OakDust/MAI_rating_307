@@ -108,7 +108,7 @@ exports.getTeacherRatingById = async (req, res) => {
 
             const ratingByDisciplines = []
 
-            if (disciplines.length === 0) {
+            if (disciplines.length === 0 || !disciplines) {
                 res.status(200).json({
                     teacherRatingByDiscipline: [],
                     totalScore: 0
@@ -118,12 +118,14 @@ exports.getTeacherRatingById = async (req, res) => {
             }
 
             for (let i = 0; i < disciplines.length; i++) {
-                const disciplineRating = await service.getScoreByDiscipline(id, disciplines[i])
+                let disciplineRating = await service.getScoreByDiscipline(id, disciplines[i])
 
-                if (disciplineRating.lecturer_score == "NaN" || disciplineRating.lecturer_score === 0) {
+                if (disciplineRating.lecturer_score == "Нет оценок") {
+                    disciplineRating.lecturer_score = 0
                     totalCount -= 1
                 }
-                if (disciplineRating.seminarian_score == "NaN" || disciplineRating.seminarian_score === 0) {
+                if (disciplineRating.seminarian_score == "Нет оценок") {
+                    disciplineRating.seminarian_score = 0
                     totalCount -= 1
                 }
 
@@ -133,9 +135,14 @@ exports.getTeacherRatingById = async (req, res) => {
                     ...disciplineRating
                 })
 
-                totalCount += 2
-                totalScore += Number(disciplineRating.lecturer_score) + Number(disciplineRating.seminarian_score)
+                // totalCount += 2
+                // totalScore += Number(disciplineRating.lecturer_score) + Number(disciplineRating.seminarian_score)
             }
+
+            ratingByDisciplines.forEach((discipline) => {
+                totalCount += 2
+                totalScore += Number(discipline.lecturer_score) + Number(discipline.seminarian_score)
+            })
 
             res.status(200).json({
                 teacherRatingByDiscipline: ratingByDisciplines,

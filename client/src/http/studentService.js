@@ -106,4 +106,42 @@ export default class StudentService {
 
         return response.json();
     }
+
+    static async addDiscipline (teacherName, disciplineName, typeDiscipline, dataUser) {
+        const url = `${process.env.REACT_APP_HOSTNAME}/student/createDiscipline`;
+        const fullTeacherName = teacherName?.value || teacherName;
+        const [surname, name, patronymic] = fullTeacherName.split(' ');
+        const groupName = setFullFormatGroup(dataUser.group);
+
+        const body = {
+            discipline_name: disciplineName,
+            teacher_surname: surname,
+            teacher_name: name,
+            teacher_patronymic: patronymic,
+            group_id: dataUser.group_id,
+            group_name: groupName,
+            semester: 0,
+            lectures: (typeDiscipline === 'ЛК' ? 1 : 0),
+            practical: (typeDiscipline === 'ПЗ' ? 1 : 0),
+            laboratory: 0,
+        }
+        
+        const requestHeaders = {
+            method: "PUT", 
+            mode: "cors",
+            cache: "no-cache", 
+            credentials: "same-origin", 
+            headers: {
+                "Authorization": dataUser.Authorization,
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer", 
+            body: JSON.stringify(body)
+        }
+
+        const response = await fetch(url, requestHeaders);
+
+        return response.json();
+    }
 }

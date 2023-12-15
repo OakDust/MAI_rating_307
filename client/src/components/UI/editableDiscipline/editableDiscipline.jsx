@@ -2,13 +2,15 @@ import React, {useState} from 'react';
 import editIcon from '../../../assets/icons/edit.webp';
 import classes from './styles.module.scss';
 import doneIcon from '../../../assets/icons/done.webp';
+import SearchInput from '../searchInput/searchInput';
 
 const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue}) => {
     const [editMode, setEditMode] = useState(false);
-    const [newValue, setNewValue] = useState('');
+    const [newValue, setNewValue] = useState({key: '', value: ''});
 
     const editHandler = () => {
-        updateValue(newValue, discipline, type);
+        const value = newValue?.value || newValue;
+        updateValue(value, discipline, type);
         setEditMode(false);
     }
 
@@ -17,12 +19,10 @@ const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue})
             <tr className={classes.selected__field}>
                 <td>{discipline.discipline}</td>
                 <td>
-                    <select value={teacher.value} onChange={(event) => setNewValue((event.target.value))}>
-                        <option>{teacher}</option>
-                        {listItems.map(item => (
-                            <option value={item.value}>{item.value}</option>
-                        ))}
-                    </select>
+                    <SearchInput
+                        list={listItems}
+                        setValue={setNewValue}
+                    />
                 </td>
                 <td>{type}</td>
                 <td>

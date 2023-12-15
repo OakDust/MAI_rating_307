@@ -4,7 +4,6 @@ import LinkButton from '../linkButton/linkButton';
 import Loader from '../loader/loader';
 import MyButton from '../myButton/myButton';
 import StudentService from '../../../http/studentService';
-import { formattingProfessorsList } from '../../../utils/student';
 import { useFetching } from '../../../hooks/useFetching';
 import { AuthContext } from '../../../context';
 
@@ -16,8 +15,8 @@ const FieldSurveys = () => {
     const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
         const response = await StudentService.getDisciplines(dataUser);
 
-        setDisciplines(response.distributed_load);
-        setSurveysPassed(response.surveys_passed)
+        setDisciplines(response?.distributed_load || []);
+        setSurveysPassed(response?.surveys_passed || [])
     })
 
     useEffect(() => {

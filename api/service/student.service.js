@@ -8,9 +8,9 @@ const StudentCrudLoad = require("../models/student_crud_load");
 
 exports.getSurveysStudentPassed = async (student_id) => {
     let surveys_passed = []
-    let dbName = process.env.DB_NAME
+    let dbName = process.env.STUDENTS_BY_GROUPS_DB_NAME
 
-    const surveysQuery = `SELECT discipline.name as discipline_name, discipline.id as discipline_id, quizzes.id as quiz_id, quizzes.student_id FROM \`quizzes\` join ${dbName}.discipline on kaf307_2023.discipline.id = quizzes.discipline_id where quizzes.student_id = ${student_id}`
+    const surveysQuery = `SELECT ${dbName}.discipline.name as discipline_name, ${dbName}.discipline.id as discipline_id, ${dbName}.quizzes.id as quiz_id, ${dbName}.quizzes.student_id FROM ${dbName}.\`quizzes\` join ${dbName}.discipline on ${dbName}.discipline.id = ${dbName}.quizzes.discipline_id where ${dbName}.quizzes.student_id = ${student_id}`
 
     const surveys = await Quiz.sequelize.query(surveysQuery, {
         type: QueryTypes.SELECT,
@@ -228,14 +228,38 @@ exports.getCrudDistributedLoad = async (distributed_load) => {
         let lecturer = ''
         let seminarian = ''
         let laborant = ''
-        let lecturer_id
-        let seminarian_id
+        let lecturer_id = 0
+        let seminarian_id = 0
 
         if (count === 1) {
-            lecturer = this.getName(data[0])
-            lecturer_id = data[0].teacher_id
-            seminarian = lecturer
-            seminarian_id = data[0].teacher_id
+            if (this.sum(data[0]) === 0 || (data[0].practical !== 0 && data[0].lectures !== 0)) {
+                lecturer = this.getName(data[0])
+                lecturer_id = data[0].teacher_id
+                seminarian = lecturer
+                seminarian_id = data[0].teacher_id
+            }
+            if (data[0].lectures !== 0 && data[0].practical === 0) {
+                lecturer = this.getName(data[0])
+                lecturer_id = data[0].teacher_id
+            }
+            if (data[0].practical !== 0 && data[0].lectures === 0) {
+                seminarian = this.getName(data[0])
+                seminarian_id = data[0].teacher_id
+            }
+
+            check.push({
+                lecturer: lecturer,
+                seminarian: seminarian,
+                // laborant: laborant,
+                discipline_id: discipline_ids[i],
+                discipline: discipline_names[i],
+                lecturer_id: lecturer_id,
+                seminarian_id: seminarian_id,
+                key: i,
+            })
+
+            continue
+
         } else if (count === 2) {
             for (let j = 0; j < count; j++) {
 
