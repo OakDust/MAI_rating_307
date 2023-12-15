@@ -46,8 +46,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
         if (validateQuiz()) {
             try{
                 const response = await StudentService.submitQuiz(dataUser, body)
-                console.log(body)
-                console.log(response)
+                
                 if (response.statusCode === 201) {
                     setIsCompleteQuiz(true);
                 }
