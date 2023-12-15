@@ -50,6 +50,52 @@ exports.fillSubmittedSurveys = (student_id, surveys) => {
 }
 
 exports.teacherExists = async (body) => {
+    if (body[0].lecturer_name === '' || body[0].seminarian_name === '') {
+        let lecturer
+        let seminarian
+
+        if (body[0].lecturer_name === '' && body[0].seminarian_name !== '') {
+            const [seminarianSurname, seminarianName, seminarianPatronymic] = body[0].seminarian_name.split(' ')
+
+            seminarian = await Teacher.findOne({
+                logging: false,
+                where: {
+                    name: seminarianName,
+                    surname: seminarianSurname,
+                    patronymic: seminarianPatronymic,
+                }
+            })
+
+            lecturer = {
+                    name: '',
+                    surname: '',
+                    patronymic: '',
+                    id: -1
+            }
+        } else if (body[0].lecturer_name !== '' && body[0].seminarian_name === '') {
+            const [lecturerSurname, lecturerName, lecturerPatronymic] = body[0].lecturer_name.split(' ')
+
+            lecturer = await Teacher.findOne({
+                logging: false,
+                where: {
+                    name: lecturerName,
+                    surname: lecturerSurname,
+                    patronymic: lecturerPatronymic,
+                }
+            })
+
+            seminarian = {
+                    name: '',
+                    surname: '',
+                    patronymic: '',
+                    id: -1
+            }
+        }
+
+        return [lecturer, seminarian]
+    }
+
+
     const [lecturerSurname, lecturerName, lecturerPatronymic] = body[0].lecturer_name.split(' ')
     const [seminarianSurname, seminarianName, seminarianPatronymic] = body[0].seminarian_name.split(' ')
 

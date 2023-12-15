@@ -45,7 +45,7 @@ exports.getGroupsList = async (req, res) => {
 exports.createStudent = async (req, res) => {
     const hashedPassword = bcrypt.hashSync(req.body.password, 10);
 
-    const groupName = req.body.groups.value
+    const groupName = req.body.groups
 
     if (!groupName) {
         res.status(400).json({message: 'Укажите группу'})
@@ -62,13 +62,18 @@ exports.createStudent = async (req, res) => {
     const existStudent = await Student.findOne({
         where: {
             groups: groupName,
-            name: req.body.name,
+            name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
             role: req.body.role
         }
     })
 
-    if (!dbStudent || existStudent) {
+    if (!dbStudent) {
         res.status(400).json({message: 'Такой студент не существует.'})
+        return
+    }
+
+    if (existStudent) {
+        res.status(400).json({message: 'Такой студент уже зарегистрирован.'})
         return
     }
 
@@ -120,9 +125,13 @@ exports.createProfessor = async (req, res, next) => {
             }
         })
 
-        if (!dbTeacher || existTeacher) {
+        if (!dbTeacher) {
             res.status(400).json({message: 'Такой преподаватель не существует.'})
             return
+        }
+
+        if (existTeacher) {
+            res.status(400).json({message: 'Такой преподаватель уже зарегистрирован.'})
         }
         const activationLink = uuid.v4()
 

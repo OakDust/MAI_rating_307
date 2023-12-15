@@ -335,6 +335,24 @@ exports.createDiscipline = async (req, res) => {
         laboratory: 0
     }
 
+    const dataExist = await StudentCrudLoad.findAll({
+        where: {
+            discipline_name: req.body.discipline_name,
+            group_id: req.body.group_id,
+            group_name: req.body.group_name,
+            semester: req.body.semester,
+        }
+    })
+
+    if (dataExist.length === 2) {
+        res.status(400).json({
+            message: 'Такая учебная дисциплина уже в списке. Обновите информацию.',
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+
     try {
         let teacher = await Teacher.findOne({
             logging: false,
@@ -345,42 +363,45 @@ exports.createDiscipline = async (req, res) => {
             }
         })
 
-        if (!teacher) {
-            await Teacher.create({
-                surname: req.body.teacher_surname,
-                name: req.body.teacher_name,
-                patronymic: req.body.teacher_patronymic,
-            })
-
-            teacher = await Teacher.findOne({
-                logging: false,
-                where: {
-                    surname: req.body.teacher_surname,
-                    name: req.body.teacher_name,
-                    patronymic: req.body.teacher_patronymic,
-                }
-            })
-        }
-
-        let discipline = await StudentCrudLoad.findOne({
+        let discipline = await Discipline.findOne({
             logging: false,
             where: {
-                discipline_name: req.body.discipline_name
+                name: req.body.discipline_name
             }
         })
 
-        if (!discipline) {
-            await Discipline.create({
-                name: req.body.discipline_name,
-                comment: '',
-            })
-
-            discipline = await Discipline.findOne({
-                where: {
+        if (!teacher || !discipline) {
+            if (!discipline) {
+                await Discipline.create({
                     name: req.body.discipline_name,
-                }
-            })
+                    comment: '',
+                })
+
+                discipline = await Discipline.findOne({
+                    where: {
+                        name: req.body.discipline_name,
+                    }
+                })
+            }
+
+            if (!teacher) {
+                await Teacher.create({
+                    surname: req.body.teacher_surname,
+                    name: req.body.teacher_name,
+                    patronymic: req.body.teacher_patronymic,
+                })
+
+                teacher = await Teacher.findOne({
+                    logging: false,
+                    where: {
+                        surname: req.body.teacher_surname,
+                        name: req.body.teacher_name,
+                        patronymic: req.body.teacher_patronymic,
+                    }
+                })
+            }
         }
+
 
         userRequest.discipline_id = discipline.dataValues.id
         userRequest.discipline_name = discipline.dataValues.name

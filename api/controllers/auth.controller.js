@@ -8,9 +8,9 @@ function passRole(is_head_student) {
     return is_head_student ? 'Староста' : 'Студент'
 }
 
-const generateAccessToken = (id, role, email, password, active) => {
+const generateAccessToken = (id, role, email, password, active, activation_link) => {
     const payload = {
-        id, role, email, password, active
+        id, role, email, password, active, activation_link
     }
 
     return jwt.sign(payload, process.env.AUTH_SECRET, {expiresIn: '4h'})
@@ -58,7 +58,7 @@ exports.professorAuth = async (req, res, next) => {
         role = 'Administrator'
     }
 
-    const token = await generateAccessToken(professor.id, role, professor.email, professor.password)
+    const token = await generateAccessToken(professor.id, role, professor.email, professor.password, professor.active, professor.activation_link)
 
     const professorData = {
         id: professor.dataValues.id,
@@ -113,7 +113,7 @@ exports.studentAuth = async (req, res, next) => {
             return
         }
 
-        const token = await generateAccessToken(student.id, 'Student', student.email, student.password, student.active)
+        const token = await generateAccessToken(student.id, 'Student', student.email, student.password, student.active, student.activation_link)
 
         const role = passRole(student.dataValues.is_head_student)
 
