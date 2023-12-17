@@ -3,7 +3,6 @@
     flex-direction: column;
     gap: 27px;
     text-align: left;
-    margin-top: 62px;
 
     a{ 
         width: 100%;
@@ -15,6 +14,17 @@
 
         color: #000;
         font-family: Montserrat;
-        font-size: 22px;
+        font-size: clamp(0.875rem, 0.76rem + 0.513vw, 1.375rem);
     }
+}
+
+@media screen and (min-width: 360px) and (max-width: 1000px) {
+    .link__container {
+        gap: 16px;
+
+        a {
+            padding: 10px 20px;
+        }
+    }
+    
 }

@@ -2,33 +2,51 @@
     margin-top: 25px;
     text-align: left;
 
-    .disciplines__table {
-        text-align: center;
-        width: 100%; 
-        margin-top: 20px;
-        font-family: Montserrat;
-        font-size: 20px;
-        border-collapse: separate;
-        border: 1px solid #D9D9D9;
-        border-radius: 20px;
-    
-        &, th, td {
-            box-sizing: border-box;
-            padding: 15px 32px;
-    
-            img {
-                cursor: pointer;
+    .table__block {
+        overflow-x: auto;
+
+        .disciplines__table {
+            text-align: center;
+            width: 100%; 
+            margin-top: 20px;
+            font-family: Montserrat;
+            font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.25rem);
+            border-collapse: separate;
+            border: 1px solid #D9D9D9;
+            border-radius: 20px;
+            overflow-x: auto;
+        
+            th, td {
+                box-sizing: border-box;
+                padding: 15px 32px;
+        
+                img {
+                    cursor: pointer;
+                }
+            }
+        
+            tbody{ 
+                text-align: center;
+        
+                tr{
+                    td{
+                        &:first-child{
+                            text-align: left;
+                        }
+                    }
+                }
             }
         }
-    
-        tbody{ 
-            text-align: center;
-    
-            tr{
-                td{
-                    &:first-child{
-                        text-align: left;
-                    }
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 1000px) {
+    .disciplines__container {
+        .table__block {
+            .disciplines__table {
+                th, td {
+                    box-sizing: border-box;
+                    padding: 10px 20px;
                 }
             }
         }

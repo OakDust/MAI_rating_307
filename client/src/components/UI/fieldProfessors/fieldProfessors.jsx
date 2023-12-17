@@ -69,28 +69,30 @@ const FieldProfessors = () => {
     return( 
         <div className={classes.disciplines__container}>
             <MyButton onClick={() => addDisciplineHandler()}>{addDiscipline.title}</MyButton>
-            <table className={classes.disciplines__table}>
-                <thead>
-                    <td>Дисциплина</td>
-                    <td>ФИО преподавателя</td>
-                    <td>Форма</td>
-                    <td>Ред.</td>
-                </thead>
-                <tbody>
-                    <AddedDiscipline 
-                        dataUser={dataUser} 
-                        fetchDisciplines={fetchDisciplines}
-                        teachersList={teachersList}
-                        isAddMode={addDiscipline.mode}
-                    />
-                    {disciplines.map(discipline => (
-                        <>
-                            {showNotEmptyTeacher(discipline, discipline.lecturer, 'ЛК')}
-                            {showNotEmptyTeacher(discipline, discipline.seminarian, 'ПЗ')}
-                        </>
-                    ))}
-                </tbody>
-            </table>
+            <div className={classes.table__block}>
+                <table className={classes.disciplines__table}>
+                    <thead>
+                        <td>Дисциплина</td>
+                        <td>ФИО преподавателя</td>
+                        <td>Форма</td>
+                        <td>Ред.</td>
+                    </thead>
+                    <tbody>
+                        <AddedDiscipline 
+                            dataUser={dataUser} 
+                            fetchDisciplines={fetchDisciplines}
+                            teachersList={teachersList}
+                            isAddMode={addDiscipline.mode}
+                        />
+                        {disciplines.map(discipline => (
+                            <>
+                                {showNotEmptyTeacher(discipline, discipline.lecturer, 'ЛК')}
+                                {showNotEmptyTeacher(discipline, discipline.seminarian, 'ПЗ')}
+                            </>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
         </div>
         
     );

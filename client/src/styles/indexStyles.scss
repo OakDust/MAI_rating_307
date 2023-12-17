@@ -1,4 +1,7 @@
 *body{
+    padding: 0;
+    margin: 0;
+    
     background-color: #625FFAD6;
     background-image: url('../assets/backgrounds/background.webp');
     background-size: 100% auto;
@@ -21,5 +24,13 @@
         background-color: #A8A8EF;
         background-clip: content-box;
         border-radius: 12px;
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 1400px) {
+    *body {
+        &::-webkit-scrollbar{
+            display: none;
+        }
     }
 }

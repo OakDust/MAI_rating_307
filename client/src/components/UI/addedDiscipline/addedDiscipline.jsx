@@ -3,6 +3,7 @@ import classes from './styles.module.scss';
 import MyButton from '../myButton/myButton';
 import SearchInput from '../searchInput/searchInput';
 import StudentService from '../../../http/studentService';
+import MyInput from '../myInput/myInput';
 
 const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) => {
     const [disciplineName, setDisciplineName] = useState('');
@@ -20,9 +21,10 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) 
         return( 
             <tr className={classes.added__row}>
                 <td>
-                    <input 
+                    <MyInput
                         onChange={(e) => setDisciplineName(e.target.value)}
                         value={disciplineName}
+                        placeholder='Название дисциплины'
                     />
                 </td>
                 <td>
@@ -31,6 +33,7 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) 
                         value={teacherName}
                         setValue={setTeacherName}
                         list={teachersList}
+                        placeholder='ФИО преподавателя'
                     />
                 </td>
                 <td>

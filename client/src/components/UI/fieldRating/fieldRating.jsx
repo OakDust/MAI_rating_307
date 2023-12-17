@@ -32,31 +32,33 @@ const FieldRating = () => {
     const showRatingByDisciplines = () => {
         if (ratingByDisciplines.length > 0) {
             return (
-                <table>
-                    <thead>
-                        <tr>
-                            <td>Форма</td>
-                            <td>Название дисциплины</td>
-                            <td>Оценка</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {ratingByDisciplines.map((discipline) => (
-                            <>
+                <div>
+                    <table>
+                        <thead>
                             <tr>
-                                <td>ЛК</td>
-                                <td>{discipline.discipline_name}</td>
-                                <td>{checkNumberOfRating(discipline.lecturer_score)}</td>
+                                <td>Форма</td>
+                                <td>Название дисциплины</td>
+                                <td>Оценка</td>
                             </tr>
-                            <tr>
-                                <td>ПЗ</td>
-                                <td>{discipline.discipline_name}</td>
-                                <td>{checkNumberOfRating(discipline.seminarian_score)}</td>
-                            </tr>
-                            </>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {ratingByDisciplines.map((discipline) => (
+                                <>
+                                <tr>
+                                    <td>ЛК</td>
+                                    <td>{discipline.discipline_name}</td>
+                                    <td>{checkNumberOfRating(discipline.lecturer_score)}</td>
+                                </tr>
+                                <tr>
+                                    <td>ПЗ</td>
+                                    <td>{discipline.discipline_name}</td>
+                                    <td>{checkNumberOfRating(discipline.seminarian_score)}</td>
+                                </tr>
+                                </>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             )
         }
         else {

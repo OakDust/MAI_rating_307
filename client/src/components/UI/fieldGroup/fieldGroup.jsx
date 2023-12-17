@@ -29,27 +29,29 @@ const FieldGroup = ({groupList, dataUser, loading}) => {
     
     if (dataUser.role === 'Староста') {
         return(
-            <table className={classes.table__group}>
-                <thead>
-                    <tr>
-                        <td>№</td>
-                        <td>ФИО</td>
-                        <td>Количество пройденных опросов</td>
-                    </tr>
-                </thead>
-                
-                <tbody>
-                    {students.map((student, index) => (
+            <div className={classes.table__block}>
+                <table className={classes.table__group}>
+                    <thead>
                         <tr>
-                            <td>{index + 1}</td>
-                            <td>{student.name}</td>
-                            <td>
-                                <StatIndication student={student} countSurveys={disciplines.length}/>
-                            </td>
+                            <td>№</td>
+                            <td>ФИО</td>
+                            <td>Количество пройденных опросов</td>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    
+                    <tbody>
+                        {students.map((student, index) => (
+                            <tr>
+                                <td>{index + 1}</td>
+                                <td>{student.name}</td>
+                                <td>
+                                    <StatIndication student={student} countSurveys={disciplines.length}/>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
     )
     }
 

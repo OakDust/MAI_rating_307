@@ -17,7 +17,7 @@
     h3{
         color: #606063;
         font-family: Montserrat;
-        font-size: 20px;
+        font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.25rem);
     }
 }
 
@@ -33,4 +33,38 @@
     100% { 
         transform: rotate(-360deg);
     }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1400px) {
+    .loader__container {
+        height: 500px;
+
+        img {
+            width: 80px;
+            height: 80px;
+        }
+    } 
+}
+
+@media screen and (min-width: 768px) and (max-width: 1000px) {
+    .loader__container {
+        height: 300px;
+
+        img {
+            width: 60px;
+            height: 60px;
+        }
+    }
+    
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .loader__container {
+        height: 300px;
+        
+        img {
+            width: 40px;
+            height: 40px;
+        }
+    } 
 }

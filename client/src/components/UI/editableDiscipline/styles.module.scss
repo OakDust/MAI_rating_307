@@ -1,9 +1,7 @@
 .selected__field { 
 
     td:last-child{
-        display: flex;
         border: none;
-        justify-content: center;
     }
 
     select {
@@ -33,6 +31,7 @@
         height: 24px;
         border-radius: 4px;
         background-color: #0045BD;
+        margin: auto;
         cursor: pointer;
 
         img {
@@ -44,4 +43,19 @@
             background-color: #00CFDC;
         }
     }
+}
+
+@media screen and (min-width: 360px) and (max-width: 1000px) {
+    .selected__field {
+        .done__icon {
+            width: 18px;
+            height: 18px;
+
+            img {
+                width: 10px;
+                height: 8px;
+            }
+        }
+    }
+    
 }

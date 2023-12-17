@@ -8,14 +8,14 @@
 @media screen and (min-width: 1400px) and (max-width: 1920px) {
     .container{
         width: 1400px;
-        padding: 100px;
+        padding: 100px 50px;
     }
 }
 
 @media screen and (min-width: 1000px) and (max-width: 1400px) {
     .container{
         width: 1000px;
-        padding: 100px;
+        padding: 100px 30px;
     }
 }
 
@@ -26,16 +26,9 @@
     }
 }
 
-@media screen and (min-width: 480px) and (max-width: 768px) {
+@media screen and (min-width: 360px) and (max-width: 768px) {
     .container{
-        width: 480px;
-        padding: 40px;
-    }
-}
-
-@media screen and (min-width: 360px) and (max-width: 480px) {
-    .container{
-        width: 360px;
-        padding: 20px;
+        width: 100%;
+        padding: 50px 0 0 0;
     }
 }

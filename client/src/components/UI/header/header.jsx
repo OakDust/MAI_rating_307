@@ -18,7 +18,7 @@ const Header = ({dataUser, setIsAuth}) => {
                 <p>{dataUser.group}</p>
             </div>
 
-            <h1>ОПРОС КАФЕДРЫ 307</h1>
+            <h1>ОПРОС 307</h1>
 
             <LinkButton to="/auth" onClick={logout}>
                 Выйти

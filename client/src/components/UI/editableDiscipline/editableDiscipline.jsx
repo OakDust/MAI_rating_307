@@ -10,7 +10,11 @@ const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue})
 
     const editHandler = () => {
         const value = newValue?.value || newValue;
-        updateValue(value, discipline, type);
+
+        if (value.length > 0) {
+            updateValue(value, discipline, type);
+        }
+
         setEditMode(false);
     }
 
@@ -22,6 +26,7 @@ const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue})
                     <SearchInput
                         list={listItems}
                         setValue={setNewValue}
+                        placeholder='ФИО преподавателя'
                     />
                 </td>
                 <td>{type}</td>

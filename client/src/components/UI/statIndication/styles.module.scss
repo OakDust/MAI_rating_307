@@ -22,7 +22,7 @@
             text-align: left;
             bottom: 100%;
             min-width: 200px;
-            font-size: 16px;
+            font-size: clamp(0.625rem, 0.538rem + 0.385vw, 1rem);
             width: auto;
             display: none;
             background-color: #f3feff;
@@ -42,8 +42,28 @@
             div {
                 background-color: #00CFDC;
             }
+        } 
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 1000px) {
+    .indication__container {
+        gap: 20px;
+
+        .indication {
+            gap: 8px
         }
 
-        
+        .indicator {
+            div {
+                width: 14px;
+                height: 14px;
+            }
+
+            .indicator__info {
+                min-width: 150px;
+            }
+        }
     }
+    
 }

@@ -1,16 +1,11 @@
 .added__row {
-    td > button {
-        padding: 10px 15px;
-        font-size: 20px;
-    }
-
     td > select {
         text-align: center;
         width: 100%;
         border: none;
         outline: none;
         shape-outside: none;
-        font-size: 22px;
+        font-size: clamp(0.75rem, 0.663rem + 0.385vw, 1.125rem);
         font-family: Montserrat;
 
         overflow-y: auto;
@@ -20,18 +15,9 @@
         &::-webkit-scrollbar{
             display: none;
         }
-    }
 
-    input{
-        width: 100%;
-        font-family: "Montserrat";
-        font-size: 18px;
-        border-radius: 16px;
-        background-color: #D9D9D9;
-        border: none;
-        height: 57px;
-        outline: none;
-        box-sizing: border-box;
-        padding: 18px;
+        option {
+            font-size: clamp(0.75rem, 0.663rem + 0.385vw, 1.125rem);
+        }
     }   
 }

@@ -11,11 +11,11 @@
         flex-direction: column;
         color: #FFF;
         font-family: Montserrat;
-        font-size: 25px;
+        font-size: clamp(0.875rem, 0.76rem + 0.513vw, 1.375rem);
 
         p{
             margin-top: 10px;
-            font-size: 16px;
+            font-size: clamp(0.875rem, 0.817rem + 0.256vw, 1.125rem);
         }
     }
 
@@ -42,36 +42,18 @@
 
 @media screen and (min-width: 1400px) and (max-width: 1920px) {
     .main__header {
-        .user__info {
-            font-size: 22px;
-        }
-
         h1 {
-            font-size: 73px;
+            font-size: 70px;
         }
     }
 }
 
-@media screen and (min-width: 360px) and (max-width: 1400px) {
+@media screen and (min-width: 1000px) and (max-width: 1400px) {
     .main__header {
-        align-items: flex-end;
-        flex-direction: column-reverse;
-        gap: 5px;
-    }
-
-    
-}
-
-@media screen and (min-width: 768px) and (max-width: 1400px) {
-    .main__header {
-        .user__info {
-            flex-direction: row;
-            gap: 15px;
-            font-size: 22px;
-        }
+        margin-bottom: 40px;
 
         h1 {
-            font-size: 73px;
+            font-size: 60px;
         }
     }
 }
@@ -79,14 +61,10 @@
 @media screen and (min-width: 768px) and (max-width: 1000px) {
     .main__header {
         margin-bottom: 40px;
-        .user__info {
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
 
-            p {
-                margin: 0;
-            }
+        .user__info {
+            align-items: flex-start;
+            font-size: 18px;
         }
 
         h1 {
@@ -95,38 +73,35 @@
     }
 }
 
-@media screen and (min-width: 480px) and (max-width: 768px) {
+@media screen and (min-width: 360px) and (max-width: 768px) {
     .main__header {
         margin-bottom: 25px;
-        align-items: flex-start;
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        box-sizing: border-box;
+        padding: 0 20px;
 
         .user__info {
-            justify-content: center;
-            align-items: flex-start;
-            flex-direction: row;
-            gap: 15px;
-            font-size: 16px;
-
-            p {
-                margin: 0;
-            }
+            display: inline-grid;
+            column-gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
         }
 
         h1 {
             font-size: 50px;
+            grid-row-start: 1;
         }
 
         a {
-            position: absolute;
-            top: 0;
-            right: 0;
+            grid-row-start: 1;
         }
     }
 }
 
 @media screen and (min-width: 360px) and (max-width: 480px) {
-    .container{
-        width: 360px;
-        padding: 20px;
+    .main__header {
+        h1 {
+            font-size: 42px;
+        }
     }
 }

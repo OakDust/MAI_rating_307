@@ -24,9 +24,12 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
 
     const fetchGroups = async () => {
         const response = await AuthService.getGroupsList();
-        const groupsList = formattingGroupsList(response.groups);
-
-        setGroupsList(groupsList);
+        
+        if (response?.groups) {
+            const groupsList = formattingGroupsList(response.groups);
+            setGroupsList(groupsList);
+        }
+        
     }
 
     useEffect(() => {
@@ -70,9 +73,11 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
                                     }
                                 }
                             })}
+
                             type={field.type}
                             placeholder={field.placeholder}
                         />
+
                         {errors?.[field.name] && <p className={classes.validate__error}>{errors?.[field.name]?.message}</p>}
                     </div>
                 )}

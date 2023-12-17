@@ -50,8 +50,7 @@ const Auth = ({isRegistration}) => {
     return(
         <div className={classes.auth__container}>
             <div className={classes.intro__block}>
-                <h1>Опрос кафедры 307</h1>
-                <p>Данный опрос создан в целях улучшения образования и преподавания на кафедре 307</p>
+                <h1>Опросы 307</h1>
             </div>
 
             <RoleButtons 

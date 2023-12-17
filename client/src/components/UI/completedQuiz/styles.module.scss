@@ -15,7 +15,7 @@
     h3 {
         color: #000;
         font-family: Montserrat;
-        font-size: 26px;
+        font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.25rem);
     }
 
     .next__quiz{
@@ -27,12 +27,70 @@
             text-decoration: underline;
             color: #625FFA;
             font-family: Montserrat;
-            font-size: 22px;
+            font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.25rem);
         }
 
         img {
             width: 24px;
             height: 24px;
+        }
+    }
+}
+
+
+@media screen and (min-width: 1000px) and (max-width: 1400px) {
+    .quiz__completed {
+        height: 500px;
+
+        img {
+            width: 250px;
+            height: 100px;
+        }
+
+        .next__quiz {
+            img {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    } 
+}
+
+@media screen and (min-width: 768px) and (max-width: 1000px) {
+    .quiz__completed {
+        height: 300px;
+        gap: 20px;
+
+        img {
+            width: 200px;
+            height: 80px;
+        }
+
+        .next__quiz {
+            img {
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+    
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .quiz__completed {
+        height: 300px;
+        gap: 15px;
+
+        img {
+            width: 200px;
+            height: 80px;
+        }
+
+        .next__quiz {
+            img {
+                width: 18px;
+                height: 18px;
+            }
         }
     }
 }

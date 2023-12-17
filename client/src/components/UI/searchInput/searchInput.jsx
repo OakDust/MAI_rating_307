@@ -1,5 +1,6 @@
 import React, {useState, useMemo} from 'react';
 import classes from './styles.module.scss';
+import MyInput from '../myInput/myInput';
 
 const SearchInput = ({list, setValue, ...props}) => {
     const [selectQuery, setSelectQuery] = useState('');
@@ -37,7 +38,7 @@ const SearchInput = ({list, setValue, ...props}) => {
 
     return( 
         <div className={classes.search__input}>
-            <input
+            <MyInput
                 {...props}
                 value={selectQuery}
                 onChange={(e) => searchHandler(e)}
