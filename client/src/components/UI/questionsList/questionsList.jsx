@@ -8,7 +8,7 @@ const QuestionsList = ({answered, buttonDirty}) => {
 
         <ul className={classes.questions__list}>
             {questionsList.map(({number, question, type, role}) => (
-                <li>
+                <li key={question}>
                     <h3>{`${number}. ${question}`}</h3>
                     {type === 'blitz' 
                     ?

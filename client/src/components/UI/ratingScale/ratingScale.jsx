@@ -17,7 +17,11 @@ const RatingScale = ({title, numberQuestion, answered, buttonDirty}) => {
 
     for (let value = 1; value <= pointScale; value++) {
         ratingScale.push(
-            <span className={value === answerValue ? answerActiveStyle : classes.answer__field} onClick={() => answerHandler(value)}>
+            <span 
+                className={value === answerValue ? answerActiveStyle : classes.answer__field} 
+                onClick={() => answerHandler(value)}
+                key={value}
+            >
                 {value}
             </span>
         )

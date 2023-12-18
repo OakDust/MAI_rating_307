@@ -4,6 +4,7 @@ import MyButton from '../myButton/myButton';
 import SearchInput from '../searchInput/searchInput';
 import StudentService from '../../../http/studentService';
 import MyInput from '../myInput/myInput';
+import MySelect from '../mySelect/mySelect';
 
 const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) => {
     const [disciplineName, setDisciplineName] = useState('');
@@ -11,9 +12,10 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) 
     const [typeDiscipline, setTypeDiscipline] = useState('ПЗ');
 
     const addDiscipline = async () => {
-        await StudentService.addDiscipline(teacherName, disciplineName, typeDiscipline, dataUser);
-
-        fetchDisciplines();
+        if (teacherName && disciplineName) {
+            await StudentService.addDiscipline(teacherName, disciplineName, typeDiscipline, dataUser);
+            fetchDisciplines();
+        }
     }
 
     if (isAddMode) {
@@ -37,10 +39,15 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) 
                     />
                 </td>
                 <td>
-                    <select value={typeDiscipline} onChange={(e) => setTypeDiscipline(e.target.value)}>
-                        <option value='ПЗ'>ПЗ</option>
-                        <option value='ЛК'>ЛК</option>
-                    </select>
+                    <MySelect
+                        defaultValue='Тип'
+                        value={typeDiscipline}
+                        onChange={(type) => setTypeDiscipline(type)}
+                        options={[
+                            {name: 'ПЗ', value: 'ПЗ'}, 
+                            {name: 'ЛК', value: 'ЛК'}
+                        ]}
+                    />
                 </td>
                 <td><MyButton onClick={() => addDiscipline()}>Добавить</MyButton></td>
             </tr>

@@ -19,7 +19,7 @@ const AppRouter = () => {
             <Routes>
                 {privateRoutes[dataUser.role].map(({path, Component, title}) => {
                     return (
-                        <Route path={path} element={<Component title={title} />}/>
+                        <Route key={path} path={path} element={<Component title={title} />}/>
                     )
                 })}
                 <Route
@@ -34,7 +34,7 @@ const AppRouter = () => {
             <Routes>
                 {publicRoutes.map(({path, Component, title}) => {
                     return (
-                        <Route path={path} element={<Component title={title}/>}/>
+                        <Route key={path} path={path} element={<Component title={title}/>}/>
                     )
                 })}
                 <Route

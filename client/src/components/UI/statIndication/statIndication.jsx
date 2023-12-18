@@ -10,7 +10,7 @@ const StatIndication = ({student, countSurveys}) => {
 
         if (i < countCompletedSurveys) {
             indication.push(
-                <div className={classes['indicator'] + ' ' + classes.active}>
+                <div key={i} className={classes['indicator'] + ' ' + classes.active}>
                     <div/>
                     <p className={classes.indicator__info}>{completedSurveys[i].discipline_name}</p>
                 </div>
@@ -18,7 +18,7 @@ const StatIndication = ({student, countSurveys}) => {
         } 
         else {
             indication.push(
-                <div className={classes['indicator']}>
+                <div key={i} className={classes['indicator']}>
                     <div/>
                 </div>
             )

@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import classes from './styles.module.scss';
 import QuestionsList from '../questionsList/questionsList';
 import MyButton from '../myButton/myButton';
@@ -45,9 +45,9 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
 
         if (validateQuiz()) {
             try{
-                const response = await StudentService.submitQuiz(dataUser, body)
+                const response = await StudentService.submitQuiz(dataUser, body);
                 
-                if (response.statusCode === 201) {
+                if (response.ok) {
                     setIsCompleteQuiz(true);
                 }
             } catch (e) {
@@ -56,9 +56,14 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
         }
     }
 
+    useEffect(() => {
+        if (isCompleteQuiz) {
+            setTitle('');
+        }
+
+    }, [isCompleteQuiz])
+
     if (isCompleteQuiz) {
-        setTitle('');
-        
         return(
             <CompletedQuiz/>
         )

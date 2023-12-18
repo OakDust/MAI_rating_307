@@ -4,6 +4,7 @@ import LinkButton from '../linkButton/linkButton';
 import Loader from '../loader/loader';
 import MyButton from '../myButton/myButton';
 import StudentService from '../../../http/studentService';
+import { checkSubmittedSurveys } from '../../../utils/student';
 import { useFetching } from '../../../hooks/useFetching';
 import { AuthContext } from '../../../context';
 
@@ -23,21 +24,6 @@ const FieldSurveys = () => {
         fetchDisciplines();
     }, [])
 
-    const checkSubmittedSurveys = (disciplineId) => {
-        const submittedSurveys = surveysPassed?.submitted_surveys;
-        let submitted = false;
-
-        if (submittedSurveys) {
-            submittedSurveys.forEach(survey => {
-                if (survey.discipline_id === disciplineId) {
-                    submitted = true;
-                }
-            });
-        }
-
-        return submitted;
-    }
-
     if (isDisciplinesLoading) {
         return (
             <Loader/>
@@ -47,9 +33,9 @@ const FieldSurveys = () => {
     return(
         <ul className={classes.surveys__list}>
             {disciplines.map((discipline) => (
-                <li>
+                <li key={discipline.discipline_id}>
                     <p>{discipline.discipline}</p>
-                    {checkSubmittedSurveys(discipline.discipline_id) 
+                    {checkSubmittedSurveys(surveysPassed, discipline.discipline_id) 
                     ? (<MyButton>Пройден</MyButton>) 
                     : (<LinkButton to={`/surveys/quiz`} state={discipline}>Пройти опрос</LinkButton>)}
                     

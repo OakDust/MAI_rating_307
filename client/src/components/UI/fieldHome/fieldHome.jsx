@@ -23,7 +23,7 @@ const FieldHome = () => {
 
         <div className={classes.link__container}>
             {routesList.map((route) => (
-                <Link to={route.route}>{route.title}</Link>
+                <Link key={route.route} to={route.route}>{route.title}</Link>
             ))}
         </div>
     );

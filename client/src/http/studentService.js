@@ -62,7 +62,7 @@ export default class StudentService {
     
         const response = await fetch(url, requestHeaders)
 
-        return response.json();
+        return response;
     }
 
     static async getTeachers (dataUser) { 

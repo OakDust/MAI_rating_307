@@ -1,0 +1,19 @@
+.my__select {
+    outline: none;
+    border: 2px solid #D9D9D9;
+    border-radius: 16px;
+    box-sizing: border-box;
+    padding: 5px 15px;
+    font-family: "Montserrat";
+    font-size: clamp(0.75rem, 0.663rem + 0.385vw, 1.125rem);
+
+    option {
+        font-size: clamp(0.75rem, 0.663rem + 0.385vw, 1.125rem);
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .my__select {
+        padding: 5px;
+    }
+}

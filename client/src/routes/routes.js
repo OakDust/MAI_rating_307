@@ -1,4 +1,5 @@
 import {
+    ADMIN_ROUTE,
     AUTH_ROUTE,
     GROUP_ROUTE,
     HOME_ROUTE,
@@ -18,6 +19,7 @@ import Group from '../pages/group.jsx';
 import Quiz from '../pages/quiz.jsx';
 import Home from '../pages/home.jsx';
 import Professors from '../pages/professors.jsx';
+import Admin from '../pages/admin.jsx';
 
 export const publicRoutes = [
     {
@@ -78,5 +80,10 @@ export const privateRoutes = {
             Component: Rating,
             title: 'Опросы 307 | Рейтинг',
         },
+        {
+            path: ADMIN_ROUTE,
+            Component: Admin,
+            title: 'Опросы 307 | Администратор',
+        }
     ]
 }

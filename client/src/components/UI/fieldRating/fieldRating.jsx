@@ -10,6 +10,7 @@ const FieldRating = () => {
     const [totalScore, setTotalScore] = useState(0);
     const [ratingByDisciplines, setRatingByDisciplines] = useState([])
     const {dataUser} = useContext(AuthContext);
+    console.log(dataUser);
     const [fetchRating, isLoadingRating] = useFetching(async () => {
         const response = await ProfessorServise.getRating(dataUser);
 
@@ -29,9 +30,16 @@ const FieldRating = () => {
         )
     }
 
-    const showRatingByDisciplines = () => {
-        if (ratingByDisciplines.length > 0) {
-            return (
+    return( 
+
+        <div className={classes.rating__container}>
+            <div className={classes.total__score}>
+                <h5>Общий рейтинг:</h5>
+                <h5>{totalScore}</h5>
+            </div>
+
+            <div className={classes.rating__table}>
+                <h5>Дисциплины</h5>
                 <div>
                     <table>
                         <thead>
@@ -42,7 +50,8 @@ const FieldRating = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {ratingByDisciplines.map((discipline) => (
+                            {ratingByDisciplines.length > 0
+                            ? ratingByDisciplines.map((discipline, index) => (
                                 <>
                                 <tr>
                                     <td>ЛК</td>
@@ -55,30 +64,11 @@ const FieldRating = () => {
                                     <td>{checkNumberOfRating(discipline.seminarian_score)}</td>
                                 </tr>
                                 </>
-                            ))}
+                            ))
+                            : <tr><td>Нет данных</td></tr>}
                         </tbody>
                     </table>
                 </div>
-            )
-        }
-        else {
-            return (
-                <div className={classes.waste__list}>Нет данных...</div>
-            )
-        }
-    }
-
-    return( 
-
-        <div className={classes.rating__container}>
-            <div className={classes.total__score}>
-                <h5>Общий рейтинг:</h5>
-                <h5>{totalScore}</h5>
-            </div>
-
-            <div className={classes.rating__table}>
-                <h5>Дисциплины</h5>
-                {showRatingByDisciplines()}
             </div>
         </div>
     );

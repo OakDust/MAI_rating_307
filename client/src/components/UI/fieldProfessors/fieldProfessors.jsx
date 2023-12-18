@@ -19,7 +19,6 @@ const FieldProfessors = () => {
         
         setDisciplines(response?.distributed_load || []);
     })
-    
 
     const [fetchTeachers, isTeachersLoading] = useFetching(async () => {
         const response = await StudentService.getTeachers(dataUser);
@@ -72,10 +71,12 @@ const FieldProfessors = () => {
             <div className={classes.table__block}>
                 <table className={classes.disciplines__table}>
                     <thead>
-                        <td>Дисциплина</td>
-                        <td>ФИО преподавателя</td>
-                        <td>Форма</td>
-                        <td>Ред.</td>
+                        <tr>
+                            <td>Дисциплина</td>
+                            <td>ФИО преподавателя</td>
+                            <td>Форма</td>
+                            <td>Ред.</td>
+                        </tr>
                     </thead>
                     <tbody>
                         <AddedDiscipline 

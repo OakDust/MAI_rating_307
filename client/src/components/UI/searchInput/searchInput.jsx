@@ -7,7 +7,7 @@ const SearchInput = ({list, setValue, ...props}) => {
     const [isDirtySelect, setIsDirtySelect] = useState(false);
 
     const searchedList = useMemo(() => {
-        return list.filter(item => item.value.includes(selectQuery));
+        return list.filter(item => item.value.toLowerCase().includes(selectQuery.toLowerCase()));
 
     }, [selectQuery, list])
 
@@ -29,7 +29,7 @@ const SearchInput = ({list, setValue, ...props}) => {
             return (
                 <ul>
                     {searchedList.map(item => (
-                        <li onClick={() => selectHandler(item)}>{item.value}</li>
+                        <li key={item.key} onClick={() => selectHandler(item)}>{item.value}</li>
                     ))}
                 </ul>
             )

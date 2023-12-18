@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import classes from './styles.module.scss';
 import AuthService from '../../../http/authService.js';
 import SearchInput from '../searchInput/searchInput.jsx';
@@ -53,7 +53,7 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
                 </div>}
                 
                 {form.fields.map((field) => 
-                    <div>
+                    <div key={field.name}>
                         <label>{field.title}</label>
                         <input
                             {...register(field.name, {

@@ -41,7 +41,7 @@ const FieldGroup = ({groupList, dataUser, loading}) => {
                     
                     <tbody>
                         {students.map((student, index) => (
-                            <tr>
+                            <tr key={student.name}>
                                 <td>{index + 1}</td>
                                 <td>{student.name}</td>
                                 <td>
@@ -59,7 +59,7 @@ const FieldGroup = ({groupList, dataUser, loading}) => {
         <div className={classes.group__container}>
             <ul>
                 {students.map((student) => (
-                    <li>
+                    <li key={student}>
                         {student}
                     </li>
                 ))}

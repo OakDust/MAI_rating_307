@@ -11,7 +11,7 @@ const Header = ({dataUser, setIsAuth}) => {
     }
 
     return(
-        <div className={classes.main__header}>
+        <header className={classes.main__header}>
             <div className={classes.user__info}>
                 <h3>{name}</h3>
                 <h3>{surname}</h3>
@@ -23,7 +23,7 @@ const Header = ({dataUser, setIsAuth}) => {
             <LinkButton to="/auth" onClick={logout}>
                 Выйти
             </LinkButton>
-        </div>
+        </header>
     );
 }
 export default Header;
