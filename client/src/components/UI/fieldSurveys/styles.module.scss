@@ -1,0 +1,61 @@
+.surveys__list{
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+
+    li{
+        display: flex;
+        justify-content: space-between;
+        padding: 25px 30px;
+        box-sizing: border-box;
+        border-radius: 20px;
+        border: 2px solid #878787;
+        font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.25rem);
+        text-align: left;
+        align-items: center;
+
+        p {
+            width: 60%;
+        }
+
+        a{
+            border: none;
+            color: white;
+            background-color: #7B61FF;
+
+            &:hover{
+                background-color: #1410D6;
+            }
+        }
+
+        button{
+            background: #0BEB65;
+            pointer-events: none;
+        }
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .surveys__list {
+        li { 
+            padding: 15px;
+        }
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 480px) {
+    .surveys__list {
+        li {
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+
+            p {
+                width: 100%;
+            }
+        }
+    }
+}
+

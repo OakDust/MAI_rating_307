@@ -1,0 +1,33 @@
+.teacher__list{
+    list-style-type: none;
+    padding: 0;
+    margin-top: 48px;
+    text-align: left;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+
+    li{
+        font-family: Montserrat;
+        font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.25rem);
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+.validate__error{
+    color: red;
+    margin-bottom: 20px;
+    font-size: clamp(0.75rem, 0.692rem + 0.256vw, 1rem);
+}
+
+@media screen and (min-width: 360px) and (max-width: 480px) {
+    .teacher__list {
+        li {
+            p {
+                text-align: right;
+            }
+        }
+    }
+}

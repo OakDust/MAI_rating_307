@@ -7,26 +7,31 @@ const StudentCrudLoad = require("../models/student_crud_load");
 
 
 exports.getSurveysStudentPassed = async (student_id) => {
-    let surveys_passed = []
-    let dbName = process.env.STUDENTS_BY_GROUPS_DB_NAME
+    try {
+        let surveys_passed = []
+        let dbName = process.env.STUDENTS_BY_GROUPS_DB_NAME
 
-    const surveysQuery = `SELECT ${dbName}.discipline.name as discipline_name, ${dbName}.discipline.id as discipline_id, ${dbName}.quizzes.id as quiz_id, ${dbName}.quizzes.student_id FROM ${dbName}.\`quizzes\` join ${dbName}.discipline on ${dbName}.discipline.id = ${dbName}.quizzes.discipline_id where ${dbName}.quizzes.student_id = ${student_id}`
+        const surveysQuery = `SELECT ${dbName}.discipline.name as discipline_name, ${dbName}.discipline.id as discipline_id, ${dbName}.quizzes.id as quiz_id, ${dbName}.quizzes.student_id FROM ${dbName}.\`${process.env.CURRENT_YEAR_QUIZZES}\` join ${dbName}.discipline on ${dbName}.discipline.id = ${dbName}.${process.env.CURRENT_YEAR_QUIZZES}.discipline_id where ${dbName}.${process.env.CURRENT_YEAR_QUIZZES}.student_id = ${student_id}`
 
-    const surveys = await Quiz.sequelize.query(surveysQuery, {
-        type: QueryTypes.SELECT,
-        logging: false
-    })
-
-    if (surveys.length === 0) {
-        surveys_passed.push({
-            student_id: student_id,
-            surveys_passed: 0,
+        const surveys = await Quiz.sequelize.query(surveysQuery, {
+            type: QueryTypes.SELECT,
+            logging: false
         })
-    } else {
-        surveys_passed = this.fillSubmittedSurveys(student_id, surveys)
+
+        if (surveys.length === 0) {
+            surveys_passed.push({
+                student_id: student_id,
+                surveys_passed: 0,
+            })
+        } else {
+            surveys_passed = this.fillSubmittedSurveys(student_id, surveys)
+        }
+
+        return surveys_passed
+    } catch (err) {
+        return []
     }
 
-    return surveys_passed
 }
 
 exports.fillSubmittedSurveys = (student_id, surveys) => {
@@ -183,14 +188,14 @@ exports.getName = (obj) => {
 }
 
 exports.getGroupId = async (groupName) => {
-    const groups = await GroupsDB.findOne({
+    const groups = await StudentCrudLoad.findOne({
         logging: false,
         where: {
-            name: groupName
+            group_name: groupName
         }
     })
 
-    return groups.id
+    return groups.dataValues.group_id
 }
 
 exports.applyDistributedLoad = async (semester, groups_id, db_name) => {

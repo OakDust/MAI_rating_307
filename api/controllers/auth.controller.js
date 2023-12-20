@@ -119,7 +119,11 @@ exports.studentAuth = async (req, res, next) => {
 
         const groupNameParticials = student.dataValues.groups.split('-', 3)
 
-        const year = new Date().getFullYear()
+        let year = new Date().getFullYear()
+        if (process.env.CURRENT_YEAR_CRUD_DB === 'load_22'){
+            year -= 1
+        }
+
         const groupName = groupNameParticials[0] + '-' + String(year % 2000 - Number(groupNameParticials[2]) + 1) + groupNameParticials[1] + '-' + groupNameParticials[2]
 
         const groupId = await studentService.getGroupId(groupName)

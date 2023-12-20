@@ -2,7 +2,7 @@ const {DataTypes} = require('sequelize')
 const db = require('../bin/crud_db')
 
 
-const StudentCrudLoad = db.define('student_crud_load', {
+const StudentCrudLoad = db.define(`${process.env.CURRENT_YEAR_CRUD_DB}`, {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -60,7 +60,7 @@ const StudentCrudLoad = db.define('student_crud_load', {
         allowNull: true,
     },
 }, {
-    tableName: 'student_crud_load',
+    tableName: `${process.env.CURRENT_YEAR_CRUD_DB}`,
     timestamps: false,
     indexes: [
         {

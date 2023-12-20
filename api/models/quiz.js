@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize')
 //
 const db = require('../bin/crud_db')
 
-const Quiz = db.define('quizzes', {
+const Quiz = db.define(`${process.env.CURRENT_YEAR_QUIZZES}`, {
         id: {
             type: DataTypes.INTEGER,
             autoIncrement: true,
@@ -55,7 +55,7 @@ const Quiz = db.define('quizzes', {
             allowNull: false
         }
     },{
-        tableName: 'quizzes',
+        tableName: `${process.env.CURRENT_YEAR_QUIZZES}`,
         timestamps: false,
         indexes: [
             {

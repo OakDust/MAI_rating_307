@@ -6,7 +6,7 @@ const {getGroupId, teacherExists} = require("../service/student.service");
 const Discipline = require("../models/discipline");
 const {Op, QueryTypes} = require("sequelize");
 const Teacher = require("../models/teacher");
-const StudentCrudLoad = require("../models/student_crud_load");
+const StudentCrudLoad = require(`../models/student_crud_load`);
 
 // defines all the group members of current student
 // RETURN:
@@ -172,8 +172,22 @@ exports.setTeacherScore = async (req, res, next) => {
         const queryYear = body[0].groups.split('-', 3)
 
         const date = new Date()
-        const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+        // const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
         // const numberOfCourse = 2023 - 2000 - queryYear[2] + 1
+
+        let numberOfCourse = 0
+        if (process.env.CURRENT_YEAR_CRUD_DB === 'load_22') {
+            numberOfCourse = date.getFullYear() - 2000 - queryYear[2]
+        } else if (process.env.CURRENT_YEAR_CRUD_DB === 'student_crud_load') {
+            numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+        } else {
+            res.status(500).json({
+                message: 'DB initialization error. Check .env',
+                statusCode: res.statusCode
+            })
+
+            return
+        }
 
         const groupName = queryYear[0] + '-' + numberOfCourse.toString() + queryYear[1] + '-' + queryYear[2]
         const groups_id = await getGroupId(groupName)
@@ -293,7 +307,20 @@ exports.provideDistributedLoad = async (req, res) => {
     const queryYear = req.query.groups.split('-', 3)
 
     const date = new Date()
-    const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+    let numberOfCourse = 0
+    if (process.env.CURRENT_YEAR_CRUD_DB === 'load_22') {
+        numberOfCourse = date.getFullYear() - 2000 - queryYear[2]
+    } else if (process.env.CURRENT_YEAR_CRUD_DB === 'student_crud_load') {
+        numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+    } else {
+        res.status(500).json({
+            message: 'DB initialization error. Check .env',
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+    // const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
     // const numberOfCourse = 2023 - 2000 - queryYear[2] + 1
     const semester = date.getMonth() > 1 ? 0 : 1
 

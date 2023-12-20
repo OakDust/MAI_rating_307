@@ -1,0 +1,61 @@
+.selected__field { 
+
+    td:last-child{
+        border: none;
+    }
+
+    select {
+        text-align: center;
+        width: 100%;
+        border: none;
+        outline: none;
+        shape-outside: none;
+        font-size: 22px;
+        font-family: Montserrat;
+
+        overflow-y: auto;
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+
+        &::-webkit-scrollbar{
+            display: none;
+        }
+    }
+
+    .done__icon{
+        display: flex;
+        justify-content: center;
+        vertical-align: center;
+        align-items: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        background-color: #0045BD;
+        margin: auto;
+        cursor: pointer;
+
+        img {
+            width: 14px;
+            height: 12px;
+        }
+
+        &:hover {
+            background-color: #00CFDC;
+        }
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 1000px) {
+    .selected__field {
+        .done__icon {
+            width: 18px;
+            height: 18px;
+
+            img {
+                width: 10px;
+                height: 8px;
+            }
+        }
+    }
+    
+}

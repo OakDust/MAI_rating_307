@@ -1,0 +1,107 @@
+.main__header{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 60px;
+    position: relative;
+
+    .user__info{
+        display: flex;
+        flex-direction: column;
+        color: #FFF;
+        font-family: Montserrat;
+        font-size: clamp(0.875rem, 0.76rem + 0.513vw, 1.375rem);
+
+        p{
+            margin-top: 10px;
+            font-size: clamp(0.875rem, 0.817rem + 0.256vw, 1.125rem);
+        }
+    }
+
+    h1{
+        color: #F4F4F4;
+        font-family: Tektur;
+        font-size: 82px;
+        font-style: normal;
+        font-weight: 800;
+        line-height: 100%;
+    }
+
+    a {
+        text-decoration: none;
+        border: none;
+        background-color: #00CFDC;
+        color: #FFF;
+
+        &:hover{
+            background: #1410D6;
+        }
+    }
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1920px) {
+    .main__header {
+        h1 {
+            font-size: 70px;
+        }
+    }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1400px) {
+    .main__header {
+        margin-bottom: 40px;
+
+        h1 {
+            font-size: 60px;
+        }
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1000px) {
+    .main__header {
+        margin-bottom: 40px;
+
+        .user__info {
+            align-items: flex-start;
+            font-size: 18px;
+        }
+
+        h1 {
+            font-size: 55px;
+        }
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .main__header {
+        margin-bottom: 25px;
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        box-sizing: border-box;
+        padding: 0 20px;
+
+        .user__info {
+            display: inline-grid;
+            column-gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        h1 {
+            font-size: 50px;
+            grid-row-start: 1;
+        }
+
+        a {
+            grid-row-start: 1;
+        }
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 480px) {
+    .main__header {
+        h1 {
+            font-size: 42px;
+        }
+    }
+}
