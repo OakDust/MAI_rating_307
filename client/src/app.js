@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthContext } from './context';
 import AppRouter from './components/appRouter/appRouter';
-import classes from './styles/indexStyles.scss';
+import classes from './styles/index.scss';
 
 function App() {
   const [isAuth, setIsAuth] = useState(false);

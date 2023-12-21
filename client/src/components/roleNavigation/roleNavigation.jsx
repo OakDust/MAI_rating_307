@@ -17,7 +17,7 @@ const RoleNavigation = ({role}) => {
         }
             
         default:
-            return <Navigate to='/404'/>
+            return <Navigate to='/auth'/>
     }
 }
 export default RoleNavigation;

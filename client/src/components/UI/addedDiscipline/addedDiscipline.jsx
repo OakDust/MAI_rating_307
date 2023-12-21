@@ -5,17 +5,30 @@ import SearchInput from '../searchInput/searchInput';
 import StudentService from '../../../http/studentService';
 import MyInput from '../myInput/myInput';
 import MySelect from '../mySelect/mySelect';
+import Errors from '../../../pages/errors';
 
 const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) => {
     const [disciplineName, setDisciplineName] = useState('');
     const [teacherName, setTeacherName] = useState({});
     const [typeDiscipline, setTypeDiscipline] = useState('ПЗ');
+    const [error, setError] = useState('');
 
     const addDiscipline = async () => {
         if (teacherName && disciplineName) {
-            await StudentService.addDiscipline(teacherName, disciplineName, typeDiscipline, dataUser);
-            fetchDisciplines();
+            try {
+                await StudentService.addDiscipline(teacherName, disciplineName, typeDiscipline, dataUser);
+                fetchDisciplines();
+            }
+            catch (e) {
+                setError(e.message);
+            }
         }
+    }
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
     }
 
     if (isAddMode) {

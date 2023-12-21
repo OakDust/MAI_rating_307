@@ -5,13 +5,13 @@ import ProfessorServise from '../../../http/professorService';
 import { AuthContext } from '../../../context';
 import Loader from '../loader/loader';
 import { checkNumberOfRating } from '../../../utils/professor';
+import Errors from '../../../pages/errors';
 
 const FieldRating = () => {
     const [totalScore, setTotalScore] = useState(0);
     const [ratingByDisciplines, setRatingByDisciplines] = useState([])
     const {dataUser} = useContext(AuthContext);
-    console.log(dataUser);
-    const [fetchRating, isLoadingRating] = useFetching(async () => {
+    const [fetchRating, isLoadingRating, error] = useFetching(async () => {
         const response = await ProfessorServise.getRating(dataUser);
 
         if (response?.totalScore && response?.teacherRatingByDiscipline) {
@@ -27,6 +27,12 @@ const FieldRating = () => {
     if (isLoadingRating) {
         return (
             <Loader/>
+        )
+    }
+
+    if (error) {
+        return (
+            <Errors message={error}/>
         )
     }
 

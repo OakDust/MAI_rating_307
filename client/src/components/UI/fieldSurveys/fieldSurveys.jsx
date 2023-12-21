@@ -7,13 +7,13 @@ import StudentService from '../../../http/studentService';
 import { checkSubmittedSurveys } from '../../../utils/student';
 import { useFetching } from '../../../hooks/useFetching';
 import { AuthContext } from '../../../context';
+import Errors from '../../../pages/errors';
 
 const FieldSurveys = () => {
     const [disciplines, setDisciplines] = useState([]);
     const [surveysPassed, setSurveysPassed] = useState([]);
-
     const {dataUser} = useContext(AuthContext);
-    const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
+    const [fetchDisciplines, isDisciplinesLoading, error] = useFetching( async () => {
         const response = await StudentService.getDisciplines(dataUser);
 
         setDisciplines(response?.distributed_load || []);
@@ -27,6 +27,12 @@ const FieldSurveys = () => {
     if (isDisciplinesLoading) {
         return (
             <Loader/>
+        )
+    }
+
+    if (error) {
+        return (
+            <Errors message={error}/>
         )
     }
 

@@ -25,14 +25,14 @@ const SubmitButtons = ({isRegistration}) => {
     return( 
 
         <div className={classes.button__container}>
+            <LinkButton to={buttons.backRoute}>{buttons.titleLink}</LinkButton>
+
             <MyButton
                 type="submit"
                 form={buttons.idForm}
             >
                 {buttons.titleSubmit}
             </MyButton>
-
-            <LinkButton to={buttons.backRoute}>{buttons.titleLink}</LinkButton>
         </div>
     );
 }

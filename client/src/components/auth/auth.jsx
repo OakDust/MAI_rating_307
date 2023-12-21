@@ -6,6 +6,7 @@ import AuthForm from '../UI/authForm/authForm';
 import RoleButtons from '../UI/roleButtons/roleButtons';
 import SubmitButtons from '../UI/submitButtons/submitButtons';
 import AuthService from '../../http/authService';
+import Errors from '../../pages/errors';
 import classes from './styles.module.scss';
 
 const Auth = ({isRegistration}) => {
@@ -13,6 +14,7 @@ const Auth = ({isRegistration}) => {
     const [serverMessage, setServerMessage] = useState('');
     const [studentGroup, setStudentGroup] = useState('');
     const {isAuth, setIsAuth, setDataUser} = useContext(AuthContext);
+    const [error, setError] = useState('');
 
     const submitAuthForm = async (authFields) => {
         try {
@@ -28,8 +30,8 @@ const Auth = ({isRegistration}) => {
                 setServerMessage(response.message);
             }
         }
-        catch {
-            console.log('Server loosed');
+        catch (e) {
+            setError(e.message);
         }
     } 
 
@@ -38,9 +40,15 @@ const Auth = ({isRegistration}) => {
             const response = await AuthService.registrateUser(role, registrationFields, studentGroup); 
             setServerMessage(response.message);
         }
-        catch {
-            console.log('Server loosed');
+        catch (e) {
+            setError(e.message);
         }
+    }
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
     }
 
     if (isAuth) {

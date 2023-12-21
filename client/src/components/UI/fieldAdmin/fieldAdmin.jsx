@@ -6,13 +6,14 @@ import Loader from '../loader/loader';
 import classes from './styles.module.scss';
 import MyInput from '../myInput/myInput';
 import MySelect from '../mySelect/mySelect';
+import Errors from '../../../pages/errors';
 
 const FieldAdmin = () => {
     const {dataUser} = useContext(AuthContext);
     const [ratingAllTeachers, setRatingAllTeachers] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectQuery, setSelectQuery] = useState('');
-    const [fetchRatingAllTeachers, ratingAllTeacherLoading] = useFetching(async () => {
+    const [fetchRatingAllTeachers, ratingAllTeacherLoading, error] = useFetching(async () => {
         const response = await AdminService.getRatingForAllTeachers(dataUser);
 
         setRatingAllTeachers(response?.total_score || []);
@@ -36,6 +37,12 @@ const FieldAdmin = () => {
         return sortedRatingTeachers.filter(teacher => teacher.name.toLowerCase().includes(searchQuery.toLowerCase()));
         
     }, [searchQuery, sortedRatingTeachers])
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
+    }
 
     if (ratingAllTeacherLoading) {
         return (

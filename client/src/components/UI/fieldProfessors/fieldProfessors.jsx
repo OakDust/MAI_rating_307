@@ -8,19 +8,20 @@ import StudentService from '../../../http/studentService';
 import EditableDiscipline from '../editableDiscipline/editableDiscipline';
 import AddedDiscipline from '../addedDiscipline/addedDiscipline';
 import MyButton from '../myButton/myButton';
+import Errors from '../../../pages/errors';
 
 const FieldProfessors = () => {
     const [disciplines, setDisciplines] = useState([]);
     const [teachersList, setTeachersList] = useState([]);
     const [addDiscipline, setAddDiscipline] = useState({mode: false, title: 'Добавить дисциплину'});
+    const [error, setError] = useState('');
     const {dataUser} = useContext(AuthContext);
-    const [fetchDisciplines, isDisciplinesLoading] = useFetching(async () => {
+    const [fetchDisciplines, isDisciplinesLoading, errorFetchDisciplines] = useFetching(async () => {
         const response = await StudentService.getDisciplines(dataUser);
         
         setDisciplines(response?.distributed_load || []);
     })
-
-    const [fetchTeachers, isTeachersLoading] = useFetching(async () => {
+    const [fetchTeachers, isTeachersLoading, errorFetchTeachers] = useFetching(async () => {
         const response = await StudentService.getTeachers(dataUser);
         const teachers = formattingTeachersList(response);
 
@@ -33,8 +34,14 @@ const FieldProfessors = () => {
     }, [])
 
     const updateTeacher = async (teacher, discipline, type) => {
-        await StudentService.updateTeacher(teacher, discipline, dataUser, type);
-        fetchDisciplines();
+        try {
+            await StudentService.updateTeacher(teacher, discipline, dataUser, type);
+            fetchDisciplines();
+        }
+        catch (e) {
+            setError(e.message);
+        }
+        
     }
 
     const addDisciplineHandler = () => {
@@ -62,6 +69,14 @@ const FieldProfessors = () => {
     if (isDisciplinesLoading || isTeachersLoading) {
         return (
             <Loader/>
+        )
+    }
+
+    const occurredError = errorFetchDisciplines || errorFetchTeachers || error
+
+    if (occurredError) {
+        return (
+            <Errors message={occurredError}/>
         )
     }
     

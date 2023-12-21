@@ -5,11 +5,11 @@ import background from '../../../assets/backgrounds/groupBackground.webp';
 import StatIndication from '../statIndication/statIndication';
 import Loader from '../loader/loader';
 import StudentService from '../../../http/studentService';
+import Errors from '../../../pages/errors';
 
 const FieldGroup = ({groupList, dataUser, loading}) => {
     const [disciplines, setDisciplines] = useState([]);
-
-    const [fetchDisciplines, isDisciplinesLoading] = useFetching( async () => {
+    const [fetchDisciplines, isDisciplinesLoading, error] = useFetching( async () => {
         const response = await StudentService.getDisciplines(dataUser);
         setDisciplines(response?.distributed_load || []);
     })
@@ -24,6 +24,12 @@ const FieldGroup = ({groupList, dataUser, loading}) => {
     if (loading || isDisciplinesLoading) {
         return (
             <Loader/>
+        )
+    }
+
+    if (error) {
+        return (
+            <Errors message={error}/>
         )
     }
     
