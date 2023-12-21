@@ -29,11 +29,11 @@ const FieldMain = ({title, displayField, dataUser}) => {
                 <LinkButton to='/'>Главная</LinkButton>   
             )
         }
-        else if (role === 'Преподаватель') {
-            return (
-                <LinkButton>Запросить отзывы</LinkButton>
-            )
-        }
+        // else if (role === 'Преподаватель') {
+        //     return (
+        //         <LinkButton>Запросить отзывы</LinkButton>
+        //     )
+        // }
     }
 
     return( 
