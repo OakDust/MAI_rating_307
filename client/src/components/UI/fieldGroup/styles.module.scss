@@ -22,8 +22,8 @@
         width: 750px;
         height: 500px;
         margin: auto 0;
-        object-fit: cover;
-        object-position: 0 0;
+        background: no-repeat url('../../../assets/backgrounds/groupBackground.webp');
+        background-size: 100% 100%;
     }
 }
 
@@ -69,7 +69,7 @@
 @media screen and (min-width: 1400px) and (max-width: 1920px) {
     .group__container {
         .group__background {
-            width: 700px;
+            width: 650px;
         }
     }
 }
@@ -78,6 +78,8 @@
     .group__container {
         .group__background {
             width: 450px;
+            background: no-repeat url('../../../assets/backgrounds/groupBackground1400.webp');
+            background-size: 100% auto;
         }
     }
 
@@ -97,6 +99,8 @@
 
         .group__background {
             width: 250px;
+            background: no-repeat url('../../../assets/backgrounds/groupBackground1000.webp');
+            background-size: 100% auto;
         }
     }
 

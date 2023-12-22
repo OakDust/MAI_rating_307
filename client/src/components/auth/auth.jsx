@@ -1,7 +1,7 @@
 import React, {useContext, useState} from 'react';
 import {Navigate} from "react-router-dom";
 import { AuthContext } from '../../context';
-import { formatUserData } from '../../utils/auth';
+import { formatUserData, trimObjectFields } from '../../utils/auth';
 import AuthForm from '../UI/authForm/authForm';
 import RoleButtons from '../UI/roleButtons/roleButtons';
 import SubmitButtons from '../UI/submitButtons/submitButtons';
@@ -18,6 +18,8 @@ const Auth = ({isRegistration}) => {
 
     const submitAuthForm = async (authFields) => {
         try {
+            authFields = trimObjectFields(authFields);
+
             const response = await AuthService.authUser(role, authFields);
 
             if (response?.token) {
@@ -36,6 +38,8 @@ const Auth = ({isRegistration}) => {
     } 
 
     const submitRegistrationForm = async (registrationFields) => {
+        registrationFields = trimObjectFields(registrationFields);
+        console.log(registrationFields);
         try {
             const response = await AuthService.registrateUser(role, registrationFields, studentGroup); 
             setServerMessage(response.message);

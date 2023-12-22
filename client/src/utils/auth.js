@@ -72,3 +72,11 @@ export const formattingGroupsList = (groupsArray) => {
 
     return groupsList;
 }
+
+export const trimObjectFields = (authFields) => {
+    for (let key in authFields) {
+        authFields[key] = authFields[key].trim();
+    }
+
+    return authFields;
+}

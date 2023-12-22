@@ -20,6 +20,10 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
         }
     })
 
+    useEffect(() => {
+        fetchGroups();
+    }, [])
+
     const [form, setForm] = useState({
         fields: authFields,
         id: 'authForm',
@@ -33,10 +37,6 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
             })
         }
     }, [isRegistration])
-
-    useEffect(() => {
-        fetchGroups();
-    }, [])
 
     const {register, getValues, formState: {errors}, handleSubmit} = useForm({mode: 'onBlur'});
 

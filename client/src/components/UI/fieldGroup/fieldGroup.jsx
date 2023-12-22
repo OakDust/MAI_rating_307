@@ -75,7 +75,7 @@ const FieldGroup = ({groupList, dataUser, loading}) => {
                 </li>
             </ul>
 
-            <img className={classes.group__background} src={background} alt='group'/>
+            <div className={classes.group__background}/>
         </div>
     );
 }

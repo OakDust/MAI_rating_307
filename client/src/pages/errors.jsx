@@ -3,6 +3,8 @@ import classes from '../styles/errors.module.scss';
 import errorIcon from '../assets/icons/error.webp';
 
 const Errors = ({message}) => {
+    localStorage.removeItem('authUser');
+
     return( 
 
         <div className={classes.error__container}>
