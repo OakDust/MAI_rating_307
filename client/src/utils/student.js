@@ -108,6 +108,14 @@ export const getDisciplineInfoByType = (discipline, type) => {
     return disciplineInfoByType;
 }
 
+export const setShortFormatGroup = (group) => {
+    let [instituteId, groupName, year] = group.split('-');
+    groupName = groupName.slice(1);
+    const shortStudentGroup = `${instituteId}-${groupName}-${year}`;
+
+    return shortStudentGroup;
+} 
+
 export const setFullFormatGroup = (group) => {
     const yearOfStudy = getYearOfStudy(group);
     const codeGroup = group.split('-');

@@ -1,3 +1,5 @@
+import { setFullFormatGroup, setShortFormatGroup } from "./student";
+
 export const getAuthUrlByRole = (role) => {
     let url = `${process.env.REACT_APP_HOSTNAME}/auth`;
 
@@ -42,6 +44,7 @@ export const formatUserData = (data, role) => {
 }
 
 export const formatBodyRegistration = (fields, role, studentGroup) => {
+
     let body = {
         'name': fields.name,
         'surname': fields.surname,
@@ -54,7 +57,7 @@ export const formatBodyRegistration = (fields, role, studentGroup) => {
     if (role === 'Студент') {
         body = {
             ...body,
-            'groups': studentGroup.value,
+            'groups': setShortFormatGroup(studentGroup.value),
         }
     }
 
@@ -67,7 +70,7 @@ export const formattingGroupsList = (groupsArray) => {
     groupsArray.map((group) => (
         groupsList.push({
             key: group.group_id,
-            value: group.group_name
+            value: setFullFormatGroup(group.group_name)
     })))
 
     return groupsList;
