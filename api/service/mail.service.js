@@ -15,18 +15,26 @@ exports.sendActivationMail = async (email, activationLink) => {
         })
     }
 
-    await Client.transporter.sendMail({
-        from: process.env.SMTP_USER,
-        to: email,
-        subject: `Активация аккаунта ${process.env.REACT_APP_API_URL}`,
-        text: '',
-        html: `
-            <div>
-                <h1>Для активации аккаунта перейдите по ссылке:</h1>
-                <a href="${activationLink}">Активировать аккаунт</a>
-            </div>
-        `
-    })
+    try {
+        await Client.transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: `Активация аккаунта ${process.env.REACT_APP_API_URL}`,
+            text: '',
+            html: `
+                <div>
+                    <h1>Для активации аккаунта перейдите по ссылке:</h1>
+                    <a href="${activationLink}">Активировать аккаунт</a>
+                </div>
+            `
+        })
+
+        return true
+    } catch (err) {
+        return false
+    }
+
+
 }
 
 exports.recoverPassword = async (req, res) => {

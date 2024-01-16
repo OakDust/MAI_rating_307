@@ -39,7 +39,7 @@ exports.getAllTeachersRating = async (req, res) => {
                     lecturer_score += quiz[1].lecturer_score / 7
                     lecturer_subs += 1
                 }
-                console.log(lecturer_score)
+                // console.log(lecturer_score)
 
                 if (quiz[1].seminarian_id === teacher[1].dataValues.id) {
                     seminarian_score += quiz[1].seminarian_score / 7
@@ -86,9 +86,15 @@ exports.getTeacherRatingById = async (req, res) => {
         //         ]
         //     }
         // })
-        const query = `SELECT DISTINCT quizzes.id, quizzes.discipline_id, student_crud_load.discipline_name, student_crud_load.teacher_surname, student_crud_load.teacher_name, student_crud_load.teacher_patronymic FROM \`quizzes\` join student_crud_load on student_crud_load.discipline_id = quizzes.discipline_id where (quizzes.lecturer_id = ${id} or quizzes.seminarian_id = ${id}) and student_crud_load.teacher_id = ${id}`
+
+        const currentDB = process.env.DB_NAME
+        const currentYearQuizzes = process.env.CURRENT_YEAR_QUIZZES
+        const crudDB = process.env.CURRENT_YEAR_CRUD_DB
+
+        const query = `SELECT DISTINCT ${currentDB}.${currentYearQuizzes}.id, ${currentDB}.${currentYearQuizzes}.discipline_id, ${currentDB}.${crudDB}.discipline_name, ${currentDB}.${crudDB}.teacher_surname, ${currentDB}.${crudDB}.teacher_name, ${currentDB}.${crudDB}.teacher_patronymic FROM \`${currentDB}\`.\`${currentYearQuizzes}\` join ${currentDB}.${crudDB} on ${currentDB}.${crudDB}.discipline_id = ${currentDB}.${currentYearQuizzes}.discipline_id where (${currentDB}.${currentYearQuizzes}.lecturer_id = ${id} or ${currentDB}.${currentYearQuizzes}.seminarian_id = ${id}) and ${currentDB}.${crudDB}.teacher_id = ${id}`
         const quizzes = await Quiz.sequelize.query(query, {queryType: QueryTypes.SELECT})
 
+        // console.log(quizzes)
         const length = quizzes[0].length
 
         if (length !== 0) {

@@ -7,8 +7,8 @@
 const app = require('../app');
 const debug = require('debug')('api:server');
 const http = require('http');
-const sequelize = require('./kaf307_20200')
-const custom_db = require('./crud_db')
+const sequelize = require(`./${process.env.CURRENT_DB_CONFIG}`)
+const custom_db = require(`./${process.env.DB_NAME}`)
 /**
  * Get port from environment and store in Express.
  */

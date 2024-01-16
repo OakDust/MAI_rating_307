@@ -1,5 +1,5 @@
 const {DataTypes} = require('sequelize')
-const db = require('../bin/crud_db')
+const db = require('../bin/kaf307_opros')
 
 
 const StudentCrudLoad = db.define(`${process.env.CURRENT_YEAR_CRUD_DB}`, {

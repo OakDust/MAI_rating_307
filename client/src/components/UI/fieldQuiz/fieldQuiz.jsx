@@ -7,11 +7,13 @@ import StudentService from '../../../http/studentService';
 import { fieldAnswers } from './fieldAnswers';
 import { checkEmptyTeacher, formatBodyAnswers } from '../../../utils/student';
 import { AuthContext } from '../../../context';
+import Errors from '../../../pages/errors';
 
 const FieldQuiz = ({disciplineInfo, setTitle}) => {
     const [answers, setAnswers] = useState(fieldAnswers);
     const [buttonDirty, setButtonDirty] = useState(false);
     const [isCompleteQuiz, setIsCompleteQuiz] = useState(false);
+    const [error, setError] = useState('');
     const {dataUser} = useContext(AuthContext);
 
     const validateQuiz = () => {
@@ -51,7 +53,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
                     setIsCompleteQuiz(true);
                 }
             } catch (e) {
-                console.log(e.message);
+                setError(e.message);
             }
         }
     }
@@ -62,6 +64,12 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
         }
 
     }, [isCompleteQuiz])
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
+    }
 
     if (isCompleteQuiz) {
         return(

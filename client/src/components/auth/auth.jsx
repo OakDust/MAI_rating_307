@@ -1,11 +1,12 @@
 import React, {useContext, useState} from 'react';
 import {Navigate} from "react-router-dom";
 import { AuthContext } from '../../context';
-import { formatUserData } from '../../utils/auth';
+import { formatUserData, trimObjectFields } from '../../utils/auth';
 import AuthForm from '../UI/authForm/authForm';
 import RoleButtons from '../UI/roleButtons/roleButtons';
 import SubmitButtons from '../UI/submitButtons/submitButtons';
 import AuthService from '../../http/authService';
+import Errors from '../../pages/errors';
 import classes from './styles.module.scss';
 
 const Auth = ({isRegistration}) => {
@@ -13,9 +14,12 @@ const Auth = ({isRegistration}) => {
     const [serverMessage, setServerMessage] = useState('');
     const [studentGroup, setStudentGroup] = useState('');
     const {isAuth, setIsAuth, setDataUser} = useContext(AuthContext);
+    const [error, setError] = useState('');
 
     const submitAuthForm = async (authFields) => {
         try {
+            authFields = trimObjectFields(authFields);
+
             const response = await AuthService.authUser(role, authFields);
 
             if (response?.token) {
@@ -28,19 +32,27 @@ const Auth = ({isRegistration}) => {
                 setServerMessage(response.message);
             }
         }
-        catch {
-            console.log('Server loosed');
+        catch (e) {
+            setError(e.message);
         }
     } 
 
     const submitRegistrationForm = async (registrationFields) => {
+        registrationFields = trimObjectFields(registrationFields);
+        console.log(registrationFields);
         try {
             const response = await AuthService.registrateUser(role, registrationFields, studentGroup); 
             setServerMessage(response.message);
         }
-        catch {
-            console.log('Server loosed');
+        catch (e) {
+            setError(e.message);
         }
+    }
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
     }
 
     if (isAuth) {

@@ -2,12 +2,28 @@ import React, {useEffect, useState} from 'react';
 import classes from './styles.module.scss';
 import AuthService from '../../../http/authService.js';
 import SearchInput from '../searchInput/searchInput.jsx';
+import Loader from '../loader/loader.jsx';
 import {useForm} from 'react-hook-form';
 import {registrationFields, authFields} from './formFields.js';
 import { formattingGroupsList } from '../../../utils/auth.js';
+import { useFetching } from '../../../hooks/useFetching.js';
+import Errors from '../../../pages/errors.jsx';
 
 const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGroup}) => {
     const [groupsList, setGroupsList] = useState([]);
+    const [fetchGroups, fetchGroupsLoading, error] = useFetching( async () => {
+        const response = await AuthService.getGroupsList();
+
+        if (response?.groups) {
+            const groupsList = formattingGroupsList(response.groups);
+            setGroupsList(groupsList);
+        }
+    })
+
+    useEffect(() => {
+        fetchGroups();
+    }, [])
+
     const [form, setForm] = useState({
         fields: authFields,
         id: 'authForm',
@@ -22,21 +38,19 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
         }
     }, [isRegistration])
 
-    const fetchGroups = async () => {
-        const response = await AuthService.getGroupsList();
-        
-        if (response?.groups) {
-            const groupsList = formattingGroupsList(response.groups);
-            setGroupsList(groupsList);
-        }
-        
+    const {register, getValues, formState: {errors}, handleSubmit} = useForm({mode: 'onBlur'});
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
     }
 
-    useEffect(() => {
-        fetchGroups();
-    }, [])
-
-    const {register, getValues, formState: {errors}, handleSubmit} = useForm({mode: 'onBlur'});
+    if (fetchGroupsLoading) {
+        return (
+            <Loader/>
+        )
+    }
 
     return( 
         <div className={classes.auth__container}>

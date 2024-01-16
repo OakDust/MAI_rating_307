@@ -1,5 +1,5 @@
 const {DataTypes} = require('sequelize')
-const db = require('../bin/crud_db')
+const db = require('../bin/kaf307_opros')
 
 
 const Scores = db.define('scores', {

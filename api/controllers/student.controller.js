@@ -6,7 +6,7 @@ const {getGroupId, teacherExists} = require("../service/student.service");
 const Discipline = require("../models/discipline");
 const {Op, QueryTypes} = require("sequelize");
 const Teacher = require("../models/teacher");
-const StudentCrudLoad = require(`../models/student_crud_load`);
+const StudentCrudLoad = require('../models/student_crud_load');
 
 // defines all the group members of current student
 // RETURN:
@@ -30,7 +30,12 @@ exports.getUserInfo = async (req, res) => {
         let surveys_passed = []
         if (student.dataValues.is_head_student) {
             for (const entry of students) {
-                const surveysQuery = `SELECT discipline.name as discipline_name, discipline.id as discipline_id, quizzes.id as quiz_id, quizzes.student_id FROM \`quizzes\` join kaf307_2023.discipline on kaf307_2023.discipline.id = quizzes.discipline_id where quizzes.student_id = ${entry.dataValues.id}`
+                const quizzes = process.env.CURRENT_YEAR_QUIZZES
+                const currentDB = process.env.DB_NAME
+                const currentYearDB = process.env.CURRENT_DB_CONFIG
+
+                const surveysQuery = `SELECT ${currentYearDB}.discipline.name as discipline_name, ${currentYearDB}.discipline.id as discipline_id, ${currentDB}.${quizzes}.id as quiz_id, ${currentDB}.${quizzes}.student_id FROM \`${currentDB}\`.\`${quizzes}\` join ${currentYearDB}.discipline on ${currentYearDB}.discipline.id = ${currentDB}.${quizzes}.discipline_id where ${currentDB}.${quizzes}.student_id = ${entry.dataValues.id}`
+
                 const surveys = await Quiz.sequelize.query(surveysQuery, {
                     type: QueryTypes.SELECT,
                     logging: false
@@ -177,9 +182,9 @@ exports.setTeacherScore = async (req, res, next) => {
 
         let numberOfCourse = 0
         if (process.env.CURRENT_YEAR_CRUD_DB === 'load_22') {
-            numberOfCourse = date.getFullYear() - 2000 - queryYear[2]
+            numberOfCourse = process.env.CURRENT_YEAR % 2000 - queryYear[2] + 1
         } else if (process.env.CURRENT_YEAR_CRUD_DB === 'student_crud_load') {
-            numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+            numberOfCourse = date.getFullYear() - 2000 - queryYear[2]
         } else {
             res.status(500).json({
                 message: 'DB initialization error. Check .env',
@@ -228,75 +233,77 @@ exports.setTeacherScore = async (req, res, next) => {
 }
 
 exports.updateTeacher = async (req, res) => {
+    const group_name = req.body.group_name.split('-', 3)
+    req.body.group_name = group_name[0] + '-' + group_name[1].at(1) + group_name[1].at(2) + group_name[1].at(3) + '-' + group_name[2]
+
+    const [groupName, semester] = await service.getUserGroupById(req, res)
+    const groupId = await service.getGroupId(groupName)
+
+    req.body.semester = semester
+    req.body.group_id = groupId
+    req.body.group_name = groupName
+
+    const [distributed_load, teacher] = await service.updateTeacherCheckBody(req.body)
+
+    if (!teacher || !distributed_load) {
+        res.status(400).json({
+            message: 'Неизвестный преподаватель или не получается получить распределение нагрузки.',
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+
+    const checkDisciplineInDB = await StudentCrudLoad.findOne({
+        where: {
+            discipline_id: req.body.discipline_id
+        }
+    })
+
+    if (!checkDisciplineInDB) {
+        res.status(400).json({
+            message: "Невозможно найти указанную учебную дисциплину.",
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+
     try {
-        const [distributed_load, teacher] = await service.updateTeacherCheckBody(req.body)
+        const id = distributed_load.dataValues.id
+        const teacher_id = teacher.dataValues.id
+        const discipline_name = checkDisciplineInDB.dataValues.discipline_name
 
-        if (!teacher || !distributed_load) {
-            res.status(400).json({
-                message: 'Неизвестный преподаватель или не получается получить распределение нагрузки.',
-                statusCode: res.statusCode
-            })
-
-            return
+        const obj = {
+            id: id,
+            practical: req.body.practical,
+            lectures: req.body.lectures,
+            teacher_name: teacher.dataValues.name,
+            teacher_surname: teacher.dataValues.surname,
+            teacher_patronymic: teacher.dataValues.patronymic,
+            discipline_name: discipline_name,
+            laboratory: req.body.laboratory,
+            teacher_id: teacher_id,
+            semester: semester,
+            group_id: groupId,
+            group_name: req.body.group_name,
         }
 
-        const checkDisciplineInDB = await StudentCrudLoad.findOne({
+        await StudentCrudLoad.update(obj, {
             where: {
-                discipline_id: req.body.discipline_id
+                id: id
             }
         })
 
-        if (!checkDisciplineInDB) {
-            res.status(400).json({
-                message: "Невозможно найти указанную учебную дисциплину.",
-                statusCode: res.statusCode
-            })
-
-            return
-        }
-
-        try {
-            const id = distributed_load.dataValues.id
-            const teacher_id = teacher.dataValues.id
-            const discipline_name = checkDisciplineInDB.dataValues.discipline_name
-
-            const obj = {
-                id: id,
-                practical: req.body.practical,
-                lectures: req.body.lectures,
-                teacher_name: teacher.dataValues.name,
-                teacher_surname: teacher.dataValues.surname,
-                teacher_patronymic: teacher.dataValues.patronymic,
-                discipline_name: discipline_name,
-                laboratory: req.body.laboratory,
-                teacher_id: teacher_id,
-                semester: req.body.semester,
-                group_id: req.body.group_id,
-                group_name: req.body.group_name,
-            }
-
-            await StudentCrudLoad.update(obj, {
-                where: {
-                    id: id
-                }
-            })
-
-            res.status(200).json({
-                message: "Информация обновлена успешно",
-                statusCode: res.statusCode,
-            })
-        } catch (err) {
-            res.status(400).json({
-                statusCode: res.statusCode,
-                message: "Неверный формат данных.",
-                error: err.message,
-            })
-        }
-    } catch (err) {
-        res.status(500).json({
+        res.status(200).json({
+            message: "Информация обновлена успешно",
             statusCode: res.statusCode,
+        })
+    } catch (err) {
+        res.status(400).json({
+            statusCode: res.statusCode,
+            message: "Неверный формат данных.",
             error: err.message,
-            message: 'Не получилось обновить информацию.'
         })
     }
 }
@@ -304,83 +311,192 @@ exports.updateTeacher = async (req, res) => {
 exports.provideDistributedLoad = async (req, res) => {
     const student_id = req.user.id
     const surveys_passed = await service.getSurveysStudentPassed(student_id)
-    const queryYear = req.query.groups.split('-', 3)
 
-    const date = new Date()
-    let numberOfCourse = 0
-    if (process.env.CURRENT_YEAR_CRUD_DB === 'load_22') {
-        numberOfCourse = date.getFullYear() - 2000 - queryYear[2]
-    } else if (process.env.CURRENT_YEAR_CRUD_DB === 'student_crud_load') {
-        numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
-    } else {
-        res.status(500).json({
-            message: 'DB initialization error. Check .env',
-            statusCode: res.statusCode
-        })
-
-        return
-    }
-    // const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
-    // const numberOfCourse = 2023 - 2000 - queryYear[2] + 1
-    const semester = date.getMonth() > 1 ? 0 : 1
-
-    const groupName = queryYear[0] + '-' + numberOfCourse.toString() + queryYear[1] + '-' + queryYear[2]
-
+    const [groupName, semester] = await service.getUserGroupById(req, res)
     try {
         const groups_id = await getGroupId(groupName)
+
         const distributed_load = await StudentCrudLoad.findAll({
+            attributes: ['discipline_id'],
             where: {
-                group_name: groupName,
+                // group_name: groupName,
                 group_id: groups_id,
                 semester: semester,
             }
         })
 
-        const check = await service.getCrudDistributedLoad(distributed_load)
+        const load = await service.getCrudDistributedLoad(groups_id, semester, distributed_load)
 
         res.status(200).json({
-            distributed_load: check,
+            distributed_load: load,
             surveys_passed: surveys_passed,
         })
     } catch (err) {
         res.status(400).json({
-            message: err.message,
+            message: err.stack,
             statusCode: res.statusCode,
         })
     }
 
 }
 
+// exports.createDiscipline = async (req, res) => {
+//     const group_name = req.body.group_name.split('-', 3)
+//
+//     req.body.group_name = group_name[0] + '-' + group_name[1].at(1) + group_name[1].at(2) + group_name[1].at(3) + '-' + group_name[2]
+//
+//     const [groupName, semester] = await service.getUserGroupById(req, res)
+//     req.body.group_name = groupName
+//     const groupId = await service.getGroupId(groupName)
+//
+//     req.body.group_id = groupId
+//
+//     const userRequest = {
+//         discipline_name: req.body.discipline_name,
+//         group_name: groupName,
+//         group_id: groupId,
+//         semester: semester,
+//         lectures: req.body.lectures,
+//         practical: req.body.practical,
+//         laboratory: 0
+//     }
+//
+//     const dataExist = await StudentCrudLoad.findAll({
+//         raw: true,
+//         where: {
+//             discipline_name: req.body.discipline_name,
+//             group_name: groupName,
+//             semester: semester,
+//             lectures: req.body.lectures,
+//             practical: req.body.practical
+//         }
+//     })
+//
+//     if (dataExist.length === 1) {
+//         res.status(400).json({
+//             message: 'Такая учебная дисциплина уже в списке. Обновите информацию.',
+//             statusCode: res.statusCode,
+//         })
+//
+//         return
+//     }
+//
+//     try {
+//         let teacher = await Teacher.findOne({
+//             logging: false,
+//             where: {
+//                 surname: req.body.teacher_surname,
+//                 name: req.body.teacher_name,
+//                 patronymic: req.body.teacher_patronymic,
+//             }
+//         })
+//
+//         let discipline = await Discipline.findOne({
+//             logging: false,
+//             where: {
+//                 name: req.body.discipline_name
+//             }
+//         })
+//
+//         if (!teacher || !discipline) {
+//             if (!discipline) {
+//                 await Discipline.create({
+//                     name: req.body.discipline_name,
+//                     comment: '',
+//                 })
+//
+//                 discipline = await Discipline.findOne({
+//                     where: {
+//                         name: req.body.discipline_name,
+//                     }
+//                 })
+//             }
+//
+//             if (!teacher) {
+//                 await Teacher.create({
+//                     surname: req.body.teacher_surname,
+//                     name: req.body.teacher_name,
+//                     patronymic: req.body.teacher_patronymic,
+//                 })
+//
+//                 teacher = await Teacher.findOne({
+//                     logging: false,
+//                     where: {
+//                         surname: req.body.teacher_surname,
+//                         name: req.body.teacher_name,
+//                         patronymic: req.body.teacher_patronymic,
+//                     }
+//                 })
+//             }
+//         }
+//
+//
+//         userRequest.discipline_id = discipline.dataValues.id
+//         userRequest.discipline_name = discipline.dataValues.name
+//         userRequest.teacher_id = teacher.dataValues.id
+//         userRequest.teacher_name = teacher.dataValues.name
+//         userRequest.teacher_surname = teacher.dataValues.surname
+//         userRequest.teacher_patronymic = teacher.dataValues.patronymic
+//
+//         await StudentCrudLoad.create(userRequest)
+//
+//         res.status(201).json({
+//             message: "Учебная дисциплина успешно создана.",
+//             statusCode: res.statusCode
+//         })
+//
+//         return
+//     } catch (err) {
+//         res.status(400).json({
+//             message: 'Не получается найти данные.',
+//             statusCode: res.statusCode,
+//         })
+//
+//         return
+//     }
+// }
+
 exports.createDiscipline = async (req, res) => {
-    const userRequest = {
-        discipline_name: req.body.discipline_name,
-        group_id: req.body.group_id,
-        group_name: req.body.group_name,
-        semester: req.body.semester,
-        lectures: req.body.lectures,
-        practical: req.body.practical,
-        laboratory: 0
-    }
+    try {
+        const group_name = req.body.group_name.split('-')
+        req.body.group_name = group_name[0] + '-' + group_name[1].charAt(1) + group_name[1].charAt(2) + group_name[1].charAt(3) + '-' + group_name[2]
 
-    const dataExist = await StudentCrudLoad.findAll({
-        where: {
+        const [groupName, semester] = await service.getUserGroupById(req, res)
+        req.body.group_name = groupName
+        const groupId = await service.getGroupId(groupName)
+
+        req.body.group_id = groupId
+
+        const userRequest = {
             discipline_name: req.body.discipline_name,
-            group_id: req.body.group_id,
-            group_name: req.body.group_name,
-            semester: req.body.semester,
+            group_name: groupName,
+            group_id: groupId,
+            semester: semester,
+            lectures: req.body.lectures,
+            practical: req.body.practical,
+            laboratory: 0
         }
-    })
 
-    if (dataExist.length === 2) {
-        res.status(400).json({
-            message: 'Такая учебная дисциплина уже в списке. Обновите информацию.',
-            statusCode: res.statusCode,
+        const dataExist = await StudentCrudLoad.findAll({
+            raw: true,
+            where: {
+                discipline_name: req.body.discipline_name,
+                group_name: groupName,
+                semester: semester,
+                lectures: req.body.lectures,
+                practical: req.body.practical
+            }
         })
 
-        return
-    }
+        if (dataExist.length === 1) {
+            res.status(400).json({
+                message: 'Такая учебная дисциплина уже в списке. Обновите информацию.',
+                statusCode: res.statusCode,
+            })
 
-    try {
+            return
+        }
+
         let teacher = await Teacher.findOne({
             logging: false,
             where: {
@@ -397,38 +513,35 @@ exports.createDiscipline = async (req, res) => {
             }
         })
 
-        if (!teacher || !discipline) {
-            if (!discipline) {
-                await Discipline.create({
-                    name: req.body.discipline_name,
-                    comment: '',
-                })
+        if (!teacher) {
+            await Teacher.create({
+                surname: req.body.teacher_surname,
+                name: req.body.teacher_name,
+                patronymic: req.body.teacher_patronymic,
+            })
 
-                discipline = await Discipline.findOne({
-                    where: {
-                        name: req.body.discipline_name,
-                    }
-                })
-            }
-
-            if (!teacher) {
-                await Teacher.create({
+            teacher = await Teacher.findOne({
+                logging: false,
+                where: {
                     surname: req.body.teacher_surname,
                     name: req.body.teacher_name,
                     patronymic: req.body.teacher_patronymic,
-                })
-
-                teacher = await Teacher.findOne({
-                    logging: false,
-                    where: {
-                        surname: req.body.teacher_surname,
-                        name: req.body.teacher_name,
-                        patronymic: req.body.teacher_patronymic,
-                    }
-                })
-            }
+                }
+            })
         }
 
+        if (!discipline) {
+            await Discipline.create({
+                name: req.body.discipline_name,
+                comment: '',
+            })
+
+            discipline = await Discipline.findOne({
+                where: {
+                    name: req.body.discipline_name,
+                }
+            })
+        }
 
         userRequest.discipline_id = discipline.dataValues.id
         userRequest.discipline_name = discipline.dataValues.name
@@ -444,14 +557,11 @@ exports.createDiscipline = async (req, res) => {
             statusCode: res.statusCode
         })
 
-        return
     } catch (err) {
         res.status(400).json({
-            message: 'Не получается найти данные.',
+            message: 'Не удалось найти данные.',
             statusCode: res.statusCode,
         })
-
-        return
     }
 }
 

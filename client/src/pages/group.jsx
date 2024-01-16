@@ -5,11 +5,12 @@ import { AuthContext } from '../context';
 import { useFetching } from '../hooks/useFetching';
 import { formattingGroupList } from '../utils/student';
 import StudentService from '../http/studentService';
+import Errors from './errors';
 
 const Group = (props) => {
     const [groupList, setGroupList] = useState({students: [], headStudent: ''});
     const {dataUser} = useContext(AuthContext);
-    const [fetchGroupList, groupListLoading] = useFetching( async () => {
+    const [fetchGroupList, groupListLoading, error] = useFetching( async () => {
         const response = await StudentService.getGroupList(dataUser);
         const formattedGroupList = formattingGroupList(response.students, response.surveys_passed);
 
@@ -22,6 +23,12 @@ const Group = (props) => {
     useEffect(() => {
         fetchGroupList();
     }, [])
+
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
+    }
 
     return(
         <Main 

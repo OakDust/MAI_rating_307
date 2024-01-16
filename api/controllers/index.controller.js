@@ -94,13 +94,22 @@ exports.createStudent = async (req, res) => {
 
     try {
         await Student.create(student)
-        await mailService.sendActivationMail(student.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
+        const emailSent = await mailService.sendActivationMail(student.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
 
-        res.status(201).json({message: 'Регистрация прошла успешно.'})
+        if (!emailSent) {
+            res.status(500).json({
+                message: 'Не получилось отправить письмо на указанную почту.',
+                statusCode: res.statusCode,
+            })
+
+            return
+        }
+
+        res.status(201).json({message: "Регистрация прошла успешно. Для активации аккаунта перейдите по ссылке, которая пришла вам на почту."})
     } catch (err) {
         res.status(500).json({
             message: 'Не получилось зарегистрироваться.',
-            error: err.stack
+            error: err.message
         });
     }
 
@@ -147,9 +156,18 @@ exports.createProfessor = async (req, res, next) => {
         };
 
         await Professor.create(professor)
-        await mailService.sendActivationMail(professor.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
+        const emailSent = await mailService.sendActivationMail(professor.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
 
-        res.status(201).json({message: 'Регистрация прошла успешно.'})
+        if (!emailSent) {
+            res.status(500).json({
+                message: 'Не получилось отправить письмо на указанную почту.',
+                statusCode: res.statusCode,
+            })
+
+            return
+        }
+
+        res.status(201).json({message: "Регистрация прошла успешно. Для активации аккаунта перейдите по ссылке, которая пришла вам на почту."})
     } catch (err) {
         res.status(400).json({message: 'Не получилось зарегистрироваться.'})
     }

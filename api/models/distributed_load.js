@@ -1,5 +1,5 @@
 const {DataTypes} = require('sequelize');
-const db = require('../bin/crud_db')
+const db = require(`../bin/${process.env.CURRENT_DB_CONFIG}`)
 
 
 const DistributedLoad = db.define('distributed_load', {
