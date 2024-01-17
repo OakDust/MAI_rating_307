@@ -1,5 +1,5 @@
 const DataTypes = require('sequelize');
-const db = require('../bin/crud_db')
+const db = require(`../bin/${process.env.DB_NAME}`)
 
 
 const Discipline = db.define('discipline', {

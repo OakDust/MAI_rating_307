@@ -1,0 +1,19 @@
+.message__block{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    p {
+        font-size: clamp(0.875rem, 0.76rem + 0.513vw, 1.375rem);
+
+        span {
+            color: #1410D6;
+        }
+    }
+
+    .buttons__block{
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+    }
+}

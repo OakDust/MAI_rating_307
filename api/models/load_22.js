@@ -2,7 +2,7 @@ const {DataTypes} = require('sequelize')
 const db = require('../bin/kaf307_opros')
 
 
-const StudentCrudLoad = db.define(`${process.env.CURRENT_YEAR_CRUD_DB}`, {
+const Load2022 = db.define('load_22', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
@@ -60,7 +60,7 @@ const StudentCrudLoad = db.define(`${process.env.CURRENT_YEAR_CRUD_DB}`, {
         allowNull: true,
     },
 }, {
-    tableName: `${process.env.CURRENT_YEAR_CRUD_DB}`,
+    tableName: 'load_22',
     timestamps: false,
     indexes: [
         {
@@ -75,4 +75,4 @@ const StudentCrudLoad = db.define(`${process.env.CURRENT_YEAR_CRUD_DB}`, {
 })
 
 
-module.exports = StudentCrudLoad
+module.exports = Load2022

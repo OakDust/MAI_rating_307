@@ -45,5 +45,9 @@ router.put('/createDiscipline', headStudentCheck(), async (req, res, next) => {
     await controller.createDiscipline(req, res)
 })
 
+router.put('/deleteDiscipline', headStudentCheck(), async (req, res, next) => {
+    await controller.deleteDiscipline(req, res)
+})
+
 
 module.exports = router;

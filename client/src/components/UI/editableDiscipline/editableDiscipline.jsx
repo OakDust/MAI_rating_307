@@ -1,11 +1,15 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import editIcon from '../../../assets/icons/edit.webp';
 import classes from './styles.module.scss';
 import doneIcon from '../../../assets/icons/done.webp';
 import SearchInput from '../searchInput/searchInput';
+import deleteIcon from '../../../assets/icons/delete.webp';
+import ModalWindow from '../modalWindow/modalWindow';
+import DeleteWindow from '../deleteWindow/deleteWindow';
 
-const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue}) => {
+const EditableDiscipline = ({discipline, teacher, teacherId, type, listItems, updateValue, deleteDiscipline}) => {
     const [editMode, setEditMode] = useState(false);
+    const [deleteMode, setDeleteMode] = useState(false);
     const [newValue, setNewValue] = useState({key: '', value: ''});
 
     const editHandler = () => {
@@ -16,6 +20,12 @@ const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue})
         }
 
         setEditMode(false);
+    }
+
+    const deleteHandler = () => {
+        deleteDiscipline(discipline.discipline_id, teacherId);
+        
+        setDeleteMode(false);
     }
 
     if (editMode) {
@@ -39,13 +49,29 @@ const EditableDiscipline = ({discipline, teacher, type, listItems, updateValue})
         )
     }
 
-    return( 
+    if (deleteMode) {
+        return (
+            <ModalWindow visible={deleteMode} setVisible={setDeleteMode}>
+                <DeleteWindow
+                    discipline={discipline}
+                    type={type}
+                    deleteHandler={deleteHandler}
+                    setDeleteMode={setDeleteMode}
+                />
+            </ModalWindow>
+        )
+    }
+
+    return(
 
         <tr>
             <td>{discipline.discipline}</td>
             <td>{teacher}</td>
             <td>{type}</td>
-            <td><img src={editIcon} alt='Редактировать' onClick={() => setEditMode(true)}/></td>
+            <td className={classes.table__options}>
+                <img src={editIcon} alt='Редактировать' onClick={() => setEditMode(true)}/>
+                <img src={deleteIcon} alt='Удалить' onClick={() => setDeleteMode(true)}/>
+            </td>
         </tr>
     );
 

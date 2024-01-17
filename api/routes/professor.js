@@ -6,7 +6,7 @@ const Quiz = require("../models/quiz");
 const checkRole = require('../middleware/roleMiddleware')
 
 router.use(authMiddleware)
-router.use(checkRole('Professor'))
+router.use(checkRole('Professor' || 'Administrator'))
 router.get('/allRating', async (req, res, next) => {
     // await controller.showProfessors(req, res)
     // if (req.user.role === 'Преподаватель') {

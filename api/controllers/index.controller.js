@@ -62,13 +62,18 @@ exports.createStudent = async (req, res) => {
     const existStudent = await Student.findOne({
         where: {
             groups: groupName,
-            name: req.body.name,
+            name: req.body.surname + ' ' + req.body.name + ' ' + req.body.patronymic,
             role: req.body.role
         }
     })
 
-    if (!dbStudent || existStudent) {
+    if (!dbStudent) {
         res.status(400).json({message: 'Такой студент не существует.'})
+        return
+    }
+
+    if (existStudent) {
+        res.status(400).json({message: 'Такой студент уже зарегистрирован.'})
         return
     }
 
@@ -89,13 +94,22 @@ exports.createStudent = async (req, res) => {
 
     try {
         await Student.create(student)
-        await mailService.sendActivationMail(student.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
+        const emailSent = await mailService.sendActivationMail(student.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
 
-        res.status(201).json({message: 'Регистрация прошла успешно.'})
+        if (!emailSent) {
+            res.status(500).json({
+                message: 'Не получилось отправить письмо на указанную почту.',
+                statusCode: res.statusCode,
+            })
+
+            return
+        }
+
+        res.status(201).json({message: "Регистрация прошла успешно. Для активации аккаунта перейдите по ссылке, которая пришла вам на почту."})
     } catch (err) {
         res.status(500).json({
             message: 'Не получилось зарегистрироваться.',
-            error: err.stack
+            error: err.message
         });
     }
 
@@ -120,9 +134,13 @@ exports.createProfessor = async (req, res, next) => {
             }
         })
 
-        if (!dbTeacher || existTeacher) {
+        if (!dbTeacher) {
             res.status(400).json({message: 'Такой преподаватель не существует.'})
             return
+        }
+
+        if (existTeacher) {
+            res.status(400).json({message: 'Такой преподаватель уже зарегистрирован.'})
         }
         const activationLink = uuid.v4()
 
@@ -138,9 +156,18 @@ exports.createProfessor = async (req, res, next) => {
         };
 
         await Professor.create(professor)
-        await mailService.sendActivationMail(professor.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
+        const emailSent = await mailService.sendActivationMail(professor.email, `${process.env.HOST_NAME}:${process.env.PORT}/activate/${activationLink}&role=${req.body.role}`)
 
-        res.status(201).json({message: 'Регистрация прошла успешно.'})
+        if (!emailSent) {
+            res.status(500).json({
+                message: 'Не получилось отправить письмо на указанную почту.',
+                statusCode: res.statusCode,
+            })
+
+            return
+        }
+
+        res.status(201).json({message: "Регистрация прошла успешно. Для активации аккаунта перейдите по ссылке, которая пришла вам на почту."})
     } catch (err) {
         res.status(400).json({message: 'Не получилось зарегистрироваться.'})
     }

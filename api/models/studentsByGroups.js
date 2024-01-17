@@ -1,6 +1,6 @@
 const { Sequelize, DataTypes } = require('sequelize')
 
-const db = require('../bin/crud_db')
+const db = require('../bin/kaf307_opros')
 
 const StudentsByGroups = db.define('students_by_groups', {
         id: {

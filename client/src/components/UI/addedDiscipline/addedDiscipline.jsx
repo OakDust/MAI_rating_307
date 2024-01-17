@@ -8,10 +8,29 @@ import MySelect from '../mySelect/mySelect';
 import Errors from '../../../pages/errors';
 
 const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) => {
-    const [disciplineName, setDisciplineName] = useState('');
+    const [disciplineName, setDisciplineName] = useState({});
     const [teacherName, setTeacherName] = useState({});
     const [typeDiscipline, setTypeDiscipline] = useState('ПЗ');
     const [error, setError] = useState('');
+
+    const disciplineList = [
+        {
+            value: 'ОВТИС',
+            key: '26',
+        },
+        {
+            value: 'Прога',
+            key: '226',
+        },
+        {
+            value: 'Матан',
+            key: '6',
+        },
+        {
+            value: 'Дота2',
+            key: '2',
+        }
+    ]
 
     const addDiscipline = async () => {
         if (teacherName && disciplineName) {
@@ -36,9 +55,11 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList}) 
         return( 
             <tr className={classes.added__row}>
                 <td>
-                    <MyInput
+                    <SearchInput
                         onChange={(e) => setDisciplineName(e.target.value)}
                         value={disciplineName}
+                        setValue={setDisciplineName}
+                        list={disciplineList}
                         placeholder='Название дисциплины'
                     />
                 </td>

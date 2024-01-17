@@ -7,26 +7,35 @@ const StudentCrudLoad = require("../models/student_crud_load");
 
 
 exports.getSurveysStudentPassed = async (student_id) => {
-    let surveys_passed = []
-    let dbName = process.env.STUDENTS_BY_GROUPS_DB_NAME
+    try {
+        let surveys_passed = []
+        let dbName = process.env.DB_NAME
+        let current = process.env.CURRENT_DB_CONFIG
+        let quizzes = process.env.CURRENT_YEAR_QUIZZES
 
-    const surveysQuery = `SELECT ${dbName}.discipline.name as discipline_name, ${dbName}.discipline.id as discipline_id, ${dbName}.quizzes.id as quiz_id, ${dbName}.quizzes.student_id FROM ${dbName}.\`quizzes\` join ${dbName}.discipline on ${dbName}.discipline.id = ${dbName}.quizzes.discipline_id where ${dbName}.quizzes.student_id = ${student_id}`
+        const surveysQuery = `SELECT ${current}.discipline.name as discipline_name, ${current}.discipline.id as discipline_id, ${dbName}.${quizzes}.id as quiz_id, ${dbName}.${quizzes}.student_id FROM ${dbName}.\`${quizzes}\` join ${current}.discipline on ${current}.discipline.id = ${dbName}.${quizzes}.discipline_id where ${dbName}.${quizzes}.student_id = ${student_id}`
 
-    const surveys = await Quiz.sequelize.query(surveysQuery, {
-        type: QueryTypes.SELECT,
-        logging: false
-    })
-
-    if (surveys.length === 0) {
-        surveys_passed.push({
-            student_id: student_id,
-            surveys_passed: 0,
+        const surveys = await Quiz.sequelize.query(surveysQuery, {
+            type: QueryTypes.SELECT,
+            logging: false
         })
-    } else {
-        surveys_passed = this.fillSubmittedSurveys(student_id, surveys)
+
+        // console.log(surveys)
+
+        if (surveys.length === 0) {
+            surveys_passed.push({
+                student_id: student_id,
+                surveys_passed: 0,
+            })
+        } else {
+            surveys_passed = this.fillSubmittedSurveys(student_id, surveys)
+        }
+
+        return surveys_passed
+    } catch (err) {
+        return []
     }
 
-    return surveys_passed
 }
 
 exports.fillSubmittedSurveys = (student_id, surveys) => {
@@ -50,6 +59,52 @@ exports.fillSubmittedSurveys = (student_id, surveys) => {
 }
 
 exports.teacherExists = async (body) => {
+    if (body[0].lecturer_name === '' || body[0].seminarian_name === '') {
+        let lecturer
+        let seminarian
+
+        if (body[0].lecturer_name === '' && body[0].seminarian_name !== '') {
+            const [seminarianSurname, seminarianName, seminarianPatronymic] = body[0].seminarian_name.split(' ')
+
+            seminarian = await Teacher.findOne({
+                logging: false,
+                where: {
+                    name: seminarianName,
+                    surname: seminarianSurname,
+                    patronymic: seminarianPatronymic,
+                }
+            })
+
+            lecturer = {
+                    name: '',
+                    surname: '',
+                    patronymic: '',
+                    id: -1
+            }
+        } else if (body[0].lecturer_name !== '' && body[0].seminarian_name === '') {
+            const [lecturerSurname, lecturerName, lecturerPatronymic] = body[0].lecturer_name.split(' ')
+
+            lecturer = await Teacher.findOne({
+                logging: false,
+                where: {
+                    name: lecturerName,
+                    surname: lecturerSurname,
+                    patronymic: lecturerPatronymic,
+                }
+            })
+
+            seminarian = {
+                    name: '',
+                    surname: '',
+                    patronymic: '',
+                    id: -1
+            }
+        }
+
+        return [lecturer, seminarian]
+    }
+
+
     const [lecturerSurname, lecturerName, lecturerPatronymic] = body[0].lecturer_name.split(' ')
     const [seminarianSurname, seminarianName, seminarianPatronymic] = body[0].seminarian_name.split(' ')
 
@@ -136,15 +191,20 @@ exports.getName = (obj) => {
     }
 }
 
+exports.getGroupName = (groupNameParticials) => {
+    return groupNameParticials[0] + '-' + String(process.env.CURRENT_YEAR % 2000 - Number(groupNameParticials[2]) + 1) + groupNameParticials[1] + '-' + groupNameParticials[2]
+}
+
 exports.getGroupId = async (groupName) => {
-    const groups = await GroupsDB.findOne({
+    console.log(groupName)
+    const groups = await StudentCrudLoad.findOne({
         logging: false,
         where: {
-            name: groupName
+            group_name: groupName
         }
     })
 
-    return groups.id
+    return groups.dataValues.group_id
 }
 
 exports.applyDistributedLoad = async (semester, groups_id, db_name) => {
@@ -202,135 +262,64 @@ exports.applyDistributedLoad = async (semester, groups_id, db_name) => {
     return check
 }
 
-exports.getCrudDistributedLoad = async (distributed_load) => {
+exports.getCrudDistributedLoad = async (group_id, semester, distributed_load) => {
     let discipline_ids = new Set()
-    let discipline_names = new Set()
-    for (let i = 0; i < distributed_load.length; i++) {
-        discipline_ids.add(distributed_load[i].dataValues.discipline_id)
-        discipline_names.add(distributed_load[i].dataValues.discipline_name)
+
+    for (const item of distributed_load) {
+        discipline_ids.add(item.dataValues.discipline_id)
     }
 
-    discipline_ids = Array.from(discipline_ids)
-    discipline_names = Array.from(discipline_names)
-    const check = []
-
-    for (let i = 0; i < discipline_ids.length; i++) {
-        let count = 0
-        let data = []
-
-        for (let j = 0; j < distributed_load.length; j++) {
-            if (distributed_load[j].dataValues.discipline_id === discipline_ids[i]) {
-                count++
-                data.push(distributed_load[j].dataValues)
+    const data = new Map()
+    for (const id of discipline_ids) {
+        const load = await StudentCrudLoad.findAll({
+            raw: true,
+            where: {
+                discipline_id: id,
+                semester: semester,
+                group_id: group_id
             }
-        }
+        })
+        data.set(id, load)
+    }
 
+    const load = []
+    let key = 0
+    for (const [disciplineId, entries] of data) {
         let lecturer = ''
         let seminarian = ''
-        let laborant = ''
-        let lecturer_id = 0
-        let seminarian_id = 0
+        let lecturer_id = -1
+        let seminarian_id = -1
 
-        if (count === 1) {
-            if (this.sum(data[0]) === 0 || (data[0].practical !== 0 && data[0].lectures !== 0)) {
-                lecturer = this.getName(data[0])
-                lecturer_id = data[0].teacher_id
-                seminarian = lecturer
-                seminarian_id = data[0].teacher_id
-            }
-            if (data[0].lectures !== 0 && data[0].practical === 0) {
-                lecturer = this.getName(data[0])
-                lecturer_id = data[0].teacher_id
-            }
-            if (data[0].practical !== 0 && data[0].lectures === 0) {
-                seminarian = this.getName(data[0])
-                seminarian_id = data[0].teacher_id
+        for (const node of entries) {
+            if (lecturer === '' && (node.lectures > 0 && node.practical === 0 || (node.lectures + node.practical === 0))) {
+                lecturer = this.getName(node)
+                lecturer_id = node.teacher_id
             }
 
-            check.push({
-                lecturer: lecturer,
-                seminarian: seminarian,
-                // laborant: laborant,
-                discipline_id: discipline_ids[i],
-                discipline: discipline_names[i],
-                lecturer_id: lecturer_id,
-                seminarian_id: seminarian_id,
-                key: i,
-            })
-
-            continue
-
-        } else if (count === 2) {
-            for (let j = 0; j < count; j++) {
-
-                if ((this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '') {
-                    lecturer = this.getName(data[j])
-                }
-
-                if (data[j].practical !== 0 && seminarian === '') {
-                    seminarian = this.getName(data[j])
-                }
-                // data[j].practical !== 0 && seminarian === '' ?  : null
-            }
-        } else if (count === 3) {
-            for (let j = 0; j < count; j++) {
-                // this.sum(data[j]) === 0 || data[j].lectures !== 0 ? lecturer = this.getName(data[j]) : null
-                //
-                // data[j].practical !== 0 ? seminarian = this.getName(data[j]) : null
-                if ((this.sum(data[j]) === 0 || data[j].lectures !== 0) && lecturer === '') {
-                    lecturer = this.getName(data[j])
-                }
-
-                if (data[j].practical !== 0 && seminarian === '') {
-                    seminarian = this.getName(data[j])
-                }
-
-                data[j].laboratory !== 0 ? laborant = this.getName(data[j]) : null
+            if (seminarian === '' && (node.practical > 0 && node.lectures === 0)) {
+                seminarian = this.getName(node)
+                seminarian_id = node.teacher_id
             }
         }
 
-        const teacherId = await Teacher.findAll({
-            where: {
-                [Op.or]: [
-                    {
-                        name: lecturer.split(' ')[1],
-                        surname: lecturer.split(' ')[0],
-                        patronymic: lecturer.split(' ')[2],
-                    },
-                    {
-                        name: seminarian.split(' ')[1],
-                        surname: seminarian.split(' ')[0],
-                        patronymic: seminarian.split(' ')[2],
-                    }
-                ]
-            }
+        load.push({
+            lecturer,
+            seminarian,
+            discipline_id: disciplineId,
+            discipline: entries[0].discipline_name,
+            lecturer_id,
+            seminarian_id,
+            key,
         })
 
-        if (this.getName(teacherId[0]) === lecturer && count !== 1) {
-            lecturer_id = teacherId[0].dataValues.id
-            seminarian_id = teacherId[1].dataValues.id
-        } else if (count !== 1) {
-            lecturer_id = teacherId[1].dataValues.id
-            seminarian_id = teacherId[0].dataValues.id
-        }
-
-        check.push({
-            lecturer: lecturer,
-            seminarian: seminarian,
-            // laborant: laborant,
-            discipline_id: discipline_ids[i],
-            discipline: discipline_names[i],
-            lecturer_id: lecturer_id,
-            seminarian_id: seminarian_id,
-            key: i,
-        })
+        key++
     }
 
-    return check
+    return load
 }
 
 exports.updateTeacherCheckBody = async (body) => {
-    let dbWhere = {
+    const dbWhere = {
         group_id: body.group_id,
         semester: body.semester,
         discipline_id: body.discipline_id,
@@ -347,33 +336,23 @@ exports.updateTeacherCheckBody = async (body) => {
 
     let amountOfTeachers = getAmountOfTeachers.length
     if (amountOfTeachers === 1) {
-        dbWhere.practical = getAmountOfTeachers[0].dataValues.practical
-    } else if (amountOfTeachers === 2) {
-        for (let i = 0; i < 2; i++) {
+        const firstTeacher = getAmountOfTeachers[0].dataValues
+        dbWhere.practical = firstTeacher.practical
+        dbWhere.lectures = firstTeacher.lectures
+    } else {
+        for (let i = 0; i < amountOfTeachers; i++) {
+            const currentTeacher = getAmountOfTeachers[i].dataValues
             if (body.lectures !== 0) {
-                if (getAmountOfTeachers[i].dataValues.lectures !== 0 || this.sum(getAmountOfTeachers[i].dataValues) === 0) {
-                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
-                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
+                if (currentTeacher.lectures !== 0 || (currentTeacher.lectures + currentTeacher.practical) === 0) {
+                    dbWhere.practical = currentTeacher.practical
+                    dbWhere.lectures = currentTeacher.lectures
+                    break
                 }
             } else if (body.practical !== 0) {
-                if (getAmountOfTeachers[i].dataValues.practical !== 0) {
-                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
-                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
-                }
-            }
-        }
-
-    } else if (amountOfTeachers === 3) {
-        for (let i = 0; i < 3; i++) {
-            if (body.lectures !== 0) {
-                if (getAmountOfTeachers[i].dataValues.lectures !== 0 || this.sum(getAmountOfTeachers[i].dataValues) === 0) {
-                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
-                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
-                }
-            } else if (body.practical !== 0) {
-                if (getAmountOfTeachers[i].dataValues.practical !== 0) {
-                    dbWhere.lectures = getAmountOfTeachers[i].dataValues.lectures
-                    dbWhere.practical = getAmountOfTeachers[i].dataValues.practical
+                if (currentTeacher.practical !== 0) {
+                    dbWhere.lectures = currentTeacher.lectures
+                    dbWhere.practical = currentTeacher.practical
+                    break
                 }
             }
         }
@@ -392,4 +371,38 @@ exports.updateTeacherCheckBody = async (body) => {
     })
 
     return [distributed_load, teacher]
+}
+
+exports.getUserGroupById = async (req, res) => {
+    let queryYear = ''
+    if (req.query.groups) {
+        queryYear = req.query.groups.split('-', 3)
+    } else {
+        queryYear = req.body.group_name.split('-', 3)
+    }
+
+    const date = new Date()
+
+    let numberOfCourse = 0
+    let semester = 0
+    if (process.env.CURRENT_YEAR_CRUD_DB === 'load_22') {
+        numberOfCourse = process.env.CURRENT_YEAR % 2000 - queryYear[2] + 1
+        semester = 1
+    } else if (process.env.CURRENT_YEAR_CRUD_DB === 'student_crud_load') {
+        numberOfCourse = process.env.CURRENT_YEAR % 2000 - queryYear[2] + 1
+        semester = date.getMonth() > 1 ? 0 : 1
+    } else {
+        res.status(500).json({
+            message: 'DB initialization error. Check .env',
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+    // const numberOfCourse = date.getFullYear() - 2000 - queryYear[2] + 1
+    // const numberOfCourse = 2023 - 2000 - queryYear[2] + 1
+    // const semester = date.getMonth() > 1 ? 0 : 1
+
+    const groupName = this.getGroupName(queryYear)
+    return [groupName, semester]
 }

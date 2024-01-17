@@ -1,5 +1,5 @@
 const DataTypes = require('sequelize');
-const db = require('../bin/kaf307_20200')
+const db = require(`../bin/${process.env.CURRENT_DB_CONFIG}`)
 
 const Groups = db.define('groups', {
   id: {

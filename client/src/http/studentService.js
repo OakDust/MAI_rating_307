@@ -109,12 +109,13 @@ export default class StudentService {
 
     static async addDiscipline (teacherName, disciplineName, typeDiscipline, dataUser) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/createDiscipline`;
+        const newDisciplineName = disciplineName?.value || disciplineName;
         const fullTeacherName = teacherName?.value || teacherName;
         const [surname, name, patronymic] = fullTeacherName.split(' ');
         const groupName = setFullFormatGroup(dataUser.group);
 
         const body = {
-            discipline_name: disciplineName,
+            discipline_name: newDisciplineName,
             teacher_surname: surname,
             teacher_name: name,
             teacher_patronymic: patronymic,
@@ -126,6 +127,35 @@ export default class StudentService {
             laboratory: 0,
         }
         
+        const requestHeaders = {
+            method: "PUT", 
+            mode: "cors",
+            cache: "no-cache", 
+            credentials: "same-origin", 
+            headers: {
+                "Authorization": dataUser.Authorization,
+                "Content-Type": "application/json",
+            },
+            redirect: "follow",
+            referrerPolicy: "no-referrer", 
+            body: JSON.stringify(body)
+        }
+
+        const response = await fetch(url, requestHeaders);
+
+        return response.json();
+    }
+
+    static async deleteDiscipline (disciplineId, teacherId, dataUser) {
+        const url = `${process.env.REACT_APP_HOSTNAME}/student/deleteDiscipline`;
+
+        const body = {
+            teacher_id: teacherId,
+            discipline_id: disciplineId,
+            group_id: dataUser.group_id,
+            student_id: dataUser.id,
+        }
+
         const requestHeaders = {
             method: "PUT", 
             mode: "cors",
