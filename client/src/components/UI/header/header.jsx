@@ -1,6 +1,7 @@
 import React from 'react';
 import classes from './styles.module.scss';
 import LinkButton from '../linkButton/linkButton';
+import { setFullFormatGroup } from '../../../utils/student';
 
 const Header = ({dataUser, setIsAuth}) => {
     const [name, surname] = dataUser.name.split(' ');
@@ -15,7 +16,7 @@ const Header = ({dataUser, setIsAuth}) => {
             <div className={classes.user__info}>
                 <h3>{name}</h3>
                 <h3>{surname}</h3>
-                <p>{dataUser.group}</p>
+                <p>{setFullFormatGroup(dataUser.group)}</p>
             </div>
 
             <h1>ОПРОСЫ 307</h1>

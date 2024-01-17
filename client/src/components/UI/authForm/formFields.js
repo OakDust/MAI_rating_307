@@ -1,9 +1,9 @@
 export const authFields = [
     {
         type: 'email',
-        title: 'Логин',
+        title: 'E-mail',
         name: 'email',
-        placeholder: 'Введите логин',
+        placeholder: 'Введите E-mail',
     },
     {
         type: 'password',

@@ -16,11 +16,13 @@ const FieldProfessors = () => {
     const [addDiscipline, setAddDiscipline] = useState({mode: false, title: 'Добавить дисциплину'});
     const [error, setError] = useState('');
     const {dataUser} = useContext(AuthContext);
+
     const [fetchDisciplines, isDisciplinesLoading, errorFetchDisciplines] = useFetching(async () => {
         const response = await StudentService.getDisciplines(dataUser);
         
         setDisciplines(response?.distributed_load || []);
     })
+
     const [fetchTeachers, isTeachersLoading, errorFetchTeachers] = useFetching(async () => {
         const response = await StudentService.getTeachers(dataUser);
         const teachers = formattingTeachersList(response);
@@ -44,6 +46,16 @@ const FieldProfessors = () => {
         
     }
 
+    const deleteDiscipline = async (disciplineId, teacherId) => {
+        try {
+            await StudentService.deleteDiscipline(disciplineId, teacherId, dataUser);
+            fetchDisciplines();
+        }
+        catch (e) {
+            setError(e.message);
+        } 
+    }
+
     const addDisciplineHandler = () => {
         setAddDiscipline(
             addDiscipline.mode 
@@ -52,15 +64,17 @@ const FieldProfessors = () => {
         )
     }
 
-    const showNotEmptyTeacher = (discipline, teacher, type) => {
+    const showNotEmptyTeacher = (discipline, teacher, teacherId, type) => {
         if (teacher) {
             return (
                 <EditableDiscipline
                     discipline={discipline} 
                     teacher={teacher} 
+                    teacherId={teacherId}
                     type={type}
                     listItems={teachersList}
                     updateValue={updateTeacher}
+                    deleteDiscipline={deleteDiscipline}
                 />
             )
         }
@@ -83,6 +97,7 @@ const FieldProfessors = () => {
     return( 
         <div className={classes.disciplines__container}>
             <MyButton onClick={() => addDisciplineHandler()}>{addDiscipline.title}</MyButton>
+
             <div className={classes.table__block}>
                 <table className={classes.disciplines__table}>
                     <thead>
@@ -102,8 +117,8 @@ const FieldProfessors = () => {
                         />
                         {disciplines.map(discipline => (
                             <>
-                                {showNotEmptyTeacher(discipline, discipline.lecturer, 'ЛК')}
-                                {showNotEmptyTeacher(discipline, discipline.seminarian, 'ПЗ')}
+                                {showNotEmptyTeacher(discipline, discipline.lecturer, discipline.lecturer_id, 'ЛК')}
+                                {showNotEmptyTeacher(discipline, discipline.seminarian, discipline.seminarian_id, 'ПЗ')}
                             </>
                         ))}
                     </tbody>

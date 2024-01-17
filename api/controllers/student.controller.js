@@ -581,8 +581,9 @@ exports.deleteDiscipline = async (req, res, next) => {
             student_id: req.body.student_id,
         }
 
-        req.body.lectures === 0 ? whereCond.practical = req.body.practical : whereCond.lectures = req.body.lectures
+        // req.body.lectures === 0 ? whereCond.practical = req.body.practical : whereCond.lectures = req.body.lectures
 
+        console.log(whereCond)
         await Quiz.destroy({
             where: whereCond
         })

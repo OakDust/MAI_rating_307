@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classes from '../styles/errors.module.scss';
 import errorIcon from '../assets/icons/error.webp';
+import { Navigate } from 'react-router-dom';
 
 const Errors = ({message}) => {
     localStorage.removeItem('authUser');
@@ -12,6 +13,8 @@ const Errors = ({message}) => {
 
             <h1>{message}</h1>
             <p>Попробуйте позже</p>
+            
+            {message ? <Navigate to='/auth'/> : null}
         </div>
     );
 }
