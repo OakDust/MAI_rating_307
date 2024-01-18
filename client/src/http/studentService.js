@@ -174,4 +174,19 @@ export default class StudentService {
 
         return response.json();
     }
+
+    static async getAllDisciplines (dataUser) {
+        const url = `${process.env.REACT_APP_HOSTNAME}/student/getDisciplines`;
+
+        const requestHeaders = {
+            method: "GET",
+            headers: {
+                "Authorization": dataUser.Authorization
+            }
+        }
+    
+        const response = await fetch(url, requestHeaders);
+    
+        return response.json();
+    }
 }
