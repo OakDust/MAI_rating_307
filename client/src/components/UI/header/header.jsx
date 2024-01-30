@@ -4,7 +4,6 @@ import LinkButton from '../linkButton/linkButton';
 import { setFullFormatGroup } from '../../../utils/student';
 
 const Header = ({dataUser, setIsAuth}) => {
-    console.log(dataUser);
     const [name, surname] = dataUser.name.split(' ');
 
     const logout = () => {

@@ -41,6 +41,7 @@ const FieldSurveys = () => {
             {disciplines.map((discipline) => (
                 <li key={discipline.discipline_id}>
                     <p>{discipline.discipline}</p>
+                    
                     {checkSubmittedSurveys(surveysPassed, discipline.discipline_id) 
                     ? (<MyButton>Пройден</MyButton>) 
                     : (<LinkButton to={`/surveys/quiz`} state={discipline}>Пройти опрос</LinkButton>)}
