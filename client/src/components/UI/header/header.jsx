@@ -4,6 +4,7 @@ import LinkButton from '../linkButton/linkButton';
 import { setFullFormatGroup } from '../../../utils/student';
 
 const Header = ({dataUser, setIsAuth}) => {
+    console.log(dataUser);
     const [name, surname] = dataUser.name.split(' ');
 
     const logout = () => {
@@ -16,7 +17,7 @@ const Header = ({dataUser, setIsAuth}) => {
             <div className={classes.user__info}>
                 <h3>{name}</h3>
                 <h3>{surname}</h3>
-                <p>{setFullFormatGroup(dataUser.group)}</p>
+                <p>{dataUser?.group ? setFullFormatGroup(dataUser.group) : null}</p>
             </div>
 
             <h1>ОПРОСЫ 307</h1>
