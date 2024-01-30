@@ -3,13 +3,13 @@ export const authFields = [
         type: 'email',
         title: 'E-mail',
         name: 'email',
-        placeholder: 'Введите E-mail',
+        placeholder: 'Введите ваш E-mail',
     },
     {
         type: 'password',
         title: 'Пароль',
         name: 'password',
-        placeholder: 'Введите пароль',
+        placeholder: 'Введите ваш пароль',
     },
 ]
 
@@ -36,10 +36,10 @@ export const registrationFields = [
         type: 'email',
         title: 'Почта',
         name: 'email',
-        placeholder: 'Введите почту',
+        placeholder: 'Введите E-mail',
         //eslint-disable-next-line
         pattern: /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/,
-        message: 'Неккоректный email',
+        message: 'Неккоректный E-mail',
     },
     {
         type: 'password',

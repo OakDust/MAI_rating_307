@@ -4,7 +4,7 @@
     border: none;
     border-radius: 16px;
     font-family: Montserrat;
-    font-size: 20px;
+    font-size: clamp(0.75rem, 0.5rem + 0.8vw, 1rem);
     font-weight: 800;
     background-color: #FFF;
     color: #00CFDC;
@@ -19,14 +19,13 @@
 
 @media screen and (min-width: 1000px) and (max-width: 1400px) {
     .button__link {
-        font-size: 17px;
         padding: 12px 25px;
+        border-width: 3px;
     }
 }
 
 @media screen and (min-width: 768px) and (max-width: 1000px) {
     .button__link {
-        font-size: 16px;
         padding: 10px 20px;
         border-width: 2px;
     }
@@ -34,7 +33,6 @@
 
 @media screen and (min-width: 360px) and (max-width: 768px) {
     .button__link {
-        font-size: 14px;
         padding: 8px 12px;
         border-width: 2px;
     }

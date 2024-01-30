@@ -17,7 +17,12 @@ const QuestionsList = ({answered, buttonDirty}) => {
                         <RatingScale title='Семинары:' numberQuestion={number} answered={answered} buttonDirty={buttonDirty}/>
                     </>
                         
-                    : <textarea onChange={(e) => answered(e.target.value, number, role)} type="text"/>}
+                    : <textarea 
+                        onChange={(e) => answered(e.target.value, number, role)} 
+                        type="text"
+                        placeholder='Ваш комментарий...'
+                        />
+                    }
                 </li>
             ))}
         </ul>
