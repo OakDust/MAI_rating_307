@@ -71,7 +71,7 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
                         <label>{field.title}</label>
                         <input
                             {...register(field.name, {
-                                required: "Поле обязательно к заполнению",
+                                required: field.required && "Поле обязательно к заполнению",
                                 minLength: {
                                     value: field.minLength,
                                     message: field.messege,
