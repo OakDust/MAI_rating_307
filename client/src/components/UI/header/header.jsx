@@ -1,6 +1,7 @@
 import React from 'react';
 import classes from './styles.module.scss';
 import LinkButton from '../linkButton/linkButton';
+import userIcon from '../../../assets/icons/user.webp';
 import { setFullFormatGroup } from '../../../utils/student';
 
 const Header = ({dataUser, setIsAuth}) => {
@@ -13,10 +14,14 @@ const Header = ({dataUser, setIsAuth}) => {
 
     return(
         <header className={classes.main__header}>
-            <div className={classes.user__info}>
-                <h3>{name}</h3>
-                <h3>{surname}</h3>
-                <p>{setFullFormatGroup(dataUser.group)}</p>
+            <div className={classes.user__block}>
+                <img src={userIcon} alt={surname}/>
+
+                <div className={classes.user__info}>
+                    <h3>{name}</h3>
+                    <h3>{surname}</h3>
+                    <p>{dataUser?.group ? setFullFormatGroup(dataUser.group) : null}</p>
+                </div>
             </div>
 
             <h1>ОПРОСЫ 307</h1>

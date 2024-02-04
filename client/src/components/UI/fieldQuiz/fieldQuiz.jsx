@@ -59,6 +59,8 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
     }
 
     useEffect(() => {
+        window.scrollTo({ top: 0 });
+
         if (isCompleteQuiz) {
             setTitle('');
         }

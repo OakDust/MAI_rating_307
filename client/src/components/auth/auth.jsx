@@ -39,6 +39,7 @@ const Auth = ({isRegistration}) => {
 
     const submitRegistrationForm = async (registrationFields) => {
         registrationFields = trimObjectFields(registrationFields);
+
         try {
             const response = await AuthService.registrateUser(role, registrationFields, studentGroup); 
             setServerMessage(response.message);

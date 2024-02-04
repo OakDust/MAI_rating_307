@@ -4,14 +4,17 @@ const DistributedLoad = require("../models/distributed_load");
 const {QueryTypes, Op} = require("sequelize");
 const Quiz = require("../models/quiz");
 const StudentCrudLoad = require("../models/student_crud_load");
+const Student = require("../models/student");
 
 
 exports.getSurveysStudentPassed = async (student_id) => {
     try {
         let surveys_passed = []
         let dbName = process.env.DB_NAME
-        let current = process.env.CURRENT_DB_CONFIG
+        // let current = process.env.CURRENT_DB_CONFIG
         let quizzes = process.env.CURRENT_YEAR_QUIZZES
+        let current = process.env.DB_NAME
+
 
         const surveysQuery = `SELECT ${current}.discipline.name as discipline_name, ${current}.discipline.id as discipline_id, ${dbName}.${quizzes}.id as quiz_id, ${dbName}.${quizzes}.student_id FROM ${dbName}.\`${quizzes}\` join ${current}.discipline on ${current}.discipline.id = ${dbName}.${quizzes}.discipline_id where ${dbName}.${quizzes}.student_id = ${student_id}`
 
@@ -316,6 +319,22 @@ exports.getCrudDistributedLoad = async (group_id, semester, distributed_load) =>
     }
 
     return load
+}
+
+exports.appendChainsAndElectives = async (req) => {
+    const student_id = req.user.id
+
+    const student_group = await Student.findOne({
+        attributes: ['groups'],
+        where: {
+            id: student_id
+        }
+    })
+
+    const yearAdmitted = student_group.groups.split('-', 3)[2]
+    const semester = (process.env.CURRENT_YEAR % 2000 - Number(yearAdmitted) + 1) * process.env.WORKING_SEMESTER
+
+    return semester
 }
 
 exports.updateTeacherCheckBody = async (body) => {

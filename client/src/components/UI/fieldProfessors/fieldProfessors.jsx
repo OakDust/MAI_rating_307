@@ -3,7 +3,7 @@ import classes from './styles.module.scss';
 import Loader from '../loader/loader';
 import { AuthContext } from '../../../context';
 import { useFetching } from '../../../hooks/useFetching';
-import { formattingTeachersList} from '../../../utils/student';
+import { formattingAllDisciplines, formattingTeachersList} from '../../../utils/student';
 import StudentService from '../../../http/studentService';
 import EditableDiscipline from '../editableDiscipline/editableDiscipline';
 import AddedDiscipline from '../addedDiscipline/addedDiscipline';
@@ -12,6 +12,7 @@ import Errors from '../../../pages/errors';
 
 const FieldProfessors = () => {
     const [disciplines, setDisciplines] = useState([]);
+    const [allDisciplinesList, setAllDisciplinesList] = useState([]);
     const [teachersList, setTeachersList] = useState([]);
     const [addDiscipline, setAddDiscipline] = useState({mode: false, title: 'Добавить дисциплину'});
     const [error, setError] = useState('');
@@ -30,8 +31,16 @@ const FieldProfessors = () => {
         setTeachersList(teachers);
     })
 
+    const [fetchAllDisciplines, isAllDisciplinesLoading, errorFetchAllDisciplines] = useFetching(async () => {
+        const response = await StudentService.getAllDisciplines(dataUser);
+        const allDisciplines = formattingAllDisciplines(response);
+        
+        setAllDisciplinesList(allDisciplines);
+    })
+
     useEffect(() => {
         fetchDisciplines();
+        fetchAllDisciplines();
         fetchTeachers();
     }, [])
 
@@ -80,13 +89,13 @@ const FieldProfessors = () => {
         }
     }
 
-    if (isDisciplinesLoading || isTeachersLoading) {
+    if (isDisciplinesLoading || isTeachersLoading || isAllDisciplinesLoading) {
         return (
             <Loader/>
         )
     }
 
-    const occurredError = errorFetchDisciplines || errorFetchTeachers || error
+    const occurredError = errorFetchDisciplines || errorFetchTeachers || errorFetchAllDisciplines || error;
 
     if (occurredError) {
         return (
@@ -114,6 +123,7 @@ const FieldProfessors = () => {
                             fetchDisciplines={fetchDisciplines}
                             teachersList={teachersList}
                             isAddMode={addDiscipline.mode}
+                            allDisciplinesList={allDisciplinesList}
                         />
                         {disciplines.map(discipline => (
                             <>

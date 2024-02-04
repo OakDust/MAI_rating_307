@@ -151,3 +151,13 @@ export const checkSubmittedSurveys = (surveysPassed, disciplineId) => {
 
     return submitted;
 }
+
+export const formattingAllDisciplines = (allDisciplinesList) => {
+    const formattedList = []
+
+    allDisciplinesList.map((discipline) => {
+        formattedList.push({key: discipline.id, value: discipline.name});
+    })
+
+    return formattedList;
+}

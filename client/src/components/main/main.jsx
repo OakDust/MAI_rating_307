@@ -3,6 +3,7 @@ import classes from './styles.module.scss';
 import FieldMain from '../UI/fieldMain/fieldMain.jsx';
 import { AuthContext } from '../../context/index.js';
 import Header from '../UI/header/header.jsx';
+import Footer from '../UI/footer/footer.jsx';
 
 const Main = (props) => {
     const {setIsAuth, dataUser} = useContext(AuthContext);
@@ -11,13 +12,13 @@ const Main = (props) => {
 
         <div className={classes.container}>
             <Header dataUser={dataUser} setIsAuth={setIsAuth}/>
-            
             <FieldMain 
                 className={classes.main__body}
                 title={props.title} 
                 displayField={props.displayField} 
                 dataUser={dataUser}
             />
+            <Footer/>
         </div>
     );
 }

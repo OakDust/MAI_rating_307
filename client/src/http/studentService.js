@@ -1,4 +1,5 @@
 import { getDisciplineInfoByType, setFullFormatGroup } from "../utils/student";
+import Requests from "./allRequest";
 
 export default class StudentService {
     static async getDisciplines (dataUser) {
@@ -23,51 +24,23 @@ export default class StudentService {
             groups: dataUser.group,
         }
 
-        const requestHeaders = {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": dataUser.Authorization,
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-    
-            body: JSON.stringify(body)
-        }
-
-        const response = await fetch(url, requestHeaders);
+        const response = await Requests.post(body, url, dataUser);
 
         return response.json();
     }
 
     static async submitQuiz (dataUser, body) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/quiz`
-
-        const requestHeaders = {
-            method: "POST",
-            mode: "cors",
-            cache: "no-cache",
-            credentials: "same-origin",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": dataUser.Authorization,
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer",
-            body: JSON.stringify(body)
-        }
     
-        const response = await fetch(url, requestHeaders)
+        const response = await Requests.post(body, url, dataUser);
 
         return response;
     }
 
     static async getTeachers (dataUser) { 
         const url = `${process.env.REACT_APP_HOSTNAME}/student/getTeachers`;
-        const response = await fetch(url, {headers: {"Authorization": dataUser.Authorization}});
+
+        const response = await Requests.get(dataUser, url);
 
         return response.json()
     }
@@ -92,23 +65,15 @@ export default class StudentService {
             discipline_name: discipline.discipline,
             discipline_id: discipline.discipline_id,
         }
-
-        const requestHeaders = {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": dataUser.Authorization,
-            },
-            body: JSON.stringify(body)
-        }
     
-        const response = await fetch(url, requestHeaders);
+        const response = await Requests.put(dataUser, body, url);
 
         return response.json();
     }
 
     static async addDiscipline (teacherName, disciplineName, typeDiscipline, dataUser) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/createDiscipline`;
+
         const newDisciplineName = disciplineName?.value || disciplineName;
         const fullTeacherName = teacherName?.value || teacherName;
         const [surname, name, patronymic] = fullTeacherName.split(' ');
@@ -126,22 +91,8 @@ export default class StudentService {
             practical: (typeDiscipline === 'ПЗ' ? 1 : 0),
             laboratory: 0,
         }
-        
-        const requestHeaders = {
-            method: "PUT", 
-            mode: "cors",
-            cache: "no-cache", 
-            credentials: "same-origin", 
-            headers: {
-                "Authorization": dataUser.Authorization,
-                "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer", 
-            body: JSON.stringify(body)
-        }
 
-        const response = await fetch(url, requestHeaders);
+        const response = await Requests.put(dataUser, body, url);
 
         return response.json();
     }
@@ -156,22 +107,16 @@ export default class StudentService {
             student_id: dataUser.id,
         }
 
-        const requestHeaders = {
-            method: "PUT", 
-            mode: "cors",
-            cache: "no-cache", 
-            credentials: "same-origin", 
-            headers: {
-                "Authorization": dataUser.Authorization,
-                "Content-Type": "application/json",
-            },
-            redirect: "follow",
-            referrerPolicy: "no-referrer", 
-            body: JSON.stringify(body)
-        }
+        const response = await Requests.put(dataUser, body, url);
 
-        const response = await fetch(url, requestHeaders);
+        return response.json();
+    }
 
+    static async getAllDisciplines (dataUser) {
+        const url = `${process.env.REACT_APP_HOSTNAME}/student/getDisciplines`;
+    
+        const response = await Requests.get(dataUser, url);
+    
         return response.json();
     }
 }
