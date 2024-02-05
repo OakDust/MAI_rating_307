@@ -114,9 +114,17 @@ export default class StudentService {
 
     static async getAllDisciplines (dataUser) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/getDisciplines`;
-    
+
         const response = await Requests.get(dataUser, url);
     
+        return response.json();
+    }
+
+    static async getElectiveData (dataUser, route) {
+        const url = `${process.env.REACT_APP_HOSTNAME + route}`;
+
+        const response = await Requests.get(dataUser, url);
+
         return response.json();
     }
 }

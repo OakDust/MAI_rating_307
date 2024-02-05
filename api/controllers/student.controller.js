@@ -7,6 +7,8 @@ const Discipline = require("../models/discipline");
 const {Op, QueryTypes} = require("sequelize");
 const Teacher = require("../models/teacher");
 const StudentCrudLoad = require('../models/student_crud_load');
+const English = require("../models/english");
+const Individual = require("../models/individual");
 
 // defines all the group members of current student
 // RETURN:
@@ -32,7 +34,8 @@ exports.getUserInfo = async (req, res) => {
             for (const entry of students) {
                 const quizzes = process.env.CURRENT_YEAR_QUIZZES
                 const currentDB = process.env.DB_NAME
-                const currentYearDB = process.env.CURRENT_DB_CONFIG
+                // const currentYearDB = process.env.CURRENT_DB_CONFIG
+                const currentYearDB = process.env.DB_NAME
 
                 const surveysQuery = `SELECT ${currentYearDB}.discipline.name as discipline_name, ${currentYearDB}.discipline.id as discipline_id, ${currentDB}.${quizzes}.id as quiz_id, ${currentDB}.${quizzes}.student_id FROM \`${currentDB}\`.\`${quizzes}\` join ${currentYearDB}.discipline on ${currentYearDB}.discipline.id = ${currentDB}.${quizzes}.discipline_id where ${currentDB}.${quizzes}.student_id = ${entry.dataValues.id}`
 
@@ -327,6 +330,76 @@ exports.provideDistributedLoad = async (req, res) => {
 
         const load = await service.getCrudDistributedLoad(groups_id, semester, distributed_load)
 
+        const working_semester = await service.appendChainsAndElectives(req)
+
+        // load.push({
+        //     lecturer,
+        //     seminarian,
+        //     discipline_id: disciplineId,
+        //     discipline: entries[0].discipline_name,
+        //     lecturer_id,
+        //     seminarian_id,
+        //     key,
+        // })
+
+        if (working_semester >= 4) {
+            load.push(
+                {
+                    lecturer: '',
+                    seminarian: '',
+                    discipline_id: -1,
+                    discipline: 'Цепочка 1',
+                    lecturer_id: -1,
+                    seminarian_id: -1,
+                    key: 0
+                },
+                {
+                    lecturer: '',
+                    seminarian: '',
+                    discipline_id: -1,
+                    discipline: 'Цепочка 2',
+                    lecturer_id: -1,
+                    seminarian_id: -1,
+                    key: 0
+                }
+            )
+        }
+
+        if (working_semester == 5 || working_semester == 6) {
+            load.push(
+                {
+                    lecturer: '',
+                    seminarian: '',
+                    discipline_id: -1,
+                    discipline: 'Электив 1',
+                    lecturer_id: -1,
+                    seminarian_id: -1,
+                    key: 0
+                }
+            )
+        } else if (working_semester == 7) {
+            load.push(
+                {
+                    lecturer: '',
+                    seminarian: '',
+                    discipline_id: -1,
+                    discipline: 'Электив 1',
+                    lecturer_id: -1,
+                    seminarian_id: -1,
+                    key: 0
+                },
+                {
+                    lecturer: '',
+                    seminarian: '',
+                    discipline_id: -1,
+                    discipline: 'Электив 2',
+                    lecturer_id: -1,
+                    seminarian_id: -1,
+                    key: 0
+                }
+            )
+        }
+
         res.status(200).json({
             distributed_load: load,
             surveys_passed: surveys_passed,
@@ -581,8 +654,9 @@ exports.deleteDiscipline = async (req, res, next) => {
             student_id: req.body.student_id,
         }
 
-        req.body.lectures === 0 ? whereCond.practical = req.body.practical : whereCond.lectures = req.body.lectures
+        // req.body.lectures === 0 ? whereCond.practical = req.body.practical : whereCond.lectures = req.body.lectures
 
+        console.log(whereCond)
         await Quiz.destroy({
             where: whereCond
         })
@@ -599,4 +673,91 @@ exports.deleteDiscipline = async (req, res, next) => {
 
         return
     }
+}
+
+exports.fetchEnglish = async (req, res, next) => {
+    try {
+        const english = await English.findAll({
+            attributes: ['id', 'surname', 'name', 'patronymic']
+        })
+
+        const result = []
+        for (const element of english) {
+            result.push({
+                id: element.id,
+                seminarian: element.surname + ' ' + element.name + ' ' + element.patronymic,
+            })
+        }
+
+        res.json(result)
+    } catch (err) {
+        res.status(500).json({
+            statusCode: res.statusCode,
+            message: "Что-то пошло не так."
+        })
+    }
+}
+
+exports.defineIndividual = async (req, res) => {
+    const student_id = req.user.id
+
+    const student_group = await Student.findOne({
+        attributes: ['groups'],
+        where: {
+            id: student_id
+        }
+    })
+
+    const yearAdmitted = student_group.groups.split('-', 3)[2]
+    const semester = (process.env.CURRENT_YEAR % 2000 - Number(yearAdmitted) + 1) * process.env.WORKING_SEMESTER
+
+    let dataQuery = ''
+    if (req.query.individual_type === 'chain') {
+        dataQuery = `SELECT i.id, d.name, i.lecturer, i.seminarian, d.id as discipline_id FROM individual i JOIN discipline d ON d.id = i.discipline JOIN teacher t1 ON i.lecturer = t1.id JOIN teacher t2 ON i.seminarian = t2.id where i.semester = ${semester} and i.type != "e";`
+    } else if (req.query.individual_type === 'elective') {
+        dataQuery = `SELECT i.id, d.name, i.lecturer, i.seminarian, d.id as discipline_id FROM individual i JOIN discipline d ON d.id = i.discipline JOIN teacher t1 ON i.lecturer = t1.id JOIN teacher t2 ON i.seminarian = t2.id where i.semester = ${semester} and i.type = "e";`
+    } else {
+        res.status(400).json({
+            message: "Убедитесь в корректности введеных данных.",
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+
+    const data = await Individual.sequelize.query(dataQuery, {type: QueryTypes.SELECT})
+
+    const listOfChains = []
+    for (const element of data) {
+        let teacher = await Teacher.findOne({
+            attributes: ['id', 'surname', 'name', 'patronymic'],
+            where: {
+                id: element.lecturer
+            }
+        })
+
+        const lecturer = teacher.surname + ' ' + teacher.name + ' ' + teacher.patronymic
+        const lecturer_id = teacher.id
+
+        teacher = await Teacher.findOne({
+            attributes: ['id', 'surname', 'name', 'patronymic'],
+            where: {
+                id: element.seminarian
+            }
+        })
+
+        const seminarian = teacher.surname + ' ' + teacher.name + ' ' + teacher.patronymic
+        const seminarian_id = teacher.id
+
+        listOfChains.push({
+            lecturer: lecturer,
+            seminarian: seminarian,
+            lecturer_id: lecturer_id,
+            seminarian_id: seminarian_id,
+            discipline_name: element.name,
+            discipline_id: element.discipline_id
+        })
+    }
+
+    res.json(listOfChains)
 }

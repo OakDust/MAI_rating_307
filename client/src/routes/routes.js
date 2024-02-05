@@ -4,6 +4,7 @@ import {
     GROUP_ROUTE,
     HOME_ROUTE,
     PROFESSORS_ROUTE,
+    QUIZ_BY_TYPE_ROUTE,
     QUIZ_ROUTE,
     RATING_ROUTE,
     REGISTRATION_PRIVATE_ROUTE,
@@ -54,7 +55,7 @@ const studentRoutes = [
         path: QUIZ_ROUTE,
         Component: Quiz,
         title: 'Опросы 307 | ',
-    },
+    }
 ]
 
 export const privateRoutes = {

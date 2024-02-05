@@ -6,7 +6,7 @@ const Footer = () => {
     return( 
 
         <div className={classes.footer__container}>
-            <p>Данный опрос сделан в целях улучшения образования и преподавания</p>
+            <p>Данная платформа создана в целях улучшения образования и преподавания</p>
 
             <section className={classes.copyright}> 
                 <img src={starsIcon} alt='Разработано на кафедре 307'/>

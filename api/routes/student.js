@@ -49,5 +49,14 @@ router.put('/deleteDiscipline', headStudentCheck(), async (req, res, next) => {
     await controller.deleteDiscipline(req, res)
 })
 
+router.get('/fetchEnglish', async (req, res, next) => {
+    await controller.fetchEnglish(req, res)
+})
+
+router.get('/defineIndividual', async (req, res, next) => {
+    await controller.defineIndividual(req, res)
+})
+
+
 
 module.exports = router;

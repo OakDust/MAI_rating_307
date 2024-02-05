@@ -14,8 +14,6 @@ const FieldRating = () => {
     const [fetchRating, isLoadingRating, error] = useFetching(async () => {
         const response = await ProfessorServise.getRating(dataUser);
 
-        console.log(response);
-
         if (response?.totalScore && response?.teacherRatingByDiscipline) {
             setTotalScore(response.totalScore);
             setRatingByDisciplines(response.teacherRatingByDiscipline);

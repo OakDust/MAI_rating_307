@@ -161,3 +161,37 @@ export const formattingAllDisciplines = (allDisciplinesList) => {
 
     return formattedList;
 }
+
+export const checkIsElectiveSubject = (disciplineName) => {
+    const electiveSubjectNames = ['Цепочка', 'Электив', 'Иностранный язык'];
+    let electiveType = '';
+    let isElective = false;
+    
+    electiveSubjectNames.forEach((name) => {
+        if (disciplineName.includes(name)) {
+            electiveType = name;
+            isElective = true;
+        }
+    })
+
+    return [isElective, electiveType];
+}
+
+export const setDisciplineFormat = (electiveInfo, selectedData) => {
+    let discipline = {}
+
+    if (electiveInfo?.type === 'language') {
+        discipline = {
+            discipline_name: 'Иностранный язык',
+            discipline_id: 156,
+            seminarian_id: selectedData?.id,
+            seminarian: selectedData?.seminarian,
+            lecturer: '',
+            lecturer_id: -1,
+        }
+    } else {
+        discipline = selectedData;
+    }
+
+    return discipline;
+}

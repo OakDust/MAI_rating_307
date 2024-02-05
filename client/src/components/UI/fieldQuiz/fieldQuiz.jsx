@@ -9,7 +9,7 @@ import { checkEmptyTeacher, formatBodyAnswers } from '../../../utils/student';
 import { AuthContext } from '../../../context';
 import Errors from '../../../pages/errors';
 
-const FieldQuiz = ({disciplineInfo, setTitle}) => {
+const FieldQuiz = ({disciplineInfo, teachersByDiscipline, setTitle}) => {
     const [answers, setAnswers] = useState(fieldAnswers);
     const [buttonDirty, setButtonDirty] = useState(false);
     const [isCompleteQuiz, setIsCompleteQuiz] = useState(false);
@@ -21,7 +21,7 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
         const countTestAnswers = 7;
 
         for (let i = 0; i < countTestAnswers; i ++){
-            if (answers[i].lecturer === '' || answers[i].seminarian === '') {
+            if ((disciplineInfo.lecturer && answers[i].lecturer === '') || (disciplineInfo.seminarian && answers[i].seminarian === '')) {
                 validateFlag = false;
             }
         }
@@ -57,6 +57,33 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
             }
         }
     }
+    
+    const showNotEmptyTeacher = (teacher) => {
+        const teacherName = teacher.name || 'Не распределено';
+
+        return (
+            <li key={teacher.type}>
+                <h3>{teacher.type}</h3>
+                <p>{teacherName}</p>
+            </li>
+        )
+    }
+
+    const showQuestionsList = () => {
+        if (disciplineInfo.lecturer || disciplineInfo.seminarian) {
+            return (
+                <QuestionsList answered={answerHandler} buttonDirty={buttonDirty} teachersByDiscipline={teachersByDiscipline}/>
+            )
+        }
+        else {
+            return (
+                <div className={classes.validate__error}>
+                    <p>Необходимо распределение нагрузки</p>
+                    <p>Обратитесь к старосте или попробуйте пройти опрос позже</p>
+                </div>
+            )
+        }
+    }
 
     useEffect(() => {
         window.scrollTo({ top: 0 });
@@ -80,20 +107,14 @@ const FieldQuiz = ({disciplineInfo, setTitle}) => {
     }
 
     return( 
-
         <div>
             <ul className={classes.teacher__list}>
-                <li>
-                    <h3>Лектор</h3>
-                    <p>{checkEmptyTeacher(disciplineInfo.lecturer)}</p>
-                </li>
-                <li>
-                    <h3>Семинарист</h3>
-                    <p>{checkEmptyTeacher(disciplineInfo.seminarian)}</p>
-                </li>
+                {teachersByDiscipline.map((teacher) => (
+                    showNotEmptyTeacher(teacher)
+                ))}
             </ul>
-
-            <QuestionsList answered={answerHandler} buttonDirty={buttonDirty}/>
+            
+            {showQuestionsList()}
             
             {(!validateQuiz() && buttonDirty) && <p className={classes.validate__error}>Необходимо заполнить все поля!</p>}
             <MyButton onClick={submitQuiz}>Завершить</MyButton>
