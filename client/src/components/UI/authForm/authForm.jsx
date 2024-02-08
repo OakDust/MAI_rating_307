@@ -63,6 +63,8 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
                         placeholder='М3О-221Б-22*'
                         list={groupsList}
                         setValue={setStudentGroup}
+                        searchKey='key'
+                        searchValue='value'
                     />
                 </div>}
                 

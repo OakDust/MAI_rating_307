@@ -40,6 +40,8 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList, a
                         value={disciplineName}
                         setValue={setDisciplineName}
                         list={allDisciplinesList}
+                        searchKey='id'
+                        searchValue='name'
                         placeholder='Название дисциплины'
                     />
                 </td>
@@ -49,6 +51,8 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList, a
                         value={teacherName}
                         setValue={setTeacherName}
                         list={teachersList}
+                        searchKey='key'
+                        searchValue='value'
                         placeholder='ФИО преподавателя'
                     />
                 </td>

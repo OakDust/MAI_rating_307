@@ -36,6 +36,8 @@ const EditableDiscipline = ({discipline, teacher, teacherId, type, listItems, up
                     <SearchInput
                         list={listItems}
                         setValue={setNewValue}
+                        searchKey='key'
+                        searchValue='value'
                         placeholder='ФИО преподавателя'
                     />
                 </td>

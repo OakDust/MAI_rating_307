@@ -8,6 +8,7 @@ import {
     RATING_ROUTE,
     REGISTRATION_PRIVATE_ROUTE,
     REGISTRATION_ROUTE,
+    REVIEWS_ROUTE,
     SURVEYS_ROUTE,
 } from './consts.js'
 
@@ -20,6 +21,7 @@ import Quiz from '../pages/quiz.jsx';
 import Home from '../pages/home.jsx';
 import Professors from '../pages/professors.jsx';
 import Admin from '../pages/admin.jsx';
+import Reviews from '../pages/reviews.jsx';
 
 export const publicRoutes = [
     {
@@ -54,7 +56,7 @@ const studentRoutes = [
         path: QUIZ_ROUTE,
         Component: Quiz,
         title: 'Опросы 307 | ',
-    },
+    }
 ]
 
 export const privateRoutes = {
@@ -84,6 +86,11 @@ export const privateRoutes = {
             path: ADMIN_ROUTE,
             Component: Admin,
             title: 'Опросы 307 | Администратор',
+        },
+        {
+            path: REVIEWS_ROUTE,
+            Component: Reviews,
+            title: 'Опросы 307 | '
         }
     ]
 }

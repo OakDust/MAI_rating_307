@@ -33,9 +33,8 @@ const FieldProfessors = () => {
 
     const [fetchAllDisciplines, isAllDisciplinesLoading, errorFetchAllDisciplines] = useFetching(async () => {
         const response = await StudentService.getAllDisciplines(dataUser);
-        const allDisciplines = formattingAllDisciplines(response);
         
-        setAllDisciplinesList(allDisciplines);
+        setAllDisciplinesList(response);
     })
 
     useEffect(() => {
@@ -125,7 +124,7 @@ const FieldProfessors = () => {
                             isAddMode={addDiscipline.mode}
                             allDisciplinesList={allDisciplinesList}
                         />
-                        {disciplines.map(discipline => (
+                        {disciplines.map((discipline) => (
                             <>
                                 {showNotEmptyTeacher(discipline, discipline.lecturer, discipline.lecturer_id, 'ЛК')}
                                 {showNotEmptyTeacher(discipline, discipline.seminarian, discipline.seminarian_id, 'ПЗ')}

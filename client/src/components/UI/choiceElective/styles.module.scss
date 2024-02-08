@@ -1,0 +1,16 @@
+.choice__content {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    font-size: clamp(0.75rem, 0.375rem + 1.2vw, 1rem);
+
+    .warning__text {
+        font-size: clamp(0.75rem, 0.721rem + 0.128vw, 0.875rem);
+    }
+}
+
+@media screen and (min-width: 360px) and (max-width: 768px) {
+    .choice__content {
+        gap: 15px;
+    }
+}

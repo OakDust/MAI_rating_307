@@ -36,6 +36,20 @@
 
         }
     }
+
+    .dropDown__icon {
+        position: absolute;
+        cursor: pointer;
+        right: 15px;
+        top: 30%;
+        width: 30px;
+        height: 20px;
+        transition: all 0.3s ease 0s;
+
+        &.active {
+            transform: rotate(-180deg);
+        }
+    }
 }
 
 @media screen and (min-width: 360px) and (max-width: 1000px) {
@@ -44,6 +58,11 @@
             li {
                 padding: 8px;
             }
+        }
+
+        .dropDown__icon {
+            width: 20px;
+            height: 15px;
         }
     }
     

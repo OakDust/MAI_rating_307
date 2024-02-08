@@ -7,6 +7,7 @@ import classes from './styles.module.scss';
 import MyInput from '../myInput/myInput';
 import MySelect from '../mySelect/mySelect';
 import Errors from '../../../pages/errors';
+import LinkButton from '../linkButton/linkButton';
 
 const FieldAdmin = () => {
     const {dataUser} = useContext(AuthContext);
@@ -23,9 +24,20 @@ const FieldAdmin = () => {
         fetchRatingAllTeachers();
     }, [])
 
+    const sortedByParameter = (parameter, a, b) => {
+        if (parameter === 'up') {
+            return a.localeCompare(b);
+        }
+        else {
+            return b.localeCompare(a);
+        }
+    }
+
     const sortedRatingTeachers = useMemo(() => {
         if (selectQuery) {
-            return [...ratingAllTeachers].sort((a, b) => a[selectQuery].localeCompare(b[selectQuery]));
+            const [field, parameter] = selectQuery.split(' ');
+
+            return [...ratingAllTeachers].sort((a, b) => sortedByParameter(parameter, a[field], b[field]));
         }
         else {
             return ratingAllTeachers;
@@ -65,8 +77,10 @@ const FieldAdmin = () => {
                         onChange={(sort) => setSelectQuery(sort)}
                         defaultValue='Сортировка'
                         options={[
-                            {name: 'По имени', value: 'name'},
-                            {name: 'По возрастанию', value: 'score'}
+                            {name: 'По алфавиту от А до Я', value: 'name up'},
+                            {name: 'По алфавиту от Я до А', value: 'name down'},
+                            {name: 'По возрастанию', value: 'score up'},
+                            {name: 'По убыванию', value: 'score down'}
                         ]}
                     />
                 </div>
@@ -76,6 +90,7 @@ const FieldAdmin = () => {
                         <tr>
                             <td>ФИО</td>
                             <td>Рейтинг</td>
+                            <td>Комментарии</td>
                         </tr>
                     </thead>
                     <tbody>
@@ -84,6 +99,11 @@ const FieldAdmin = () => {
                             <tr key={teacher.name}>
                                 <td>{teacher.name}</td>
                                 <td>{teacher.score}</td>
+                                <td>
+                                    <LinkButton to={'/admin/reviews'} state={teacher}>
+                                        Подробнее
+                                    </LinkButton>
+                                </td>
                             </tr>
                         )) 
                         : <tr>
