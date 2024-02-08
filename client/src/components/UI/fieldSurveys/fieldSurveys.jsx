@@ -19,7 +19,7 @@ const FieldSurveys = () => {
     const {dataUser} = useContext(AuthContext);
     const [fetchDisciplines, isDisciplinesLoading, error] = useFetching( async () => {
         const response = await StudentService.getDisciplines(dataUser);
-
+        
         setDisciplines(response?.distributed_load || []);
         setSurveysPassed(response?.surveys_passed || [])
     })
@@ -37,7 +37,7 @@ const FieldSurveys = () => {
         const disciplineName = discipline.discipline;
         const [isElective, electiveType] = checkIsElectiveSubject(disciplineName);
 
-        if (checkSubmittedSurveys(surveysPassed, discipline.discipline_id)) {
+        if (checkSubmittedSurveys(surveysPassed, disciplineName, discipline.discipline_id)) {
             return (
                 <MyButton>Пройден</MyButton>
             )

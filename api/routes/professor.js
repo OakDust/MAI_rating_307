@@ -4,6 +4,8 @@ const authMiddleware = require('../middleware/authMiddleware')
 const controller = require('../controllers/professor.controller')
 const Quiz = require("../models/quiz");
 const checkRole = require('../middleware/roleMiddleware')
+const mailService = require('../service/recovery.service')
+
 
 router.use(authMiddleware)
 router.use(checkRole('Professor' || 'Administrator'))
@@ -30,6 +32,10 @@ router.get('/', async (req, res, next) => {
     })
 
     res.status(200).json(quizzes)
+})
+
+router.post('/changePassword', async (req, res, next) => {
+    await mailService.changePassword(req, res)
 })
 
 module.exports = router;

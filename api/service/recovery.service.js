@@ -8,7 +8,7 @@ exports.changePassword = async (req, res) => {
 
     if (!validPassword) {
         res.status(400).json({
-            message: 'Неправильный логин или пароль.',
+            message: 'Неправильный пароль.',
             statusCode: res.statusCode,
         })
 
@@ -20,7 +20,7 @@ exports.changePassword = async (req, res) => {
     if (req.user.role === 'Student') {
         const userData = {
             name: req.user.name,
-            id: req.user.name,
+            id: req.user.id,
             activation_link: req.user.activation_link,
             email: req.user.email,
             password: req.user.password
@@ -56,7 +56,7 @@ exports.changePassword = async (req, res) => {
     } else if (req.user.role === 'Professor') {
         const userData = {
             name: req.user.name,
-            id: req.user.name,
+            id: req.user.id,
             activation_link: req.user.activation_link,
             email: req.user.email,
             password: req.user.password

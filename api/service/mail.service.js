@@ -14,7 +14,7 @@ exports.sendActivationMail = async (email, activationLink) => {
             }
         })
     }
-
+    const heartEmojiCode = '&#128153';
     try {
         await Client.transporter.sendMail({
             from: process.env.SMTP_USER,
@@ -28,11 +28,11 @@ exports.sendActivationMail = async (email, activationLink) => {
                     <p>Перейдите по ссылке ниже, чтобы подтвердить свой аккаунт на платформе <b>«Опросы 307»</b>:</p>
                     <a href="${activationLink}">Активировать аккаунт</a>
 
-                    <p>Если вы не регистрировались на сайте «Опросы 307», то можете игнорировать это письмо.</p>
-
-                    <h4>Спасибо! Команда разработки &#128153</h4>
-
-                    <p>*Письмо сгенерировано автоматически и на него не нужно отвечать</p>
+                    <p>Если вы не регистрировались на сайте «Опросы 307», то можете игнорировать данное сообщение.</p>
+                    <br/>
+                    <p><i>*Письмо сгенерировано автоматически и на него не нужно отвечать</i></p>
+                    
+                    <h4>Спасибо! Команда разработки ${heartEmojiCode}</h4>
                 </div>
             `
         })
@@ -92,7 +92,7 @@ exports.recoverPassword = async (req, res) => {
 
             return
         } else {
-            const recoveryURL = `${process.env.REACT_APP_API_URL}/recoverPassword/${user.activation_link}`
+            const recoveryURL = `${process.env.REACT_APP_API_URL}/recoverPassword/${user.activation_link}&role=${user.role}`
             await Client.transporter.sendMail({
                 from: process.env.SMTP_USER,
                 to: userData.email,

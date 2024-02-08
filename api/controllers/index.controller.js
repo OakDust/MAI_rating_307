@@ -7,6 +7,7 @@ const StudentsByGroups = require("../models/studentsByGroups");
 const {Op} = require("sequelize");
 const mailService = require('../service/mail.service')
 const uuid = require('uuid')
+const recoveryService = require("../service/recovery.service");
 
 
 exports.getGroupsList = async (req, res) => {
@@ -171,4 +172,118 @@ exports.createProfessor = async (req, res, next) => {
     } catch (err) {
         res.status(400).json({message: 'Не получилось зарегистрироваться.'})
     }
+}
+
+exports.getEmailByParams = async (req, res) => {
+    const data = req.params.data
+
+    if (!data) {
+        res.status(400).json({
+            message: 'Убедитесь в правильности запрашиваемых данных.',
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+
+    const [recovery_link, role] = data.split('&role=', 2)
+
+    let user
+    if (role === 'Студент') {
+        user = await Student.findOne({
+            where: {
+                activation_link: recovery_link,
+            }
+        })
+    } else if (role === 'Преподаватель') {
+        user = await Professor.findOne({
+            where: {
+                activation_link: recovery_link,
+            }
+        })
+    } else {
+        res.status(400).json({
+            message: "Убедитесь в правильности запрашиваемых данных.",
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+
+    if (!user) {
+        res.status(400).json({
+            message: "Убедитесь в правильности введеных данных",
+            statusCode: res.statusCode
+        })
+
+        return
+    }
+
+    res.status(200).json({
+        email: user.email,
+        role: user.role,
+        statusCode: res.statusCode
+    })
+}
+
+exports.setNewPasswordByRecovery = async (req, res) => {
+    try {
+        const {role, email} = req.body
+
+        if (!email || !role) {
+            res.status(400).json({
+                message: "Убедитесь в правильности запрашиваемых данных.",
+                statusCode: res.statusCode,
+            })
+
+            return
+        }
+
+        let user
+        if (role === 'Студент') {
+            user = await Student.findOne({
+                where: {
+                    email: email,
+                }
+            })
+        } else if (role === 'Преподаватель') {
+            user = await Professor.findOne({
+                where: {
+                    email: email,
+                }
+            })
+        } else {
+            res.status(400).json({
+                message: "Убедитесь в правильности запрашиваемых данных.",
+                statusCode: res.statusCode
+            })
+
+            return
+        }
+
+        if (!user) {
+            res.status(400).json({
+                message: "Убедитесь в правильности введеных данных",
+                statusCode: res.statusCode
+            })
+
+            return
+        }
+
+        req.user = {
+            email: user.email,
+            role: user.role === 'Студент' ? 'Student' : 'Professor',
+            id: user.id,
+            activation_link: user.activation_link,
+            password: user.password
+        }
+
+        await recoveryService.changePassword(req, res)
+    } catch (err) {
+        res.status(500).json({
+            message: "Что-то пошло не так.",
+            statusCode: res.statusCode,
+        })
+    }
+
 }
