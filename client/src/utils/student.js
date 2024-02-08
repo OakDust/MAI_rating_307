@@ -130,13 +130,13 @@ const getYearOfStudy = (group) => {
     return Math.ceil(countMounts / 12);
 }
 
-export const checkSubmittedSurveys = (surveysPassed, disciplineId) => {
+export const checkSubmittedSurveys = (surveysPassed, disciplineName, disciplineId) => {
     const submittedSurveys = surveysPassed?.submitted_surveys;
     let submitted = false;
 
     if (submittedSurveys) {
         submittedSurveys.forEach(survey => {
-            if (survey.discipline_id === disciplineId) {
+            if (survey.discipline_id === disciplineId || survey.info === disciplineName) {
                 submitted = true;
             }
         });

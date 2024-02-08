@@ -16,7 +16,7 @@ exports.getSurveysStudentPassed = async (student_id) => {
         let current = process.env.DB_NAME
 
 
-        const surveysQuery = `SELECT ${current}.discipline.name as discipline_name, ${current}.discipline.id as discipline_id, ${dbName}.${quizzes}.id as quiz_id, ${dbName}.${quizzes}.student_id FROM ${dbName}.\`${quizzes}\` join ${current}.discipline on ${current}.discipline.id = ${dbName}.${quizzes}.discipline_id where ${dbName}.${quizzes}.student_id = ${student_id}`
+        const surveysQuery = `SELECT ${current}.discipline.name as discipline_name, ${current}.discipline.id as discipline_id, ${dbName}.${quizzes}.id as quiz_id, ${dbName}.${quizzes}.student_id, ${dbName}.${quizzes}.info as info FROM ${dbName}.\`${quizzes}\` join ${current}.discipline on ${current}.discipline.id = ${dbName}.${quizzes}.discipline_id where ${dbName}.${quizzes}.student_id = ${student_id}`
 
         const surveys = await Quiz.sequelize.query(surveysQuery, {
             type: QueryTypes.SELECT,
@@ -48,7 +48,8 @@ exports.fillSubmittedSurveys = (student_id, surveys) => {
         const temp = {
             discipline_id: surveys[i].discipline_id,
             discipline_name: surveys[i].discipline_name,
-            quiz_id: surveys[i].quiz_id
+            quiz_id: surveys[i].quiz_id,
+            info: surveys[i].info
         }
         submitted_surveys.push(temp)
     }

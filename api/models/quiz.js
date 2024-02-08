@@ -53,6 +53,10 @@ const Quiz = db.define(`${process.env.CURRENT_YEAR_QUIZZES}`, {
         group_id: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        info: {
+            type: DataTypes.TEXT,
+            allowNull: true
         }
     },{
         tableName: `${process.env.CURRENT_YEAR_QUIZZES}`,

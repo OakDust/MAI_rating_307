@@ -219,6 +219,7 @@ exports.setTeacherScore = async (req, res, next) => {
             student_id: body[0].student_id,
             discipline_id: body[0].discipline_id,
             group_id: groups_id,
+            info: body[0].info,
         }
 
         await Quiz.create(quizData, {
