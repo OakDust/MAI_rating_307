@@ -1,0 +1,16 @@
+.professor__info {
+    text-align: left;
+    font-size: clamp(0.875rem, 0.788rem + 0.385vw, 1rem);
+
+    .total__score {
+        display: flex;
+        margin-bottom: 30px;
+        gap: 30px;
+        
+    }
+
+    .reviews__list {
+        padding: 0;
+        margin: 0;
+    }
+}

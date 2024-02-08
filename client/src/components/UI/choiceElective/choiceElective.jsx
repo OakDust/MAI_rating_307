@@ -11,7 +11,8 @@ import Errors from '../../../pages/errors';
 
 
 const ChoiceElective = ({typeElective}) => {
-    const electiveInfo = electives[typeElective];
+    const [electiveName] = typeElective.split(' ');
+    const electiveInfo = electives[electiveName];
     const [electiveData, setElectiveData] = useState([]);
     const [selectedData, setSelectedData] = useState();
     const {dataUser} = useContext(AuthContext);
@@ -56,7 +57,7 @@ const ChoiceElective = ({typeElective}) => {
                 {selectedData ? 
                 <LinkButton 
                     to={'/surveys/quiz'}
-                    state={setDisciplineFormat(electiveInfo, selectedData)}>
+                    state={setDisciplineFormat(electiveInfo, selectedData, typeElective)}>
                     Продолжить
                 </LinkButton> : 
                 <p className={classes.warning__text}>{electiveInfo.message}</p>}

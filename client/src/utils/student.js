@@ -1,11 +1,3 @@
-export const checkEmptyTeacher = (teacher) => {
-    if (!teacher) {
-        return 'Не распределено'
-    }
-
-    return teacher
-}
-
 export const formatBodyAnswers = (answers, dataUser, disciplineInfo) => {
     const body = [{
         "student_id": dataUser.id,
@@ -13,6 +5,7 @@ export const formatBodyAnswers = (answers, dataUser, disciplineInfo) => {
         "lecturer_name": disciplineInfo.lecturer,
         "seminarian_name": disciplineInfo.seminarian,
         "discipline_id": disciplineInfo.discipline_id,
+        "info": disciplineInfo?.info || '',
     },
         ...answers
     ]
@@ -169,7 +162,8 @@ export const checkIsElectiveSubject = (disciplineName) => {
     
     electiveSubjectNames.forEach((name) => {
         if (disciplineName.includes(name)) {
-            electiveType = name;
+
+            electiveType = disciplineName;
             isElective = true;
         }
     })
@@ -177,7 +171,7 @@ export const checkIsElectiveSubject = (disciplineName) => {
     return [isElective, electiveType];
 }
 
-export const setDisciplineFormat = (electiveInfo, selectedData) => {
+export const setDisciplineFormat = (electiveInfo, selectedData, typeElective) => {
     let discipline = {}
 
     if (electiveInfo?.type === 'language') {
@@ -190,7 +184,10 @@ export const setDisciplineFormat = (electiveInfo, selectedData) => {
             lecturer_id: -1,
         }
     } else {
-        discipline = selectedData;
+        discipline = {
+            ...selectedData, 
+            info: typeElective,
+        };
     }
 
     return discipline;

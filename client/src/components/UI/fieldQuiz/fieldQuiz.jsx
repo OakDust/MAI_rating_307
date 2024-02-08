@@ -5,7 +5,7 @@ import MyButton from '../myButton/myButton';
 import CompletedQuiz from '../completedQuiz/completedQuiz';
 import StudentService from '../../../http/studentService';
 import { fieldAnswers } from './fieldAnswers';
-import { checkEmptyTeacher, formatBodyAnswers } from '../../../utils/student';
+import { formatBodyAnswers } from '../../../utils/student';
 import { AuthContext } from '../../../context';
 import Errors from '../../../pages/errors';
 

@@ -17,7 +17,11 @@
         thead > tr > td,
         tbody > tr > td {
             box-sizing: border-box;
-            padding: 11px 30px;
+            padding: 14px 30px;
+        }
+
+        tbody > tr > td > a {
+            padding: 8px 20px;
         }
     }
 }

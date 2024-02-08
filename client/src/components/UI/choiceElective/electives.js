@@ -1,5 +1,5 @@
 export const electives = {
-    'Иностранный язык': {
+    'Иностранный': {
         type: 'language',
         route: '/student/fetchEnglish',
         title: `Введите и выберете своего преподавателя по иностранному языку`,

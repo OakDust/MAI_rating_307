@@ -71,7 +71,7 @@ const FieldRating = () => {
                                 </tr>
                                 </>
                             ))
-                            : <tr><td>Нет данных</td></tr>}
+                            : <tr><td>Нет статистики</td></tr>}
                         </tbody>
                     </table>
                 </div>
