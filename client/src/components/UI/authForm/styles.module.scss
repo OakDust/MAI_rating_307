@@ -3,6 +3,7 @@
     flex-direction: column;
     gap: 50px;
     width: 400px;
+    font-family: "Montserrat";
 }
 
 .auth__form{
@@ -46,6 +47,12 @@
         width: 100%;
         font-size: clamp(0.75rem, 0.721rem + 0.128vw, 0.875rem);
         text-align: center;
+    }
+
+    .recovery__text {
+        color: #878787;
+        font-size: clamp(0.625rem, 0.375rem + 0.8vw, 0.875rem);
+        width: max-content;
     }
 }
 

@@ -3,7 +3,7 @@ const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware')
 const checkRole = require('../middleware/roleMiddleware')
 const headStudentCheck = require('../middleware/headStudentCheckMiddleware')
-
+const mailService = require('../service/recovery.service')
 const controller = require('../controllers/student.controller')
 
 router.use(authMiddleware)
@@ -55,6 +55,10 @@ router.get('/fetchEnglish', async (req, res, next) => {
 
 router.get('/defineIndividual', async (req, res, next) => {
     await controller.defineIndividual(req, res)
+})
+
+router.post('/changePassword', async (req, res, next) => {
+    await mailService.changePassword(req, res)
 })
 
 

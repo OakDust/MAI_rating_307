@@ -77,3 +77,60 @@ exports.getAllProfessorsAverageScore = async (req, res) => {
 
     })
 }
+
+exports.getCommentsByProfessorsId = async (req, res) => {
+    const professorsId = req.body.professors_id
+
+    if (!professorsId) {
+        res.status(400).json({
+            message: "Не выбран преподаватель или нет данных.",
+            statusCode: res.statusCode,
+        })
+
+        return
+    }
+
+    try {
+        const comments = {
+            lecturer_comments: [],
+            seminarian_comments: []
+        }
+
+        const lecturerComments = await Quiz.findAll({
+            attributes: ['lecturer_pros', 'lecturer_cons'],
+            where: {
+                lecturer_pros: {
+                    [Op.ne]: '',
+                },
+                lecturer_cons: {
+                    [Op.ne]: ''
+                },
+                lecturer_id: professorsId
+            }
+        })
+
+        const seminarianComments = await Quiz.findAll({
+            attributes: ['seminarian_pros', 'seminarian_cons'],
+            where: {
+                seminarian_pros: {
+                    [Op.ne]: '',
+                },
+                seminarian_cons: {
+                    [Op.ne]: ''
+                },
+                seminarian_id: professorsId
+            }
+        })
+
+        comments.lecturer_comments = lecturerComments
+        comments.seminarian_comments = seminarianComments
+
+        res.status(200).json(comments)
+    } catch (err) {
+        res.status(500).json({
+            message: 'Что-то пошло не так.',
+            error: err.stack,
+            statusCode: res.statusCode
+        })
+    }
+}

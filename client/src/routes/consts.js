@@ -1,6 +1,8 @@
 export const HOME_ROUTE = "/"
 export const AUTH_ROUTE = "/auth"
 export const REGISTRATION_ROUTE = "/registration"
+export const RECOVERY_ROUTE = "/recoverPassword"
+export const RECOVERY_PASSWORD_ROUTE = "/recoverPassword/:route"
 export const REGISTRATION_PRIVATE_ROUTE = "/registration/:registrationId"
 export const SURVEYS_ROUTE = "/surveys"
 export const RATING_ROUTE = "/rating"

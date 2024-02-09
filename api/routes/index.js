@@ -5,6 +5,8 @@ const controller = require('../controllers/index.controller')
 const {body, validationResult} = require('express-validator')
 const Student = require("../models/student");
 const Professor = require("../models/professor");
+const recoveryService = require('../service/mail.service')
+
 
 router.get('/register', async (req, res, next) => {
     try {
@@ -126,6 +128,18 @@ router.get('/activate/:activationLink', async (req, res) => {
     }
 
     res.status(200).redirect(`${process.env.REACT_APP_API_URL}/auth`)
+})
+
+router.post('/recoveryMail', async (req, res, next) => {
+    await recoveryService.recoverPassword(req, res)
+})
+
+router.get('/recoverPassword/:data', async (req, res, next) => {
+    await controller.getEmailByParams(req, res)
+})
+
+router.post('/recoverPassword', async (req, res, next) => {
+    await controller.setNewPasswordByRecovery(req, res)
 })
 
 module.exports = router;

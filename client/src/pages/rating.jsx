@@ -6,10 +6,7 @@ const Raiting = (props) => {
     document.title = props.title;
 
     return(
-        <div>
-            <Main title='Рейтинг' displayField={<FieldRating/>}/> 
-        </div>
-
+        <Main title='Рейтинг' displayField={<FieldRating/>}/> 
     );
 }
 export default Raiting;
