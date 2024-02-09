@@ -4,22 +4,23 @@ const Professor = require("../models/professor");
 
 
 exports.changePassword = async (req, res) => {
-    const validPassword = bcrypt.compareSync(req.body.old_password, req.user.password);
+    if (req.body.recovery !== process.env.RECOVERY_SECRET) {
+        const validPassword = bcrypt.compareSync(req.body.old_password, req.user.password);
 
-    if (!validPassword) {
-        res.status(400).json({
-            message: 'Неправильный пароль.',
-            statusCode: res.statusCode,
-        })
+        if (!validPassword) {
+            res.status(400).json({
+                message: 'Неправильный пароль.',
+                statusCode: res.statusCode,
+            })
 
-        return
+            return
+        }
     }
 
     const newHashedPassword = bcrypt.hashSync(req.body.new_password, 10);
 
     if (req.user.role === 'Student') {
         const userData = {
-            name: req.user.name,
             id: req.user.id,
             activation_link: req.user.activation_link,
             email: req.user.email,
@@ -40,13 +41,14 @@ exports.changePassword = async (req, res) => {
                 return
             }
 
-            student.dataValues.password = newHashedPassword
+            student.password = newHashedPassword
 
             await student.save()
         } catch (err) {
-            res.statusCode(500).json({
+            res.status(500).json({
                 message: 'Что-то пошло не так...',
                 statusCode: res.statusCode,
+                err: err.stack
             })
 
             return

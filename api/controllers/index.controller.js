@@ -229,7 +229,6 @@ exports.getEmailByParams = async (req, res) => {
 exports.setNewPasswordByRecovery = async (req, res) => {
     try {
         const {role, email} = req.body
-
         if (!email || !role) {
             res.status(400).json({
                 message: "Убедитесь в правильности запрашиваемых данных.",
@@ -277,6 +276,8 @@ exports.setNewPasswordByRecovery = async (req, res) => {
             activation_link: user.activation_link,
             password: user.password
         }
+
+        req.body.recovery = process.env.RECOVERY_SECRET
 
         await recoveryService.changePassword(req, res)
     } catch (err) {

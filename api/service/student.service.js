@@ -200,7 +200,6 @@ exports.getGroupName = (groupNameParticials) => {
 }
 
 exports.getGroupId = async (groupName) => {
-    console.log(groupName)
     const groups = await StudentCrudLoad.findOne({
         logging: false,
         where: {
