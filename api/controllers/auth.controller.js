@@ -17,6 +17,16 @@ const generateAccessToken = (id, role, email, password, active, activation_link)
 }
 
 exports.professorAuth = async (req, res, next) => {
+    // console.log(req.body)
+    // if (req.body.role !== 'Преподаватель') {
+    //     res.status(401).json({
+    //         message: 'Недостаточно прав для просмотра страницы.',
+    //         statusCode: res.statusCode
+    //     })
+    //
+    //     return
+    // }
+
     const professor = await Professor.findOne({
         logging: false,
         where: {

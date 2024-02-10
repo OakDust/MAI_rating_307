@@ -21,6 +21,10 @@ router.get('/allRating', async (req, res, next) => {
 });
 
 router.get('/myRating', async (req, res) => {
+    if (req.user.role === 'Administrator') {
+        res.status(204).redirect(`${process.env.HOST_NAME}/admin`)
+        return
+    }
     await controller.getTeacherRatingById(req, res)
 })
 

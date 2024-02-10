@@ -92,7 +92,7 @@ exports.recoverPassword = async (req, res) => {
 
             return
         } else {
-            const recoveryURL = `${process.env.REACT_APP_API_URL}/recoverPassword/${user.activation_link}&role=${user.role}`
+            const recoveryURL = `${process.env.HOST_NAME}/recoverPassword/${user.activation_link}&role=${user.role}`
             await Client.transporter.sendMail({
                 from: process.env.SMTP_USER,
                 to: userData.email,
