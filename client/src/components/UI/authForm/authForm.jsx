@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import classes from './styles.module.scss';
-import AuthService from '../../../http/authService.js';
-import SearchInput from '../searchInput/searchInput.jsx';
-import Loader from '../loader/loader.jsx';
 import {useForm} from 'react-hook-form';
 import {registrationFields, authFields} from './formFields.js';
 import { formattingGroupsList } from '../../../utils/auth.js';
 import { useFetching } from '../../../hooks/useFetching.js';
+import { Link } from 'react-router-dom';
+import classes from './styles.module.scss';
+import AuthService from '../../../http/authService.js';
+import SearchInput from '../searchInput/searchInput.jsx';
+import Loader from '../loader/loader.jsx';
 import Errors from '../../../pages/errors.jsx';
 
 const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGroup}) => {
@@ -97,6 +98,9 @@ const AuthForm = ({isRegistration, submitForm, serverMessage, role, setStudentGr
                         {errors?.[field.name] && <p className={classes.validate__error}>{errors?.[field.name]?.message}</p>}
                     </div>
                 )}
+                {!isRegistration && 
+                    <Link to='/recoverPassword' className={classes.recovery__text}>Забыли пароль?</Link>
+                }
                 
                 {serverMessage && <div className={classes.server__message}>{serverMessage}</div>}
             </form>

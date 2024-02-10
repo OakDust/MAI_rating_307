@@ -6,6 +6,8 @@ import {
     PROFESSORS_ROUTE,
     QUIZ_ROUTE,
     RATING_ROUTE,
+    RECOVERY_PASSWORD_ROUTE,
+    RECOVERY_ROUTE,
     REGISTRATION_PRIVATE_ROUTE,
     REGISTRATION_ROUTE,
     REVIEWS_ROUTE,
@@ -22,6 +24,7 @@ import Home from '../pages/home.jsx';
 import Professors from '../pages/professors.jsx';
 import Admin from '../pages/admin.jsx';
 import Reviews from '../pages/reviews.jsx';
+import Recovery from '../pages/recovery.jsx';
 
 export const publicRoutes = [
     {
@@ -38,6 +41,16 @@ export const publicRoutes = [
         path: REGISTRATION_PRIVATE_ROUTE,
         Component: Registration,
         title: 'Опросы 307 | Регистрация',
+    },
+    {
+        path: RECOVERY_ROUTE,
+        Component: Recovery,
+        title: 'Опросы 307 | Восстановление'
+    },
+    {
+        path: RECOVERY_PASSWORD_ROUTE,
+        Component: Recovery,
+        title: 'Опросы 307 | Восстановление пароля'
     }
 ]
 
