@@ -8,4 +8,15 @@ export default class AdminService {
 
         return response.json();
     }
+
+    static async getReviewsForTeacherById (id, dataUser) {
+        const url = `${process.env.REACT_APP_HOSTNAME}/admin/getCommentsByProfessorsId`;
+        const body = {
+            professors_id: id,
+        }
+
+        const response = await Requests.post(body, url, dataUser);
+
+        return response.json();
+    }
 }

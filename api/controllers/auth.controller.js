@@ -63,9 +63,9 @@ exports.professorAuth = async (req, res, next) => {
         return
     }
 
-    let role = 'Professor'
+    let role = 'Преподаватель'
     if (professor.admin) {
-        role = 'Administrator'
+        role = 'Администратор'
     }
 
     const token = await generateAccessToken(professor.id, role, professor.email, professor.password, professor.active, professor.activation_link)
@@ -74,7 +74,7 @@ exports.professorAuth = async (req, res, next) => {
         id: professor.dataValues.id,
         name: professor.dataValues.name,
         email: professor.dataValues.email,
-        role: professor.dataValues.role
+        role: role
     }
 
     await res.json({

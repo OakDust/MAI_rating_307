@@ -1,27 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.c8ad2e3a.css",
-    "main.js": "/static/js/main.2eb058ba.js",
+    "main.css": "/static/css/main.094a24be.css",
+    "main.js": "/static/js/main.8a158926.js",
     "static/media/background.webp": "/static/media/background.d46c092395933afc811f.webp",
     "static/media/groupBackground.webp": "/static/media/groupBackground.ac90313f56f2f4350be8.webp",
-    "static/media/groupBackground1400.webp": "/static/media/groupBackground1400.5fa499fff4fce75e1ebe.webp",
-    "static/media/error.webp": "/static/media/error.cad24435dfee0ea55ef7.webp",
-    "static/media/groupBackground1000.webp": "/static/media/groupBackground1000.c9173e7d5f1865ae97ae.webp",
     "static/media/completedQuiz.webp": "/static/media/completedQuiz.11efe65a76373c9525ad.webp",
     "static/media/loader.webp": "/static/media/loader.8939b91626ed6f2cbcee.webp",
     "static/media/user.webp": "/static/media/user.9c895e0dfc3ec2b7fc17.webp",
     "index.html": "/index.html",
-    "static/media/stars.webp": "/static/media/stars.5800e3e0c0dd6d84fb13.webp",
-    "static/media/dropdown.webp": "/static/media/dropdown.0118579b03c0b895a8b3.webp",
+    "static/media/pointer.webp": "/static/media/pointer.3fd09b380b3c2d516ea6.webp",
     "static/media/nextQuiz.webp": "/static/media/nextQuiz.0e1b1d1fd954bace5de8.webp",
-    "static/media/edit.webp": "/static/media/edit.323caa081dc89a6706fb.webp",
-    "static/media/delete.webp": "/static/media/delete.ed35a7f6e851a05d1c8d.webp",
-    "static/media/done.webp": "/static/media/done.389ccf98f0831620d8de.webp",
-    "main.c8ad2e3a.css.map": "/static/css/main.c8ad2e3a.css.map",
-    "main.2eb058ba.js.map": "/static/js/main.2eb058ba.js.map"
+    "main.094a24be.css.map": "/static/css/main.094a24be.css.map",
+    "main.8a158926.js.map": "/static/js/main.8a158926.js.map"
   },
   "entrypoints": [
-    "static/css/main.c8ad2e3a.css",
-    "static/js/main.2eb058ba.js"
+    "static/css/main.094a24be.css",
+    "static/js/main.8a158926.js"
   ]
 }
