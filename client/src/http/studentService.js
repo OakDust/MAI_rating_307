@@ -74,8 +74,9 @@ export default class StudentService {
     static async addDiscipline (teacherName, disciplineName, typeDiscipline, dataUser) {
         const url = `${process.env.REACT_APP_HOSTNAME}/student/createDiscipline`;
 
-        const newDisciplineName = disciplineName?.value || disciplineName;
+        const newDisciplineName = disciplineName?.name || disciplineName;
         const fullTeacherName = teacherName?.value || teacherName;
+
         const [surname, name, patronymic] = fullTeacherName.split(' ');
         const groupName = setFullFormatGroup(dataUser.group);
 
