@@ -1,0 +1,39 @@
+.reviews__list {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; 
+
+    .review__content{
+        padding: 25px 30px;
+        box-sizing: border-box;
+        border-radius: 20px;
+        border: 2px solid #878787;
+        font-size: clamp(0.75rem, 0.5rem + 0.8vw, 1rem);
+    
+        .review__title{
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-size: clamp(0.75rem, 0.635rem + 0.513vw, 1.35rem);
+
+            section {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+
+                .indicator {
+                    width: 10px;
+                    height: 10px;
+                    border-radius: 50%;
+                    background-color: red;
+                }
+
+                .indicator.positive {
+                    background-color: green;
+                }
+            }
+        }
+    }
+}

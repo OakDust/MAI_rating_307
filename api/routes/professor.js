@@ -8,7 +8,7 @@ const mailService = require('../service/recovery.service')
 
 
 router.use(authMiddleware)
-router.use(checkRole('Преподаватель' || 'Администратор'))
+router.use(checkRole('Professor' || 'Administrator'))
 router.get('/allRating', async (req, res, next) => {
     // await controller.showProfessors(req, res)
     // if (req.user.role === 'Преподаватель') {
