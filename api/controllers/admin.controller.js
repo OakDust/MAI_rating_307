@@ -23,7 +23,12 @@ exports.getAllProfessorsAverageScore = async (req, res) => {
     // teacher_ids = Array.from(teacher_ids)
 
     const teachers = await Teacher.findAll({
-        attributes: ['id', 'name', 'surname', 'patronymic']
+        attributes: ['id', 'name', 'surname', 'patronymic'],
+        where: {
+            id: {
+                [Op.ne]: 180
+            }
+        }
     })
 
     const teacherIds = []
@@ -92,38 +97,101 @@ exports.getCommentsByProfessorsId = async (req, res) => {
 
     try {
         const comments = {
-            lecturer_comments: [],
-            seminarian_comments: []
+            lecturer: {
+                lecturer_pros: [],
+                lecturer_cons: [],
+            },
+            seminarian: {
+                seminarian_pros: [],
+                seminarian_cons: [],
+            }
         }
 
-        const lecturerComments = await Quiz.findAll({
-            attributes: ['lecturer_pros', 'lecturer_cons'],
+        const lecturerPros = await Quiz.findAll({
+            attributes: ['lecturer_pros'],
             where: {
                 lecturer_pros: {
-                    [Op.ne]: '',
+                    [Op.ne]: ''
                 },
+                lecturer_id: professorsId,
+            }
+        })
+
+        const lecturerCons = await Quiz.findAll({
+            attributes: ['lecturer_cons'],
+            where: {
                 lecturer_cons: {
                     [Op.ne]: ''
                 },
-                lecturer_id: professorsId
+                lecturer_id: professorsId,
             }
         })
 
-        const seminarianComments = await Quiz.findAll({
-            attributes: ['seminarian_pros', 'seminarian_cons'],
+        const seminarianPros = await Quiz.findAll({
+            attributes: ['seminarian_pros'],
             where: {
                 seminarian_pros: {
-                    [Op.ne]: '',
+                    [Op.ne]: ''
                 },
+                seminarian_id: professorsId,
+            }
+        })
+
+        const seminarianCons = await Quiz.findAll({
+            attributes: ['seminarian_cons'],
+            where: {
                 seminarian_cons: {
                     [Op.ne]: ''
                 },
-                seminarian_id: professorsId
+                seminarian_id: professorsId,
             }
         })
 
-        comments.lecturer_comments = lecturerComments
-        comments.seminarian_comments = seminarianComments
+        comments.lecturer.lecturer_pros = lecturerPros
+        comments.lecturer.lecturer_cons = lecturerCons
+        comments.seminarian.seminarian_cons = seminarianCons
+        comments.seminarian.seminarian_pros = seminarianPros
+
+        // const lecturerComments = await Quiz.findAll({
+        //     attributes: ['lecturer_pros', 'lecturer_cons'],
+        //     where: {
+        //         [Op.or]: [
+        //             {
+        //                 lecturer_pros: {
+        //                     [Op.ne]: '',
+        //                 },
+        //             },
+        //             {
+        //                 lecturer_cons: {
+        //                     [Op.ne]: ''
+        //                 },
+        //             }
+        //         ],
+        //         lecturer_id: professorsId
+        //     }
+        // })
+        //
+        // const seminarianComments = await Quiz.findAll({
+        //     attributes: ['seminarian_pros', 'seminarian_cons'],
+        //     where: {
+        //         [Op.or] : [
+        //             {
+        //                 seminarian_pros: {
+        //                     [Op.ne]: '',
+        //                 },
+        //             },
+        //             {
+        //                 seminarian_cons: {
+        //                     [Op.ne]: ''
+        //                 },
+        //             }
+        //         ],
+        //         seminarian_id: professorsId
+        //     }
+        // })
+        //
+        // comments.lecturer_comments = lecturerComments
+        // comments.seminarian_comments = seminarianComments
 
         res.status(200).json(comments)
     } catch (err) {

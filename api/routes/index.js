@@ -24,7 +24,6 @@ router.post('/register',
     [
         body('name').notEmpty().isString().isAlpha('ru-RU', {ignore: ' '}),
         body('surname').notEmpty().isString().isAlpha('ru-RU', {ignore: ' '}),
-        body('patronymic').notEmpty().isString().isAlpha('ru-RU',{ignore: ' '}),
         body('email').notEmpty().isEmail(),
         body('password').notEmpty(), /// minlen
         body('role').notEmpty(),
@@ -127,7 +126,7 @@ router.get('/activate/:activationLink', async (req, res) => {
         await user.save()
     }
 
-    res.status(200).redirect(`${process.env.REACT_APP_API_URL}/auth`)
+    res.status(200).redirect(`${process.env.HOST_NAME}/auth`)
 })
 
 router.post('/recoveryMail', async (req, res, next) => {

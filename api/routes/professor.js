@@ -8,7 +8,7 @@ const mailService = require('../service/recovery.service')
 
 
 router.use(authMiddleware)
-router.use(checkRole('Professor' || 'Administrator'))
+router.use(checkRole('Преподаватель' || 'Администратор'))
 router.get('/allRating', async (req, res, next) => {
     // await controller.showProfessors(req, res)
     // if (req.user.role === 'Преподаватель') {
@@ -21,6 +21,10 @@ router.get('/allRating', async (req, res, next) => {
 });
 
 router.get('/myRating', async (req, res) => {
+    if (req.user.role === 'Administrator') {
+        res.status(204).redirect(`${process.env.HOST_NAME}/admin`)
+        return
+    }
     await controller.getTeacherRatingById(req, res)
 })
 
