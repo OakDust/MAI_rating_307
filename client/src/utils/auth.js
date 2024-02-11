@@ -28,6 +28,7 @@ export const getRegistrateUrlByRole = (role) => {
 
 export const formatUserData = (data, role) => {
     const userData = data.user;
+    console.log(userData);
 
     let dataUser = {
         'Authorization': data.token,

@@ -15,6 +15,10 @@ const RoleNavigation = ({role}) => {
         case 'Преподаватель': {
             return <Navigate to='/rating'/>
         }
+
+        case 'Администратор': {
+            return <Navigate to='/admin'/>
+        }
             
         default:
             return <Navigate to='/auth'/>

@@ -6,7 +6,7 @@ const authMiddleware = require('../middleware/authMiddleware')
 const mailService = require('../service/recovery.service')
 
 router.use(authMiddleware)
-router.use(roleMiddleware('Administrator'))
+router.use(roleMiddleware('Администратор'))
 
 /* GET users listing. */
 router.get('/', async (req, res, next) => {

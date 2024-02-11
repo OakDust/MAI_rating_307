@@ -17,6 +17,8 @@ const FieldAdmin = () => {
     const [fetchRatingAllTeachers, ratingAllTeacherLoading, error] = useFetching(async () => {
         const response = await AdminService.getRatingForAllTeachers(dataUser);
 
+        console.log(response);
+
         setRatingAllTeachers(response?.total_score || []);
     })
 

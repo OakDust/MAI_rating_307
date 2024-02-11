@@ -94,7 +94,10 @@ export const privateRoutes = {
             path: RATING_ROUTE,
             Component: Rating,
             title: 'Опросы 307 | Рейтинг',
-        },
+        }
+    ],
+
+    'Администратор': [
         {
             path: ADMIN_ROUTE,
             Component: Admin,
