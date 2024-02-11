@@ -28,10 +28,10 @@
                     height: 10px;
                     border-radius: 50%;
                     background-color: red;
-                }
 
-                .indicator.positive {
-                    background-color: green;
+                    &.positive {
+                        background-color: green;
+                    }
                 }
             }
         }

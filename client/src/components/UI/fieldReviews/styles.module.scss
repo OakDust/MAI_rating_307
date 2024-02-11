@@ -4,9 +4,23 @@
 
     .total__score {
         display: flex;
+        align-items: center;
         margin-bottom: 30px;
         gap: 30px;
-        
+
+        span { 
+            background-color: green;
+            color: white;
+            box-sizing: border-box;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        &.warning {
+            span {
+                background-color: red;
+            }
+        }
     }
 
     .comment__block {

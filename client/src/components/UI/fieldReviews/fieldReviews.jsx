@@ -35,9 +35,9 @@ const FieldReviews = ({professorInfo}) => {
 
     return( 
         <div className={classes.professor__info}>
-            <div className={classes.total__score}>
-                <h4>Общий рейтинг</h4>
-                <p>{professorInfo.score}</p>
+            <div className={professorInfo.score > 3.5 ? classes.total__score : classes['total__score'] + ' ' + classes.warning}>
+                <h4>Общий рейтинг:</h4>
+                <span>{professorInfo.score}</span>
             </div> 
 
             <div className={classes.comment__block}>
