@@ -1,27 +1,8 @@
 const Quiz = require('../models/quiz')
-const {Sequelize, Op} = require("sequelize");
+const {QueryTypes, Op} = require("sequelize");
 const Teacher = require("../models/teacher");
 
 exports.getAllProfessorsAverageScore = async (req, res) => {
-    // const quizzes = await Quiz.findAll({
-    //     attributes: [
-    //         [Sequelize.fn('DISTINCT', Sequelize.col('lecturer_id')), 'lecturer_id'],
-    //         'seminarian_id'
-    //     ]
-    // })
-    //
-    // let teacher_ids = new Set()
-    // quizzes.map((quiz) => {
-    //     if (quiz.dataValues.lecturer_id === quiz.dataValues.seminarian_id) {
-    //         teacher_ids.add(quiz.dataValues.lecturer_id)
-    //     } else {
-    //         teacher_ids.add(quiz.dataValues.lecturer_id)
-    //         teacher_ids.add(quiz.dataValues.seminarian_id)
-    //     }
-    // })
-    //
-    // teacher_ids = Array.from(teacher_ids)
-
     const teachers = await Teacher.findAll({
         attributes: ['id', 'name', 'surname', 'patronymic'],
         where: {
@@ -96,102 +77,24 @@ exports.getCommentsByProfessorsId = async (req, res) => {
     }
 
     try {
-        const comments = {
-            lecturer: {
-                lecturer_pros: [],
-                lecturer_cons: [],
-            },
-            seminarian: {
-                seminarian_pros: [],
-                seminarian_cons: [],
-            }
-        }
-
-        const lecturerPros = await Quiz.findAll({
-            attributes: ['lecturer_pros'],
-            where: {
-                lecturer_pros: {
-                    [Op.ne]: ''
-                },
-                lecturer_id: professorsId,
-            }
-        })
-
-        const lecturerCons = await Quiz.findAll({
-            attributes: ['lecturer_cons'],
-            where: {
-                lecturer_cons: {
-                    [Op.ne]: ''
-                },
-                lecturer_id: professorsId,
-            }
-        })
-
-        const seminarianPros = await Quiz.findAll({
-            attributes: ['seminarian_pros'],
-            where: {
-                seminarian_pros: {
-                    [Op.ne]: ''
-                },
-                seminarian_id: professorsId,
-            }
-        })
-
-        const seminarianCons = await Quiz.findAll({
-            attributes: ['seminarian_cons'],
-            where: {
-                seminarian_cons: {
-                    [Op.ne]: ''
-                },
-                seminarian_id: professorsId,
-            }
-        })
-
-        comments.lecturer.lecturer_pros = lecturerPros
-        comments.lecturer.lecturer_cons = lecturerCons
-        comments.seminarian.seminarian_cons = seminarianCons
-        comments.seminarian.seminarian_pros = seminarianPros
-
-        // const lecturerComments = await Quiz.findAll({
-        //     attributes: ['lecturer_pros', 'lecturer_cons'],
-        //     where: {
-        //         [Op.or]: [
-        //             {
-        //                 lecturer_pros: {
-        //                     [Op.ne]: '',
-        //                 },
-        //             },
-        //             {
-        //                 lecturer_cons: {
-        //                     [Op.ne]: ''
-        //                 },
-        //             }
-        //         ],
-        //         lecturer_id: professorsId
-        //     }
-        // })
-        //
-        // const seminarianComments = await Quiz.findAll({
-        //     attributes: ['seminarian_pros', 'seminarian_cons'],
-        //     where: {
-        //         [Op.or] : [
-        //             {
-        //                 seminarian_pros: {
-        //                     [Op.ne]: '',
-        //                 },
-        //             },
-        //             {
-        //                 seminarian_cons: {
-        //                     [Op.ne]: ''
-        //                 },
-        //             }
-        //         ],
-        //         seminarian_id: professorsId
-        //     }
-        // })
-        //
-        // comments.lecturer_comments = lecturerComments
-        // comments.seminarian_comments = seminarianComments
+        const commentsQuery = `
+            SELECT 'lecturer' AS type, 'pros' AS side, lecturer_pros AS comment
+            FROM ${process.env.CURRENT_YEAR_QUIZZES}
+            WHERE lecturer_pros IS NOT NULL AND lecturer_pros <> ''
+            UNION
+            SELECT 'lecturer' AS type, 'cons' AS side, lecturer_cons AS comment
+            FROM ${process.env.CURRENT_YEAR_QUIZZES}
+            WHERE lecturer_cons IS NOT NULL AND lecturer_cons <> ''
+            UNION
+            SELECT 'seminarian' AS type, 'pros' AS side, seminarian_pros AS comment
+            FROM ${process.env.CURRENT_YEAR_QUIZZES}
+            WHERE seminarian_pros IS NOT NULL AND seminarian_pros <> ''
+            UNION
+            SELECT 'seminarian' AS type, 'cons' AS side, seminarian_cons AS comment
+            FROM ${process.env.CURRENT_YEAR_QUIZZES}
+            WHERE seminarian_cons IS NOT NULL AND seminarian_cons <> '';
+        `
+        const comments = await Quiz.sequelize.query(commentsQuery, {type: QueryTypes.SELECT})
 
         res.status(200).json(comments)
     } catch (err) {
