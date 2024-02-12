@@ -12,7 +12,6 @@ const FieldReviews = ({professorInfo}) => {
     const [reviewsTeacher, setReviewsTeacher] = useState([]);
     const [fetchReviews, reviewsLoading, error] = useFetching(async () => {
         const response = await AdminService.getReviewsForTeacherById(professorInfo.id, dataUser);
-        console.log(response);
 
         setReviewsTeacher(response);
     })
