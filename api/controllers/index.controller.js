@@ -142,6 +142,7 @@ exports.createProfessor = async (req, res, next) => {
 
         if (existTeacher) {
             res.status(400).json({message: 'Такой преподаватель уже зарегистрирован.'})
+            return
         }
         const activationLink = uuid.v4()
 

@@ -4,13 +4,15 @@ import { useFetching } from '../../../hooks/useFetching';
 import AdminService from '../../../http/adminService';
 import { AuthContext } from '../../../context';
 import Loader from '../loader/loader';
+import ReviewsList from '../reviewsList/reviewsList';
+import Errors from '../../../pages/errors';
 
 const FieldReviews = ({professorInfo}) => {
     const {dataUser} = useContext(AuthContext);
-    const [reviewsTeacher, setReviewsTeacher] = useState();
+    const [reviewsTeacher, setReviewsTeacher] = useState([]);
     const [fetchReviews, reviewsLoading, error] = useFetching(async () => {
         const response = await AdminService.getReviewsForTeacherById(professorInfo.id, dataUser);
-        
+
         setReviewsTeacher(response);
     })
 
@@ -24,16 +26,24 @@ const FieldReviews = ({professorInfo}) => {
         )
     }
 
+    if (error) {
+        return (
+            <Errors message={error}/>
+        )
+    }
+
     return( 
         <div className={classes.professor__info}>
-            <div className={classes.total__score}>
-                <h4>Общий рейтинг</h4>
-                <p>{professorInfo.score}</p>
+            <div className={professorInfo.score > 3.5 ? classes.total__score : classes['total__score'] + ' ' + classes.warning}>
+                <h4>Общий рейтинг:</h4>
+                <span>{professorInfo.score}</span>
             </div> 
 
-            <ul className={classes.reviews__list}>
-                <h4>Комментарии</h4>
-            </ul>
+            <div className={classes.comment__block}>
+                <h4>Комментарии:</h4>
+
+                <ReviewsList reviewsTeacher={reviewsTeacher}/>
+            </div>
         </div>
     );
 }

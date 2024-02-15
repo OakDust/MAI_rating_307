@@ -4,6 +4,7 @@ const Teacher = require("../models/teacher");
 
 exports.getAllProfessorsAverageScore = async (req, res) => {
     const teachers = await Teacher.findAll({
+        logging: false,
         attributes: ['id', 'name', 'surname', 'patronymic'],
         where: {
             id: {
@@ -17,6 +18,7 @@ exports.getAllProfessorsAverageScore = async (req, res) => {
         // teacherIds.add(teacher.dataValues.id)
 
         const quizzes = await Quiz.findAll({
+            logging: false,
             where: {
                 [Op.or]: [
                     {lecturer_id: teacher.dataValues.id},
@@ -80,21 +82,21 @@ exports.getCommentsByProfessorsId = async (req, res) => {
         const commentsQuery = `
             SELECT 'lecturer' AS type, 'pros' AS side, lecturer_pros AS comment
             FROM ${process.env.CURRENT_YEAR_QUIZZES}
-            WHERE lecturer_pros IS NOT NULL AND lecturer_pros <> ''
+            WHERE lecturer_id = ${professorsId} AND lecturer_pros IS NOT NULL AND lecturer_pros <> ''
             UNION
             SELECT 'lecturer' AS type, 'cons' AS side, lecturer_cons AS comment
             FROM ${process.env.CURRENT_YEAR_QUIZZES}
-            WHERE lecturer_cons IS NOT NULL AND lecturer_cons <> ''
+            WHERE lecturer_id = ${professorsId} AND lecturer_cons IS NOT NULL AND lecturer_cons <> ''
             UNION
             SELECT 'seminarian' AS type, 'pros' AS side, seminarian_pros AS comment
             FROM ${process.env.CURRENT_YEAR_QUIZZES}
-            WHERE seminarian_pros IS NOT NULL AND seminarian_pros <> ''
+            WHERE seminarian_id = ${professorsId} AND seminarian_pros IS NOT NULL AND seminarian_pros <> ''
             UNION
             SELECT 'seminarian' AS type, 'cons' AS side, seminarian_cons AS comment
             FROM ${process.env.CURRENT_YEAR_QUIZZES}
-            WHERE seminarian_cons IS NOT NULL AND seminarian_cons <> '';
+            WHERE seminarian_id = ${professorsId} AND seminarian_cons IS NOT NULL AND seminarian_cons <> '';
         `
-        const comments = await Quiz.sequelize.query(commentsQuery, {type: QueryTypes.SELECT})
+        const comments = await Quiz.sequelize.query(commentsQuery, {type: QueryTypes.SELECT, logging: false})
 
         res.status(200).json(comments)
     } catch (err) {

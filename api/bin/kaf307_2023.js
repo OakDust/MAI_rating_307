@@ -12,7 +12,8 @@ module.exports = new Sequelize(
         port: process.env.DB_PORT,
         define: {
             timestamps: false
-        }
+        },
+        logging: false,
     },
 
 )

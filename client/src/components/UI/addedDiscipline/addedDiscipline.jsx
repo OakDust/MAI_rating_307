@@ -15,7 +15,6 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList, a
     const addDiscipline = async () => {
         if (teacherName && disciplineName) {
             try {
-                console.log(teacherName, disciplineName, typeDiscipline);
                 await StudentService.addDiscipline(teacherName, disciplineName, typeDiscipline, dataUser);
                 fetchDisciplines();
             }

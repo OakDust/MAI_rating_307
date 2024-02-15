@@ -10,7 +10,8 @@ const custom_db = new Sequelize(
         port: process.env.DB_PORT,
         define: {
             timestamps: false
-        }
+        },
+        logging: false
     },
 
 )
