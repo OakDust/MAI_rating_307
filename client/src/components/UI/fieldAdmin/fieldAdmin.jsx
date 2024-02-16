@@ -62,6 +62,32 @@ const FieldAdmin = () => {
         )
     }
 
+    const showSearchedAndSortedRating = () => {
+        if (sortedAndSearchedRatingTeachers.length > 0) {
+            
+            return (
+                sortedAndSearchedRatingTeachers.map((teacher) => (
+                    <tr key={teacher.name}>
+                        <td>{teacher.name}</td>
+                        <td>{teacher.score}</td>
+                        <td>
+                            <LinkButton to={'/admin/reviews'} state={teacher}>
+                                Подробнее
+                            </LinkButton>
+                        </td>
+                    </tr>
+                ))
+            )
+        } else {
+            return (
+                <tr>
+                    <td>Ничего не найдено</td>
+                </tr>
+            )
+        }
+
+    }
+
     if (ratingAllTeachers.length > 0) {
         return (
             <div className={classes.overall__rating}>
@@ -94,21 +120,7 @@ const FieldAdmin = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {sortedAndSearchedRatingTeachers.length > 0 
-                        ? sortedAndSearchedRatingTeachers.map((teacher) => (
-                            <tr key={teacher.name}>
-                                <td>{teacher.name}</td>
-                                <td>{teacher.score}</td>
-                                <td>
-                                    <LinkButton to={'/admin/reviews'} state={teacher}>
-                                        Подробнее
-                                    </LinkButton>
-                                </td>
-                            </tr>
-                        )) 
-                        : <tr>
-                            <td>Ничего не найдено</td>
-                        </tr>}
+                        {showSearchedAndSortedRating()}
                     </tbody>
                 </table>
             </div>
