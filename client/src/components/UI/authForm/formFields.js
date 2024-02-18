@@ -52,7 +52,7 @@ export const registrationFields = [
         title: 'Пароль (минимум 8 символов)',
         name: 'password',
         placeholder: 'Введите пароль',
-        messege: 'Минимум 8 символов!',
+        message: 'Минимум 8 символов!',
         minLength: 8,
         required: true,
     },

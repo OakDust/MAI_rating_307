@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import RecoveryForm from '../UI/recoveryForm/recoveryForm';
 import classes from './styles.module.scss';
 import MyButton from '../UI/myButton/myButton';
 import RoleButtons from '../UI/roleButtons/roleButtons';
 import PasswordService from '../../http/passwordService';
 import Errors from '../../pages/errors';
+import MyForm from '../UI/myForm/myForm';
 import { passwordFields, recoveryFields } from './formFields';
 import { useParams, Navigate } from 'react-router-dom';
 
@@ -36,6 +36,7 @@ const PasswordRecovery = () => {
             if (response.statusCode < 300) {
                 setIsChangedPassword(true);
             }
+            
         } catch (e) {
             setError(e.message);
         }
@@ -54,9 +55,9 @@ const PasswordRecovery = () => {
 
             {!route && <RoleButtons role={role} setRole={setRole}/>}
 
-            <RecoveryForm
+            <MyForm
+                id={formId}
                 submitForm={route ? recoverPassword : recoverMail}
-                formId={formId}
                 serverMessage={serverMessage}
                 formFields={route ? passwordFields : recoveryFields}
             />

@@ -15,6 +15,7 @@ function App() {
       setIsAuth(true);
       setDataUser(JSON.parse(authUser));
     }
+    
     setIsLoading(false);
   }, [])
   
