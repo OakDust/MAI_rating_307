@@ -7,6 +7,7 @@ const Quiz = (props) => {
     const location = useLocation()
     const disciplineInfo = location.state;
     const disciplineName = disciplineInfo.discipline ?? disciplineInfo.discipline_name;
+    const [title, setTitle] = useState(`Опрос по дисциплине "${disciplineName}"`) 
 
     const teachersByDiscipline = [
         {
@@ -27,14 +28,14 @@ const Quiz = (props) => {
 
     document.title = `${props.title} ${disciplineName}`;
 
-    const [title, setTitle] = useState(`Опрос по дисциплине "${disciplineName}"`) 
-
     return(
-        <Main title={title} 
-        displayField={<FieldQuiz 
+        <Main 
+            title={title} 
+            displayField={<FieldQuiz 
             disciplineInfo={disciplineInfo} 
             teachersByDiscipline={teachersByDiscipline} 
-            setTitle={setTitle}/>}/>
+            setTitle={setTitle}/>}
+        />
     );
 }
 export default Quiz;

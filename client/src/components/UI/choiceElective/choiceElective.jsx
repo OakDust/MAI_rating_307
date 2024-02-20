@@ -28,6 +28,24 @@ const ChoiceElective = ({typeElective}) => {
         fetchElectiveData();
     }, [])
 
+    const showContinueButton = () => {
+        if (selectedData) {
+            return (
+                <div>
+                    <LinkButton 
+                        to={'/surveys/quiz'}
+                        state={setDisciplineFormat(electiveInfo, selectedData, typeElective)}>
+                        Продолжить
+                    </LinkButton>
+                </div>
+            )
+        } 
+        
+        return (
+            <p className={classes.warning__text}>{electiveInfo.message}</p>
+        )
+    }
+
     if (fetchElectiveDataLoading) {
         return (
             <div>Загрузка...</div>
@@ -53,15 +71,7 @@ const ChoiceElective = ({typeElective}) => {
                 placeholder='Поиск...'
             />
 
-            <div>
-                {selectedData ? 
-                <LinkButton 
-                    to={'/surveys/quiz'}
-                    state={setDisciplineFormat(electiveInfo, selectedData, typeElective)}>
-                    Продолжить
-                </LinkButton> : 
-                <p className={classes.warning__text}>{electiveInfo.message}</p>}
-            </div>
+            {showContinueButton()}
         </div>
     )
 }

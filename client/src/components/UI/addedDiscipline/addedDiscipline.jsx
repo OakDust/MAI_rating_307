@@ -31,7 +31,6 @@ const AddedDiscipline = ({dataUser, fetchDisciplines, isAddMode, teachersList, a
     }
 
     if (isAddMode) {
-
         return( 
             <tr className={classes.added__row}>
                 <td>

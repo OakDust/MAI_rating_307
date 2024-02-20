@@ -22,9 +22,7 @@ function App() {
   return (
 
     <div className={classes}>
-      <AuthContext.Provider value={{
-        isAuth, setIsAuth, dataUser, setDataUser, isLoading
-      }}>
+      <AuthContext.Provider value={{isAuth, setIsAuth, dataUser, setDataUser, isLoading}}>
         <BrowserRouter>
           <AppRouter/>
         </BrowserRouter>

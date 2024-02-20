@@ -27,6 +27,7 @@ const RoleButtons = ({role, setRole, isRegistration}) => {
             <button className={isStudent ? (activeButtonStyle) : classes.role__button} onClick={() => setRole('Студент')}>
                 Студент
             </button>
+            
             <button disabled={isStudentRegistration()} className={!isStudent ? (activeButtonStyle) : classes.role__button} onClick={() => setRole('Преподаватель')}>
                 Преподаватель
             </button>

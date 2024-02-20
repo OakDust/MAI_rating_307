@@ -4,7 +4,6 @@ import LinkButton from '../linkButton/linkButton';
 import {useLocation} from 'react-router-dom';
 
 const FieldMain = ({title, displayField, dataUser}) => {
-
     let location = useLocation();
     const role = dataUser.role;
 

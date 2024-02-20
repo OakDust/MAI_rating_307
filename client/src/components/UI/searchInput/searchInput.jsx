@@ -29,13 +29,16 @@ const SearchInput = ({list, searchKey, searchValue, setValue, onlyChoice, ...pro
         setValue(item);
     }
 
-    const showSearchedList = () => {
-        const visibleList = isOpenList ? list : searchedList;
+    const openListHandler = () => {
+        setIsOpenList(!isOpenList);
+        setSelectQuery('');
+    }
 
+    const showSearchedList = () => {
         if ((searchedList.length > 0 && searchedList.length <= 20 && isDirtySelect && selectQuery.length > 0) || isOpenList) {
             return (
                 <ul>
-                    {visibleList.map(item => (
+                    {searchedList.map(item => (
                         <li key={item[searchKey]} onClick={() => selectHandler(item)}>{item[searchValue]}</li>
                     ))}
                 </ul>
@@ -54,7 +57,7 @@ const SearchInput = ({list, searchKey, searchValue, setValue, onlyChoice, ...pro
             <img 
                 src={dropDownIcon} 
                 alt='Открыть список'
-                onClick={() => setIsOpenList(!isOpenList)}
+                onClick={() => openListHandler()}
                 className={!isOpenList ? classes.dropDown__icon : classes['dropDown__icon'] + ' ' + classes.active}
             />
 

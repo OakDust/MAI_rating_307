@@ -83,8 +83,6 @@ const FieldSurveys = () => {
                 ))}
             </ul>
         </div>
-        
     )
-    
 }
 export default FieldSurveys;
