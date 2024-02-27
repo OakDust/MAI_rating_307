@@ -1,5 +1,5 @@
 const {DataTypes} = require('sequelize')
-const db = require('../bin/kaf307_opros')
+const db = require('../bin/infodeml_opros')
 
 
 const Load2022 = db.define('load_22', {

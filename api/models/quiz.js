@@ -1,6 +1,6 @@
 const { DataTypes } = require('sequelize')
 //
-const db = require('../bin/kaf307_opros')
+const db = require('../bin/infodeml_opros')
 
 const Quiz = db.define(`${process.env.CURRENT_YEAR_QUIZZES}`, {
         id: {

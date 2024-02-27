@@ -6,9 +6,10 @@
 
 const app = require('../app');
 const debug = require('debug')('api:server');
-const http = require('http');
+const https = require('https');
 const sequelize = require(`./${process.env.CURRENT_DB_CONFIG}`)
 const custom_db = require(`./${process.env.DB_NAME}`)
+const fs = require('fs')
 /**
  * Get port from environment and store in Express.
  */
@@ -20,7 +21,12 @@ app.set('port', port);
  * Create HTTP server.
  */
 
-const server = http.createServer(app);
+const httpsOptions = {
+  key: fs.readFileSync('/home/i/infodeml/opros.mai307.ru/public_html/cert/privateKey.key'),
+  cert: fs.readFileSync('/home/i/infodeml/opros.mai307.ru/public_html/cert/certificate.crt')
+}
+
+const server = https.createServer(app);
 
 /**
  * Listen on provided port, on all network interfaces.
